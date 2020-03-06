@@ -1,1 +1,3 @@
-PySide2==5.14.1
+# vext==0.7.3
+# vext.gi==0.7.0
+# PyGObject
