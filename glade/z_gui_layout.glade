@@ -5,6 +5,7 @@
   <object class="GtkApplicationWindow" id="main_window">
     <property name="can_focus">False</property>
     <property name="resizable">False</property>
+    <signal name="destroy" handler="on_destroy" swapped="no"/>
     <child>
       <placeholder/>
     </child>
@@ -76,6 +77,8 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <signal name="activate" handler="on_menu_bar_quit" swapped="no"/>
+                        <accelerator key="q" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                   </object>
@@ -83,15 +86,30 @@
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem">
+              <object class="GtkMenuItem" id="create_menu_item">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Add</property>
-                <property name="use_underline">True</property>
+                <property name="label" translatable="yes">Create</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkMenuItem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">New Wireframe</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_create_wireframe" swapped="no"/>
+                        <accelerator key="dollar" signal="activate"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem">
+              <object class="GtkMenuItem" id="help_menu_item">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">_Help</property>
@@ -146,15 +164,30 @@
                     <property name="orientation">vertical</property>
                     <property name="spacing">10</property>
                     <child>
-                      <object class="GtkTreeView" id="object_list">
+                      <object class="GtkFrame">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="margin_left">5</property>
-                        <property name="margin_right">5</property>
-                        <property name="margin_top">5</property>
-                        <property name="margin_bottom">5</property>
-                        <child internal-child="selection">
-                          <object class="GtkTreeSelection"/>
+                        <property name="can_focus">False</property>
+                        <property name="label_xalign">0.10000000149011612</property>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkTreeView" id="object_list">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="margin_left">5</property>
+                            <property name="margin_right">5</property>
+                            <property name="margin_top">5</property>
+                            <property name="margin_bottom">5</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection"/>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Objects</property>
+                          </object>
                         </child>
                       </object>
                       <packing>
@@ -189,6 +222,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="on_up_button" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -201,6 +235,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="on_left_button" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -213,6 +248,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="on_right_button" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -225,6 +261,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="on_down_button" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">1</property>
@@ -237,6 +274,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="on_zoom_out" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -249,6 +287,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="on_zoom_in" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>
@@ -322,7 +361,7 @@
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="margin_left">5</property>
+                                            <property name="margin_left">10</property>
                                             <property name="margin_right">5</property>
                                             <property name="margin_top">5</property>
                                             <property name="margin_bottom">5</property>
@@ -359,6 +398,7 @@
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <signal name="clicked" handler="on_x_button" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">0</property>
@@ -371,6 +411,7 @@
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <signal name="clicked" handler="on_z_button" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">2</property>
@@ -383,6 +424,7 @@
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <signal name="clicked" handler="on_y_button" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left_attach">1</property>
@@ -564,11 +606,15 @@
                         <property name="margin_right">5</property>
                         <property name="margin_top">5</property>
                         <property name="margin_bottom">5</property>
-                        <property name="pixels_above_lines">5</property>
+                        <property name="pixels_below_lines">10</property>
+                        <property name="pixels_inside_wrap">10</property>
+                        <property name="editable">False</property>
+                        <property name="wrap_mode">char</property>
                         <property name="left_margin">5</property>
                         <property name="right_margin">5</property>
-                        <property name="top_margin">50</property>
+                        <property name="top_margin">5</property>
                         <property name="bottom_margin">5</property>
+                        <property name="monospace">True</property>
                       </object>
                     </child>
                     <child type="label">

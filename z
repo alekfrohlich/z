@@ -9,10 +9,11 @@ from gi.repository import Gtk
 from windows.main import MainWindow
 
 # TODO:
-# Write glade file
+# Add 'Create Wireframe Dialog'
+# Add TreeStore
 # Apply flake8 to codebase
 # Develop basic structures (Point, Line, Wire_Frame, Display_File)
-# Rename this file to 'z'
+# Fix requirements.txt
 
 if __name__ == "__main__":
     main_window = MainWindow()

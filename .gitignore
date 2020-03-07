@@ -1,3 +1,4 @@
 *zenv/
 *vscode/
 *__pycache__/
+*.glade~
