@@ -8,12 +8,14 @@ from gi.repository import Gtk
 
 from windows.main import MainWindow
 
+
 # TODO:
-# Add TreeStore
+# Viewport transform
+# Translation, Scaling and Rotation of world
+# Fill starting text of CreateObjectDialog's name field.
+# Implement console
 # Apply flake8 to codebase
-# Develop basic structures (Point, Line, Wire_Frame, Display_File)
 # Fix requirements.txt
-# Better integrate Stack with StackSwitcher (Look And Feel)
 # Typed python?
 
 # Challenges:

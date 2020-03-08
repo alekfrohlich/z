@@ -20,14 +20,8 @@ class Object:
         self.points = points
         self.type = ObjectType(3 if len(points) > 3 else len(points))
 
-    def name(self):
-        return self.name
-
-    def object_type(self):
-        return self.type
-
-    def points(self):
-        return self.points
+    def toGtkListStoreRow(self):
+        return [self.name, Object._pretty_type[self.type]]
 
     def __str__(self):
         return self.name + "(" + Object._pretty_type[self.type] + ") at " + str(self.points)
