@@ -9,11 +9,12 @@ from gi.repository import Gtk
 from windows.main import MainWindow
 
 # TODO:
-# Add 'Create Wireframe Dialog'
+# Add dynamic behavior to 'Create object' dialog
 # Add TreeStore
 # Apply flake8 to codebase
 # Develop basic structures (Point, Line, Wire_Frame, Display_File)
 # Fix requirements.txt
+# Better integrate Stack with StackSwitcher (Look And Feel)
 
 if __name__ == "__main__":
     main_window = MainWindow()
