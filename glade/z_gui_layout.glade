@@ -726,7 +726,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry">
+              <object class="GtkEntry" id="name_dialog_field">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="margin_left">5</property>
@@ -754,7 +754,7 @@
             <property name="can_focus">False</property>
             <property name="margin_left">5</property>
             <property name="margin_top">20</property>
-            <property name="stack">stack1</property>
+            <property name="stack">object_type_stack</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -763,13 +763,13 @@
           </packing>
         </child>
         <child>
-          <object class="GtkStack" id="stack1">
+          <object class="GtkStack" id="object_type_stack">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="transition_type">crossfade</property>
             <child>
               <object class="GtkBox">
-                <property name="name">BOX</property>
+                <property name="name">point_page</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
@@ -810,7 +810,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkEntry" id="point_x">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="margin_left">5</property>
@@ -846,7 +846,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkEntry" id="point_y">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="margin_left">5</property>
@@ -882,7 +882,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkEntry" id="point_z">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="margin_left">5</property>
@@ -892,7 +892,7 @@
                                 <property name="max_length">3</property>
                                 <property name="width_chars">3</property>
                                 <property name="max_width_chars">3</property>
-                                <property name="placeholder_text" translatable="yes">0</property>
+                                <property name="text" translatable="yes">0</property>
                                 <property name="input_purpose">digits</property>
                               </object>
                               <packing>
@@ -927,6 +927,7 @@
             </child>
             <child>
               <object class="GtkBox">
+                <property name="name">line_page</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
@@ -969,7 +970,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkEntry" id="line_x1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="margin_top">5</property>
@@ -1001,7 +1002,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkEntry" id="line_y1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="margin_top">5</property>
@@ -1033,7 +1034,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkEntry" id="line_z1">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="margin_top">5</property>
@@ -1103,7 +1104,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkEntry" id="line_x2">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="margin_top">5</property>
@@ -1111,7 +1112,7 @@
                                 <property name="max_length">3</property>
                                 <property name="width_chars">3</property>
                                 <property name="max_width_chars">3</property>
-                                <property name="text" translatable="yes">0</property>
+                                <property name="placeholder_text" translatable="yes">0</property>
                                 <property name="input_purpose">digits</property>
                               </object>
                               <packing>
@@ -1135,7 +1136,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkEntry" id="line_y2">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="margin_top">5</property>
@@ -1167,7 +1168,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkEntry" id="line_z2">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="margin_top">5</property>
@@ -1211,6 +1212,7 @@
             </child>
             <child>
               <object class="GtkBox">
+                <property name="name">wireframe_page</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
@@ -1250,7 +1252,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkEntry">
+                              <object class="GtkEntry" id="wireframe_expression">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="margin_left">5</property>
@@ -1292,6 +1294,7 @@
             </child>
             <child>
               <object class="GtkBox">
+                <property name="name">curves_page</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
