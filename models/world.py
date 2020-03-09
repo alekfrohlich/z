@@ -1,18 +1,18 @@
-""""""
+""" Conceptual representation of the world as a list of objects. """
 
 
 class World:
 
-    display_file = []
+    _display_file = []
 
     @staticmethod
     def add_object(obj):
-        World.display_file.append(obj)
+        World._display_file.append(obj)
 
     @staticmethod
     def objects():
-        return World.display_file
+        return World._display_file
 
     @staticmethod
     def size():
-        return len(World.display_file)
+        return len(World._display_file)

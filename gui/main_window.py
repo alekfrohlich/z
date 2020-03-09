@@ -7,8 +7,8 @@ from gi.repository.Gtk import CellRendererText, ListStore, TreeViewColumn
 
 from core.log import Logger, LogLevel
 from core.object_factory import ObjectFactory
-from models.world import World
 from gui.dialogs import CreateObjectDialog
+from gui.viewport import ViewPort
 
 
 class MainWindow:
@@ -26,9 +26,9 @@ class MainWindow:
         self._builder.get_object("object_list").set_model(self._store)
 
         self._create_object_dialog = CreateObjectDialog(self._builder, self._store)
+        self._viewport = ViewPort(self._builder)
         handlers = {
             "on_destroy" : main_quit,
-            "on_draw": self._on_draw,
             # Controls
             "on_up_button": self.fixme,
             "on_left_button":  self.fixme,
@@ -44,6 +44,7 @@ class MainWindow:
             "on_create_object": self._on_create_object,
         }
         handlers.update(self._create_object_dialog.handlers)
+        handlers.update(self._viewport.handlers)
         self._builder.connect_signals(handlers)
 
 
@@ -54,6 +55,8 @@ class MainWindow:
         """ Display application window. """
         self._builder.get_object("main_window").show_all()
 
+    # GUI buttons
+
     def _on_create_object(self, _):
         """ Display 'Create object' dialog and wait for it's response. """
         response = self._create_object_dialog.run()
@@ -63,16 +66,6 @@ class MainWindow:
             obj = ObjectFactory.make_object(self._create_object_dialog.name,
                 self._create_object_dialog.points)
             self._store.append([obj.name, str(obj.type)])
-            self._builder.get_object("viewport").queue_draw()
+            self._viewport.update()
 
         self._create_object_dialog.hide()
-
-    def _on_draw(self, _, ctx):
-        ctx.set_line_width(2)
-        ctx.set_source_rgb(0, 0, 0)
-        for obj in World.objects():
-            points = obj.points
-            ctx.move_to(*points[0])
-            for point in points[1:]:
-                ctx.line_to(*point)
-        ctx.stroke()

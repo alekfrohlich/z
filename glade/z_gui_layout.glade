@@ -604,6 +604,7 @@
                         <property name="margin_right">10</property>
                         <property name="margin_top">10</property>
                         <property name="margin_bottom">10</property>
+                        <signal name="configure-event" handler="on_configure" swapped="no"/>
                         <signal name="draw" handler="on_draw" swapped="no"/>
                       </object>
                     </child>
