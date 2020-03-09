@@ -8,20 +8,20 @@ class ObjectType(Enum):
     LINE = 2
     WIREFRAME = 3
 
-class Object:
-    _pretty_type = {
-        ObjectType.POINT: "Point",
-        ObjectType.LINE: "Line",
-        ObjectType.WIREFRAME: "Wireframe",
-    }
+    def __str__(self):
+        pretty = {
+            ObjectType.POINT.value: "Point",
+            ObjectType.LINE.value: "Line",
+            ObjectType.WIREFRAME.value: "Wireframe",
+        }
+        return pretty[self.value]
 
+
+class Object:
     def __init__(self, name, points):
         self.name = name
         self.points = points
         self.type = ObjectType(3 if len(points) > 3 else len(points))
 
-    def toGtkListStoreRow(self):
-        return [self.name, Object._pretty_type[self.type]]
-
     def __str__(self):
-        return self.name + "(" + Object._pretty_type[self.type] + ") at " + str(self.points)
+        return self.name + "(" + str(self.type) + ") at " + str(self.points)

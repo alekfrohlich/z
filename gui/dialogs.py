@@ -4,12 +4,12 @@ import re
 
 from gi.repository.Gtk import ResponseType
 
-from core.log import Logger, LogLevel\
+from core.log import Logger, LogLevel
+from models.world import World
 
 
 class CreateObjectDialog():
     # TODO:
-    # Add signals during __init__
     # Make children widget naming consistent
     # Make CreateObjectDialog a subclass of Gtk.Dialog
 
@@ -29,15 +29,13 @@ class CreateObjectDialog():
         """ Cancels dialog without creating object. """
         self._dialog.response(ResponseType.CANCEL)
 
-    # def clear(self):
-    #     self._name_field.set_text("")
-    #     self._points_field.set_text("")
-
+    # useless, should go away when CreateObjectDialog inherits from Gtk.Dialog
     def hide(self):
         self._dialog.hide()
 
     @property
     def name(self):
+        """ Name of the object. """
         return self._name_field.get_text()
 
     def _on_ok(self, _):
@@ -50,20 +48,24 @@ class CreateObjectDialog():
 
     @property
     def points(self):
+        """ List of points already cleaned. """
         return [
             (int(point[0]), int(point[1]))
             for point in map(lambda p: p.split(","),
             self._points_field.get_text().split(";"))]
 
     def run(self):
+        """ Wrapper to automatically update name field. """
+        self._name_field.set_text("object{}".format(World.size()))
         return self._dialog.run()
 
     def validate(self):
+        """ Throw RuntimeError if either list of points is badly formatted or
+            the chosen name is already in use. """
         for row in self._store:
             if row[0] == self.name:
-                raise RuntimeError("Name '" + self.name + "' already names an object!")
+                raise RuntimeError(self.name + "' already names an object!")
 
         exp = self._points_field.get_text()
         if not CreateObjectDialog.POINTS_PATTERN.match(exp):
             raise RuntimeError("Invalid list of points format!")
-        # Smooth points?

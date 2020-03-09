@@ -6,21 +6,28 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
-from windows.main import MainWindow
+from gui.main_window import MainWindow
 
 
 # TODO:
 # Viewport transform
 # Translation, Scaling and Rotation of world
-# Fill starting text of CreateObjectDialog's name field.
-# Implement console
+# Dont allow things to resize?
+# Is there a way to avoid repainting entire widget?
+# Instantiate base class from superclass object
+# Migrate to numpy
+# Separate physical (Gtk) from conceptual (World) representation (Objects should draw themselves?)
+# Is there a need for a ObjectFactory? Wouldn't we be better off only with world
+
+# Future
+# Implement console logging
+# Implement console controlling (World Manipulation Language - WML)
 # Apply flake8 to codebase
 # Fix requirements.txt
 # Typed python?
 
 # Challenges:
 # Smoothening colinear points
-# Instantiate base class from superclass object
 
 if __name__ == "__main__":
     main_window = MainWindow()

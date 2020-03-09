@@ -3,12 +3,16 @@
 
 class World:
 
-    DISPLAY_FILE = []
+    display_file = []
 
     @staticmethod
     def add_object(obj):
-        World.DISPLAY_FILE.append(obj)
+        World.display_file.append(obj)
 
     @staticmethod
     def objects():
-        return World.DISPLAY_FILE
+        return World.display_file
+
+    @staticmethod
+    def size():
+        return len(World.display_file)

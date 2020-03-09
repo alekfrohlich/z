@@ -1,4 +1,4 @@
-""""""
+""" Glade parser """
 
 from gi.repository.Gtk import main_quit
 from gi.repository.Gtk import Builder
@@ -8,7 +8,7 @@ from gi.repository.Gtk import CellRendererText, ListStore, TreeViewColumn
 from core.log import Logger, LogLevel
 from core.object_factory import ObjectFactory
 from models.world import World
-from windows.dialogs import CreateObjectDialog
+from gui.dialogs import CreateObjectDialog
 
 
 class MainWindow:
@@ -64,7 +64,7 @@ class MainWindow:
         if response == ResponseType.OK:
             obj = ObjectFactory.make_object(self._create_object_dialog.name,
                 self._create_object_dialog.points)
-            self._store.append(obj.toGtkListStoreRow())
+            self._store.append([obj.name, str(obj.type)])
             self._builder.get_object("viewport").queue_draw()
 
         self._create_object_dialog.hide()
@@ -72,7 +72,7 @@ class MainWindow:
     def _on_draw(self, _, ctx):
         ctx.set_line_width(2)
         ctx.set_source_rgb(0, 0, 0)
-        for obj in World.DISPLAY_FILE:
+        for obj in World.objects():
             points = obj.points
             ctx.move_to(*points[0])
             for point in points[1:]:

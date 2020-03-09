@@ -12,10 +12,11 @@ $ sudo apt-get install python3-gi
 
 # Running
 
-To execute the Z Interactive Graphic System, type:
+To execute the Z Interactive Graphic System simply make it an executable and run it:
 
 ```
-python3 mainGtk.py
+$ chmod +x z
+$ ./z
 ```
 
 # Documentation
