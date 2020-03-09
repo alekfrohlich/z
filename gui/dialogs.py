@@ -9,7 +9,6 @@ from models.world import World
 
 
 class CreateObjectDialog():
-    # TODO: Make CreateObjectDialog a subclass of Gtk.Dialog
 
     POINTS_PATTERN = re.compile(r"^(-?\d+,-?\d+;)*-?\d+,-?\d+$")
 
@@ -27,8 +26,8 @@ class CreateObjectDialog():
         """ Cancels dialog without creating object. """
         self._dialog.response(ResponseType.CANCEL)
 
-    # useless, should go away when CreateObjectDialog inherits from Gtk.Dialog
     def hide(self):
+        """ Expose dialog's interface. """
         self._dialog.hide()
 
     @property
@@ -53,7 +52,7 @@ class CreateObjectDialog():
             self._points_field.get_text().split(";"))]
 
     def run(self):
-        """ Wrapper to automatically update name field. """
+        """ dialog.run wrapper that automatically updates the name field. """
         self._name_field.set_text("object{}".format(World.size()))
         return self._dialog.run()
 

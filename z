@@ -17,7 +17,7 @@ from gui.main_window import MainWindow
 # Instantiate base class from superclass object
 # Migrate to numpy
 # Separate physical (Gtk) from conceptual (World) representation (Objects should draw themselves?)
-# Is there a need for a ObjectFactory? Wouldn't we be better off only with world
+# Is there a need for a ObjectFactory? Wouldn't we be better off only with World?
 
 # Future
 # Implement console logging
