@@ -1,8 +1,9 @@
-.PHONY: check install-env
+.PHONY: check-style
 
-check:
-	#flake8 main.py
-
-	# virtualenv -p /usr/bin/python3 zenv
-	# source zenv/bin/activate
-	# pip install -r requirements.txt
+check-style:
+	@echo checking style of module: core ...
+	flake8 core/
+	@echo checking style of module: gui ...
+	flake8 gui/
+	@echo checking style of module: models ...
+	flake8 models/

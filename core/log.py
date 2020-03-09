@@ -15,6 +15,7 @@ class LogLevel(Enum):
     WARN = 2
     ERROR = 3
 
+
 class Logger():
     log_level = LogLevel.INFO
 

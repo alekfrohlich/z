@@ -27,15 +27,17 @@ class MainWindow:
     def __init__(self):
         self._builder = Builder()
         self._builder.add_from_file("glade/z_gui_layout.glade")
-        self._builder.get_object("viewport").set_size_request(*ViewPort.RESOLUTION)
+        self._builder.get_object("viewport").set_size_request(
+            *ViewPort.RESOLUTION)
 
         self._store = self._builder.get_object("object_list_store")
         self._builder.get_object("object_list").set_model(self._store)
 
-        self._create_object_dialog = CreateObjectDialog(self._builder, self._store)
+        self._create_object_dialog = CreateObjectDialog(self._builder,
+                                                        self._store)
         self._viewport = ViewPort(self._builder)
         handlers = {
-            "on_destroy" : main_quit,
+            "on_destroy": main_quit,
             # Controls
             "on_up_button": self.fixme,
             "on_left_button":  self.fixme,
@@ -54,7 +56,6 @@ class MainWindow:
         handlers.update(self._viewport.handlers)
         self._builder.connect_signals(handlers)
 
-
     def fixme(self, _):
         print("Feature not yet implemented!")
 
@@ -69,10 +70,11 @@ class MainWindow:
         """ Show 'Create object' dialog and wait for it's response. Note that
             if successful the display is hidden again (not destroyed). """
         response = self._create_object_dialog.run()
-        Logger.log(LogLevel.INFO, "Dialog returned with response code " + str(ResponseType(response)))
+        Logger.log(LogLevel.INFO, "Dialog returned with response code "
+                   + str(ResponseType(response)))
 
         if response == ResponseType.OK:
             obj = World.make_object(self._create_object_dialog.name,
-                self._create_object_dialog.points)
+                                    self._create_object_dialog.points)
             self._store.append([obj.name, str(obj.type)])
         self._create_object_dialog.hide()

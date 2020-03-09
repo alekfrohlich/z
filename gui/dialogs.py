@@ -14,8 +14,10 @@ class CreateObjectDialog():
 
     def __init__(self, builder, list_store):
         self._dialog = builder.get_object("create_object_dialog")
-        self._name_field = builder.get_object("create_object_dialog_name_field")
-        self._points_field = builder.get_object("create_object_dialog_points_field")
+        self._name_field = builder.get_object(
+            "create_object_dialog_name_field")
+        self._points_field = builder.get_object(
+            "create_object_dialog_points_field")
         self.handlers = {
             "on_create_object_ok": self._on_ok,
             "on_create_object_cancel": self._on_cancel,
@@ -33,7 +35,7 @@ class CreateObjectDialog():
         return [
             (int(point[0]), int(point[1]))
             for point in map(lambda p: p.split(","),
-            self._points_field.get_text().split(";"))]
+                             self._points_field.get_text().split(";"))]
 
     def validate(self):
         """ Throw RuntimeError if either list of points is badly formatted or
@@ -52,7 +54,6 @@ class CreateObjectDialog():
         """ dialog.hide wrapper. """
         self._dialog.hide()
 
-
     def run(self):
         """ dialog.run wrapper that automatically updates the name field. """
         self._name_field.set_text("object{}".format(World.size()))
@@ -63,7 +64,6 @@ class CreateObjectDialog():
     def _on_cancel(self, _):
         """ Cancels dialog without creating object. """
         self._dialog.response(ResponseType.CANCEL)
-
 
     def _on_ok(self, _):
         """ Check if form input is valid. If so, create new object with it. """

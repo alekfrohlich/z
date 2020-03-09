@@ -11,8 +11,8 @@ from models.window import Window
 class ViewPort(ViewPort_Common):
 
     """ RBG colors for Cairo. """
-    BLACK = (0,0,0)
-    WHITE = (1,1,1)
+    BLACK = (0, 0, 0)
+    WHITE = (1, 1, 1)
 
     RESOLUTION = (500, 500)
 
@@ -28,8 +28,10 @@ class ViewPort(ViewPort_Common):
     def viewport_transform(point):
         """ Change of basis: World -> Viewport. """
         x_w, y_w = point
-        x_vp = (x_w - Window.x_min) / (Window.x_max - Window.x_min) * ViewPort.RESOLUTION[0]
-        y_vp = (1 - (y_w - Window.y_min) / (Window.y_max - Window.y_min)) * ViewPort.RESOLUTION[1]
+        x_vp = (x_w - Window.x_min) / (Window.x_max - Window.x_min) \
+            * ViewPort.RESOLUTION[0]
+        y_vp = (1 - (y_w - Window.y_min) / (Window.y_max - Window.y_min)) \
+            * ViewPort.RESOLUTION[1]
         return (x_vp, y_vp)
 
     def clear(self):
@@ -49,7 +51,8 @@ class ViewPort(ViewPort_Common):
             CONTENT_COLOR,
             width,
             height)
-        Logger.log(LogLevel.INFO, "viewport.config() at ({},{})".format(width, height))
+        Logger.log(LogLevel.INFO, "viewport.config() at ({},{})"
+                   .format(width, height))
         self.clear()
 
     def _on_draw(self, wid, cr):
