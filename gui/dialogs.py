@@ -22,26 +22,10 @@ class CreateObjectDialog():
         }
         self._store = list_store
 
-    def _on_cancel(self, _):
-        """ Cancels dialog without creating object. """
-        self._dialog.response(ResponseType.CANCEL)
-
-    def hide(self):
-        """ Expose dialog's interface. """
-        self._dialog.hide()
-
     @property
     def name(self):
         """ Name of the object. """
         return self._name_field.get_text()
-
-    def _on_ok(self, _):
-        """ Check if form input is valid. If so, create new object with it. """
-        try:
-            self.validate()
-            self._dialog.response(ResponseType.OK)
-        except RuntimeError as error:
-            Logger.log(LogLevel.ERROR, error)
 
     @property
     def points(self):
@@ -50,11 +34,6 @@ class CreateObjectDialog():
             (int(point[0]), int(point[1]))
             for point in map(lambda p: p.split(","),
             self._points_field.get_text().split(";"))]
-
-    def run(self):
-        """ dialog.run wrapper that automatically updates the name field. """
-        self._name_field.set_text("object{}".format(World.size()))
-        return self._dialog.run()
 
     def validate(self):
         """ Throw RuntimeError if either list of points is badly formatted or
@@ -66,3 +45,30 @@ class CreateObjectDialog():
         exp = self._points_field.get_text()
         if not CreateObjectDialog.POINTS_PATTERN.match(exp):
             raise RuntimeError("Invalid list of points format!")
+
+    # Gtk.Dialog wrap
+
+    def hide(self):
+        """ dialog.hide wrapper. """
+        self._dialog.hide()
+
+
+    def run(self):
+        """ dialog.run wrapper that automatically updates the name field. """
+        self._name_field.set_text("object{}".format(World.size()))
+        return self._dialog.run()
+
+    # Signals
+
+    def _on_cancel(self, _):
+        """ Cancels dialog without creating object. """
+        self._dialog.response(ResponseType.CANCEL)
+
+
+    def _on_ok(self, _):
+        """ Check if form input is valid. If so, create new object with it. """
+        try:
+            self.validate()
+            self._dialog.response(ResponseType.OK)
+        except RuntimeError as error:
+            Logger.log(LogLevel.ERROR, error)

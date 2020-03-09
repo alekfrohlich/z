@@ -6,9 +6,9 @@ from gi.repository.Gtk import ResponseType
 from gi.repository.Gtk import CellRendererText, ListStore, TreeViewColumn
 
 from core.log import Logger, LogLevel
-from core.object_factory import ObjectFactory
 from gui.dialogs import CreateObjectDialog
 from gui.viewport import ViewPort
+from models.world import World
 
 
 class MainWindow:
@@ -20,7 +20,7 @@ class MainWindow:
     def __init__(self):
         self._builder = Builder()
         self._builder.add_from_file("glade/z_gui_layout.glade")
-        self._builder.get_object("viewport").set_size_request(500,500)
+        self._builder.get_object("viewport").set_size_request(*ViewPort.RESOLUTION)
 
         self._store = self._builder.get_object("object_list_store")
         self._builder.get_object("object_list").set_model(self._store)
@@ -57,15 +57,24 @@ class MainWindow:
 
     # GUI buttons
 
+    @needs_redraw
     def _on_create_object(self, _):
         """ Display 'Create object' dialog and wait for it's response. """
         response = self._create_object_dialog.run()
         Logger.log(LogLevel.INFO, "Dialog returned with response code " + str(ResponseType(response)))
 
         if response == ResponseType.OK:
-            obj = ObjectFactory.make_object(self._create_object_dialog.name,
+            obj = World.make_object(self._create_object_dialog.name,
                 self._create_object_dialog.points)
             self._store.append([obj.name, str(obj.type)])
-            self._viewport.update()
-
         self._create_object_dialog.hide()
+
+    # Decorators
+
+    def needs_redraw(f):
+        """ Decorates methods that modify the display file and thus demand it
+            to be redrawn to take effect. """
+        def wrapper(self, *args, **kwargs):
+            f(self, *args, **kwargs)
+            self._builder.get_object("viewport").queue_draw()
+        return wrapper
