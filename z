@@ -12,12 +12,12 @@ from gui.main_window import MainWindow
 # TODO:
 # Viewport transform
 # Translation, Scaling and Rotation of world
-# Dont allow things to resize? Scroll TreeView
+# Dont allow things to resize (configure_event being called multiple times on DrawingArea)? Scroll TreeView is expanding ...
 # Is there a way to avoid repainting entire widget?
 # Instantiate base class from superclass object
 # Migrate to numpy
 # Separate physical (Gtk) from conceptual (World) representation (Objects should draw themselves?)
-# Needs redraw annotation
+# Should signals return anything?
 # Why del?
 
 # Future:

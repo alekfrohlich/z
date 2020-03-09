@@ -42,9 +42,6 @@ class ViewPort(ViewPort_Common):
     def _on_configure(self, wid, evt):
         """ Creates surface and paint's it white. It's called at the beginning
             but will be called again whenever widget resizes. """
-        if self._surface is not None:
-            del self._surface
-            self._surface = None
         win = wid.get_window()
         width = wid.get_allocated_width()
         height = wid.get_allocated_height()
@@ -54,7 +51,6 @@ class ViewPort(ViewPort_Common):
             height)
         Logger.log(LogLevel.INFO, "viewport.config() at ({},{})".format(width, height))
         self.clear()
-        return True
 
     def _on_draw(self, wid, cr):
         """ Redraws the screen from the surface. """
@@ -69,4 +65,3 @@ class ViewPort(ViewPort_Common):
             for point in map(ViewPort.viewport_transform, points):
                 cr.line_to(*point)
             cr.stroke()
-        return False

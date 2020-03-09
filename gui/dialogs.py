@@ -46,7 +46,7 @@ class CreateObjectDialog():
         if not CreateObjectDialog.POINTS_PATTERN.match(exp):
             raise RuntimeError("Invalid list of points format!")
 
-    # Gtk.Dialog wrap
+    # Gtk.Dialog wrappers
 
     def hide(self):
         """ dialog.hide wrapper. """

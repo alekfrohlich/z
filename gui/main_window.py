@@ -3,7 +3,6 @@
 from gi.repository.Gtk import main_quit
 from gi.repository.Gtk import Builder
 from gi.repository.Gtk import ResponseType
-from gi.repository.Gtk import CellRendererText, ListStore, TreeViewColumn
 
 from core.log import Logger, LogLevel
 from gui.dialogs import CreateObjectDialog
@@ -16,6 +15,14 @@ class MainWindow:
         Main GUI window, has access to glade builder and thus is responsible
         for passing it around to other Glade-related graphical components.
     """
+
+    def needs_redraw(f):
+        """ Decorates methods that modify the display file and thus demand it
+            to be redrawn to take effect. """
+        def wrapper(self, *args, **kwargs):
+            f(self, *args, **kwargs)
+            self._builder.get_object("viewport").queue_draw()
+        return wrapper
 
     def __init__(self):
         self._builder = Builder()
@@ -59,7 +66,8 @@ class MainWindow:
 
     @needs_redraw
     def _on_create_object(self, _):
-        """ Display 'Create object' dialog and wait for it's response. """
+        """ Show 'Create object' dialog and wait for it's response. Note that
+            if successful the display is hidden again (not destroyed). """
         response = self._create_object_dialog.run()
         Logger.log(LogLevel.INFO, "Dialog returned with response code " + str(ResponseType(response)))
 
@@ -68,13 +76,3 @@ class MainWindow:
                 self._create_object_dialog.points)
             self._store.append([obj.name, str(obj.type)])
         self._create_object_dialog.hide()
-
-    # Decorators
-
-    def needs_redraw(f):
-        """ Decorates methods that modify the display file and thus demand it
-            to be redrawn to take effect. """
-        def wrapper(self, *args, **kwargs):
-            f(self, *args, **kwargs)
-            self._builder.get_object("viewport").queue_draw()
-        return wrapper
