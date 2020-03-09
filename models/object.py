@@ -1,4 +1,4 @@
-""""""
+""" Graphical object: Point, Line or Wireframe. """
 
 from enum import Enum
 

@@ -9,16 +9,14 @@ from models.world import World
 
 
 class CreateObjectDialog():
-    # TODO:
-    # Make children widget naming consistent
-    # Make CreateObjectDialog a subclass of Gtk.Dialog
+    # TODO: Make CreateObjectDialog a subclass of Gtk.Dialog
 
     POINTS_PATTERN = re.compile(r"^(-?\d+,-?\d+;)*-?\d+,-?\d+$")
 
     def __init__(self, builder, list_store):
         self._dialog = builder.get_object("create_object_dialog")
-        self._name_field = builder.get_object("name_dialog_field")
-        self._points_field = builder.get_object("wireframe_expression")
+        self._name_field = builder.get_object("create_object_dialog_name_field")
+        self._points_field = builder.get_object("create_object_dialog_points_field")
         self.handlers = {
             "on_create_object_ok": self._on_ok,
             "on_create_object_cancel": self._on_cancel,

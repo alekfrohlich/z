@@ -1,4 +1,4 @@
-""" Glade parser """
+""" Main application window (Gtk3 - Glade). """
 
 from gi.repository.Gtk import main_quit
 from gi.repository.Gtk import Builder
@@ -12,20 +12,18 @@ from gui.dialogs import CreateObjectDialog
 
 
 class MainWindow:
-    # TODO:
-    # Design ListStore with Glade
+    """
+        Main GUI window, has access to glade builder and thus is responsible
+        for passing it around to other Glade-related graphical components.
+    """
 
     def __init__(self):
         self._builder = Builder()
         self._builder.add_from_file("glade/z_gui_layout.glade")
         self._builder.get_object("viewport").set_size_request(500,500)
 
-        self._store = ListStore(str, str)
+        self._store = self._builder.get_object("object_list_store")
         self._builder.get_object("object_list").set_model(self._store)
-        self._builder.get_object("object_list").append_column(
-            TreeViewColumn("Name", CellRendererText(), text=0))
-        self._builder.get_object("object_list").append_column(
-            TreeViewColumn("Type", CellRendererText(), text=1))
 
         self._create_object_dialog = CreateObjectDialog(self._builder, self._store)
         handlers = {
