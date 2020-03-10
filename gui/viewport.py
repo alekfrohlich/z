@@ -1,6 +1,6 @@
 """ Viewport implementation using Gtk - Glade. """
 
-from cairo import Context, CONTENT_COLOR
+from cairo import Context, LineCap, CONTENT_COLOR
 
 from core.log import Logger, LogLevel
 from models.viewport import ViewPort_Common
@@ -59,6 +59,8 @@ class ViewPort(ViewPort_Common):
         """ Redraws the screen from the surface. """
         def draw_point(points):
             cr.move_to(*ViewPort.viewport_transform(points[0]))
+            cr.set_line_cap(LineCap.ROUND)
+            cr.close_path()
             cr.stroke()
 
         def draw_line(points):
@@ -90,4 +92,3 @@ class ViewPort(ViewPort_Common):
 
         for obj in World.objects():
             obj_t2func[obj.type.value](obj.points)
-

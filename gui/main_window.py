@@ -69,8 +69,8 @@ class MainWindow:
 
     @property
     def step(self):
-        tmp = self._builder.get_object("step_entry").get_text()
-        return int(tmp)
+        """ x-y offset/scale factor for moving/zooming the window. """
+        return int(self._builder.get_object("step_entry").get_text())
 
     # GUI buttons
 
