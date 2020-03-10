@@ -57,14 +57,37 @@ class ViewPort(ViewPort_Common):
 
     def _on_draw(self, wid, cr):
         """ Redraws the screen from the surface. """
+        def draw_point(points):
+            cr.move_to(*ViewPort.viewport_transform(points[0]))
+            cr.stroke()
+
+        def draw_line(points):
+            first_point = ViewPort.viewport_transform(points[0])
+            second_point = ViewPort.viewport_transform(points[1])
+            cr.move_to(*first_point)
+            cr.line_to(*second_point)
+            cr.stroke()
+
+        def draw_wireframe(points):
+            first_point = ViewPort.viewport_transform(points[0])
+            cr.move_to(*first_point)
+            for point in map(ViewPort.viewport_transform, points):
+                cr.line_to(*point)
+            cr.line_to(*first_point)
+            cr.stroke()
+
         cr.set_source_surface(self._surface, 0, 0)
         cr.paint()
 
         cr.set_line_width(2)
         cr.set_source_rgb(*ViewPort.BLACK)
+
+        obj_t2func = {
+            1: draw_point,
+            2: draw_line,
+            3: draw_wireframe,
+        }
+
         for obj in World.objects():
-            points = obj.points
-            cr.move_to(*ViewPort.viewport_transform(points[0]))
-            for point in map(ViewPort.viewport_transform, points):
-                cr.line_to(*point)
-            cr.stroke()
+            obj_t2func[obj.type.value](obj.points)
+

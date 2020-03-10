@@ -7,7 +7,9 @@
 from abc import ABCMeta, abstractmethod
 
 
-class ViewPort_Common(ABCMeta):
+class ViewPort_Common(object):
+    __metaclass__ = ABCMeta
+
     """ Common features present in all viewport implementations. """
     @abstractmethod
     def viewport_transform(self, points): raise NotImplementedError

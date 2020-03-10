@@ -327,7 +327,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkEntry" id="inout_entry">
+                                  <object class="GtkEntry" id="step_entry">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="max_length">3</property>

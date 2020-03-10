@@ -21,6 +21,8 @@ from gui.main_window import MainWindow
 # Separate physical (Gtk) from conceptual (World) representation (Objects should draw themselves?)
 # Should signals return anything?
 # Why del?
+# Python enums?
+# How to paint points?
 
 # Future:
 # Implement console logging

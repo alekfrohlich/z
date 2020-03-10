@@ -4,10 +4,12 @@ from gi.repository.Gtk import main_quit
 from gi.repository.Gtk import Builder
 from gi.repository.Gtk import ResponseType
 
+from core import DirectionType
 from core.log import Logger, LogLevel
 from gui.dialogs import CreateObjectDialog
 from gui.viewport import ViewPort
 from models.world import World
+from models.window import Window
 
 
 class MainWindow:
@@ -39,12 +41,12 @@ class MainWindow:
         handlers = {
             "on_destroy": main_quit,
             # Controls
-            "on_up_button": self.fixme,
-            "on_left_button":  self.fixme,
-            "on_right_button": self.fixme,
-            "on_down_button":  self.fixme,
-            "on_zoom_in":  self.fixme,
-            "on_zoom_out": self.fixme,
+            "on_up_button": lambda _ : self._on_move_window(DirectionType.UP),
+            "on_left_button":  lambda _ : self._on_move_window(DirectionType.LEFT),
+            "on_right_button": lambda _ : self._on_move_window(DirectionType.RIGHT),
+            "on_down_button":  lambda _ : self._on_move_window(DirectionType.DOWN),
+            "on_zoom_in":  lambda _ : self._on_zoom_window(inwards=True),
+            "on_zoom_out": lambda _ : self._on_zoom_window(inwards=False),
             "on_x_button": self.fixme,
             "on_y_button": self.fixme,
             "on_z_button": self.fixme,
@@ -63,6 +65,13 @@ class MainWindow:
         """ Display application window. """
         self._builder.get_object("main_window").show_all()
 
+    # Attributes
+
+    @property
+    def step(self):
+        tmp = self._builder.get_object("step_entry").get_text()
+        return int(tmp)
+
     # GUI buttons
 
     @needs_redraw
@@ -78,3 +87,29 @@ class MainWindow:
                                     self._create_object_dialog.points)
             self._store.append([obj.name, str(obj.type)])
         self._create_object_dialog.hide()
+
+    @needs_redraw
+    def _on_move_window(self, direction):
+        """ Move (see core.DirectionType) the window by offset specified in the
+            control menu. """
+        x_offset, y_offset = direction.value
+        Window.move(x_offset * self.step, y_offset * self.step)
+
+    @needs_redraw
+    def _on_zoom_window(self, inwards):
+        """ Zoom (in or out) the window by offset specificed in the control
+            menu (step taken as percentage). """
+        scale = (1 + self.step/100) ** (-1 if inwards else 1)
+
+        new_x_max = Window.x_max * scale
+        new_x_min = Window.x_min * scale
+        new_y_max = Window.y_max * scale
+        new_y_min = Window.x_min * scale
+
+        if new_x_max - new_x_min < 10 or new_y_max - new_y_min < 10: # too small
+            Logger.log(LogLevel.WARN, "Zoom limited exceeded, further zooming will be surpressed!")
+        else:
+            Window.x_max = new_x_max
+            Window.x_min = new_x_min
+            Window.y_max = new_y_max
+            Window.y_min = new_y_min
