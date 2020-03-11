@@ -1,6 +1,7 @@
-""""""
+""" Basic types useful for all modules. """
 
 from enum import Enum
+
 
 class DirectionType(Enum):
     UP = (0, 1)

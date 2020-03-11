@@ -6,11 +6,10 @@ from gi.repository.Gtk import ResponseType
 
 from core.log import Logger, LogLevel
 from models.world import World
+from wml import parse_points, POINTS_PATTERN
 
 
 class CreateObjectDialog():
-
-    POINTS_PATTERN = re.compile(r"^(-?\d+,-?\d+;)*-?\d+,-?\d+$")
 
     def __init__(self, builder, list_store):
         self._dialog = builder.get_object("create_object_dialog")
@@ -32,10 +31,7 @@ class CreateObjectDialog():
     @property
     def points(self):
         """ List of points already cleaned. """
-        return [
-            (int(point[0]), int(point[1]))
-            for point in map(lambda p: p.split(","),
-                             self._points_field.get_text().split(";"))]
+        return parse_points(self._points_field.get_text())
 
     def validate(self):
         """ Throw RuntimeError if either list of points is badly formatted or
@@ -45,7 +41,7 @@ class CreateObjectDialog():
                 raise RuntimeError(self.name + "' already names an object!")
 
         exp = self._points_field.get_text()
-        if not CreateObjectDialog.POINTS_PATTERN.match(exp):
+        if not POINTS_PATTERN.match(exp):
             raise RuntimeError("Invalid list of points format!")
 
     # Gtk.Dialog wrappers
@@ -59,7 +55,7 @@ class CreateObjectDialog():
         self._name_field.set_text("object{}".format(World.size()))
         return self._dialog.run()
 
-    # Signals
+    # Gtk signal handlers
 
     def _on_cancel(self, _):
         """ Cancels dialog without creating object. """

@@ -9,30 +9,22 @@ from gi.repository import Gtk
 from gui.main_window import MainWindow
 
 
-# TODO:
-# Viewport transform
-# Translation, Scaling and Rotation of world
-# Dont allow things to resize (configure_event being called multiple times on DrawingArea)?
-#   Scroll TreeView is expanding and ViewPort.RESOLUTION is currently inconsistent with the fact
-#   that things might resize
-# Is there a way to avoid repainting entire widget?
-# Instantiate base class from superclass object
-# Migrate to numpy
-# Separate physical (Gtk) from conceptual (World) representation (Objects should draw themselves?)
-# Should signals return anything?
-# Why del?
-# Python enums?
-# How to paint points?
+# TODO (first release):
+# define what is logged and what is not
+# Deselect rows
+# Dont allow things to resize?
+# move logic away from interface
+# factory pattern
+# python enums
+# fix console
+# requirements.txt?
+
+# TODO (second release):
+# Rotation of world
 
 # Future:
-# Implement console logging
-# Implement console controlling (World Manipulation Language - WML)
-# Apply flake8 to codebase
 # Fix requirements.txt
 # Typed python?
-
-# Challenges:
-# Smoothening colinear points
 
 if __name__ == "__main__":
     main_window = MainWindow()

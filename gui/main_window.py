@@ -6,6 +6,8 @@ from gi.repository.Gtk import ResponseType
 
 from core import DirectionType
 from core.log import Logger, LogLevel
+# from gui import ObjectFactory
+from gui.console import Console
 from gui.dialogs import CreateObjectDialog
 from gui.viewport import ViewPort
 from models.world import World
@@ -33,20 +35,24 @@ class MainWindow:
             *ViewPort.RESOLUTION)
 
         self._store = self._builder.get_object("object_list_store")
-        self._builder.get_object("object_list").set_model(self._store)
+        self._treeview = self._builder.get_object("object_list")
+        self._treeview.set_model(self._store)
 
+        self._console = Console(self._builder.get_object("console_text_view"),
+                                self._store)
         self._create_object_dialog = CreateObjectDialog(self._builder,
                                                         self._store)
         self._viewport = ViewPort(self._builder)
         handlers = {
             "on_destroy": main_quit,
             # Controls
-            "on_up_button": lambda _ : self._on_move_window(DirectionType.UP),
-            "on_left_button":  lambda _ : self._on_move_window(DirectionType.LEFT),
-            "on_right_button": lambda _ : self._on_move_window(DirectionType.RIGHT),
-            "on_down_button":  lambda _ : self._on_move_window(DirectionType.DOWN),
-            "on_zoom_in":  lambda _ : self._on_zoom_window(inwards=True),
-            "on_zoom_out": lambda _ : self._on_zoom_window(inwards=False),
+            "on_up_button": lambda _: self._on_translate(DirectionType.UP),
+            "on_left_button": lambda _: self._on_translate(DirectionType.LEFT),
+            "on_right_button": lambda _: self._on_translate(
+                DirectionType.RIGHT),
+            "on_down_button": lambda _: self._on_translate(DirectionType.DOWN),
+            "on_zoom_in": lambda _: self._on_scale(expand=True),
+            "on_zoom_out": lambda _: self._on_scale(expand=False),
             "on_x_button": self.fixme,
             "on_y_button": self.fixme,
             "on_z_button": self.fixme,
@@ -54,6 +60,7 @@ class MainWindow:
             "on_menu_bar_quit": main_quit,
             "on_create_object": self._on_create_object,
         }
+        handlers.update(self._console.handlers)
         handlers.update(self._create_object_dialog.handlers)
         handlers.update(self._viewport.handlers)
         self._builder.connect_signals(handlers)
@@ -69,18 +76,26 @@ class MainWindow:
 
     @property
     def step(self):
-        """ x-y offset/scale factor for moving/zooming the window. """
+        """ x-y offset/scale factor for translating/scaling objects and/or
+            the window. """
         return int(self._builder.get_object("step_entry").get_text())
 
-    # GUI buttons
+    @property
+    def selected_object(self):
+        """ Currently selected object in TreeView. """
+        tree_model, tree_iter = self._treeview.get_selection().get_selected()
+        if tree_iter is not None:
+            return World.objects()[tree_model.get_value(tree_iter, 0)]
+        else:
+            return None
+
+    # Gtk signal handlers
 
     @needs_redraw
     def _on_create_object(self, _):
         """ Show 'Create object' dialog and wait for it's response. Note that
             if successful the display is hidden again (not destroyed). """
         response = self._create_object_dialog.run()
-        Logger.log(LogLevel.INFO, "Dialog returned with response code "
-                   + str(ResponseType(response)))
 
         if response == ResponseType.OK:
             obj = World.make_object(self._create_object_dialog.name,
@@ -89,27 +104,24 @@ class MainWindow:
         self._create_object_dialog.hide()
 
     @needs_redraw
-    def _on_move_window(self, direction):
-        """ Move (see core.DirectionType) the window by offset specified in the
-            control menu. """
-        x_offset, y_offset = direction.value
-        Window.move(x_offset * self.step, y_offset * self.step)
+    def _on_translate(self, direction):
+        """ Translate the selected object by the offset specified in the
+            control menu. If there is no such object, translates the window
+            instead. """
+        dx, dy = direction.value
+        if self.selected_object is not None:
+            self.selected_object.translate(dx * self.step, dy * self.step)
+        else:
+            Window.translate(dx * self.step, dy * self.step)
 
     @needs_redraw
-    def _on_zoom_window(self, inwards):
-        """ Zoom (in or out) the window by offset specificed in the control
-            menu (step taken as percentage). """
-        scale = (1 + self.step/100) ** (-1 if inwards else 1)
-
-        new_x_max = Window.x_max * scale
-        new_x_min = Window.x_min * scale
-        new_y_max = Window.y_max * scale
-        new_y_min = Window.x_min * scale
-
-        if new_x_max - new_x_min < 10 or new_y_max - new_y_min < 10: # too small
-            Logger.log(LogLevel.WARN, "Zoom limited exceeded, further zooming will be surpressed!")
+    def _on_scale(self, expand):
+        """ Translate the selected object towards direction by the offset
+            specified in the control menu. If there is no selected object,
+            translates the window instead. """
+        if self.selected_object is not None:
+            factor = (1 + self.step/100) ** (1 if expand else -1)
+            self.selected_object.scale(factor, factor)
         else:
-            Window.x_max = new_x_max
-            Window.x_min = new_x_min
-            Window.y_max = new_y_max
-            Window.y_min = new_y_min
+            factor = (1 + self.step/100) ** (-1 if expand else 1)
+            Window.scale(factor, factor)

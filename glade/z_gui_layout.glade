@@ -2,7 +2,6 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkTextBuffer"/>
   <object class="GtkListStore" id="object_list_store">
     <columns>
       <!-- column-name Name -->
@@ -10,6 +9,9 @@
       <!-- column-name Type -->
       <column type="gchararray"/>
     </columns>
+  </object>
+  <object class="GtkTextBuffer" id="textbuffer1">
+    <signal name="insert-text" handler="on_insert_text" swapped="no"/>
   </object>
   <object class="GtkApplicationWindow" id="main_window">
     <property name="can_focus">False</property>
@@ -148,9 +150,9 @@
           </packing>
         </child>
         <child>
-          <object class="GtkPaned">
+          <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
+            <property name="can_focus">False</property>
             <child>
               <object class="GtkFrame">
                 <property name="visible">True</property>
@@ -166,8 +168,6 @@
                   <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">5</property>
-                    <property name="margin_right">5</property>
                     <property name="margin_top">5</property>
                     <property name="margin_bottom">5</property>
                     <property name="orientation">vertical</property>
@@ -176,6 +176,10 @@
                       <object class="GtkFrame">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="margin_left">5</property>
+                        <property name="margin_right">5</property>
+                        <property name="margin_top">5</property>
+                        <property name="margin_bottom">5</property>
                         <property name="label_xalign">0.10000000149011612</property>
                         <property name="shadow_type">in</property>
                         <child>
@@ -187,6 +191,7 @@
                             <property name="margin_top">5</property>
                             <property name="margin_bottom">5</property>
                             <property name="model">object_list_store</property>
+                            <property name="search_column">0</property>
                             <child internal-child="selection">
                               <object class="GtkTreeSelection"/>
                             </child>
@@ -233,6 +238,10 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">center</property>
+                        <property name="margin_left">5</property>
+                        <property name="margin_right">5</property>
+                        <property name="margin_top">5</property>
+                        <property name="margin_bottom">5</property>
                         <property name="label_xalign">0.15000000596046448</property>
                         <property name="shadow_type">in</property>
                         <child>
@@ -377,8 +386,6 @@
                                           <object class="GtkLabel">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
-                                            <property name="margin_left">5</property>
-                                            <property name="margin_right">5</property>
                                             <property name="margin_top">5</property>
                                             <property name="margin_bottom">5</property>
                                             <property name="label" translatable="yes">Degrees:</property>
@@ -393,8 +400,6 @@
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
-                                            <property name="margin_left">10</property>
-                                            <property name="margin_right">5</property>
                                             <property name="margin_top">5</property>
                                             <property name="margin_bottom">5</property>
                                             <property name="max_length">3</property>
@@ -420,8 +425,6 @@
                                       <object class="GtkGrid">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
-                                        <property name="margin_left">5</property>
-                                        <property name="margin_right">5</property>
                                         <property name="margin_bottom">5</property>
                                         <property name="column_spacing">30</property>
                                         <child>
@@ -577,21 +580,24 @@
                 </child>
               </object>
               <packing>
-                <property name="resize">False</property>
-                <property name="shrink">False</property>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_left">5</property>
+                <property name="margin_right">5</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkFrame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">5</property>
-                    <property name="margin_right">5</property>
                     <property name="margin_top">5</property>
                     <property name="margin_bottom">5</property>
                     <property name="label_xalign">0.15000000596046448</property>
@@ -626,29 +632,34 @@
                   <object class="GtkFrame">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_left">5</property>
-                    <property name="margin_right">5</property>
                     <property name="margin_top">5</property>
                     <property name="margin_bottom">5</property>
                     <property name="label_xalign">0.05000000074505806</property>
-                    <property name="shadow_type">in</property>
+                    <property name="shadow_type">none</property>
                     <child>
-                      <object class="GtkTextView">
+                      <object class="GtkScrolledWindow">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="margin_left">5</property>
-                        <property name="margin_right">5</property>
-                        <property name="margin_top">5</property>
-                        <property name="margin_bottom">5</property>
-                        <property name="pixels_below_lines">10</property>
-                        <property name="pixels_inside_wrap">10</property>
-                        <property name="editable">False</property>
-                        <property name="wrap_mode">char</property>
-                        <property name="left_margin">5</property>
-                        <property name="right_margin">5</property>
-                        <property name="top_margin">5</property>
-                        <property name="bottom_margin">5</property>
-                        <property name="monospace">True</property>
+                        <property name="shadow_type">in</property>
+                        <property name="min_content_height">150</property>
+                        <child>
+                          <object class="GtkTextView" id="console_text_view">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="margin_left">5</property>
+                            <property name="margin_right">5</property>
+                            <property name="margin_top">5</property>
+                            <property name="margin_bottom">5</property>
+                            <property name="pixels_inside_wrap">10</property>
+                            <property name="wrap_mode">char</property>
+                            <property name="left_margin">5</property>
+                            <property name="right_margin">5</property>
+                            <property name="top_margin">5</property>
+                            <property name="bottom_margin">5</property>
+                            <property name="buffer">textbuffer1</property>
+                            <property name="monospace">True</property>
+                          </object>
+                        </child>
                       </object>
                     </child>
                     <child type="label">
@@ -667,8 +678,9 @@
                 </child>
               </object>
               <packing>
-                <property name="resize">True</property>
-                <property name="shrink">False</property>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>

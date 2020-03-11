@@ -6,8 +6,24 @@ class Window:
     x_min, y_min = (0, 0)
 
     @staticmethod
-    def move(x_offset, y_offset):
-        Window.x_max += x_offset
-        Window.x_min += x_offset
-        Window.y_max += y_offset
-        Window.y_min += y_offset
+    def translate(dx, dy):
+        Window.x_max += dx
+        Window.x_min += dx
+        Window.y_max += dy
+        Window.y_min += dy
+
+    @staticmethod
+    def scale(sx, sy):
+        new_x_max = Window.x_max * sx
+        new_x_min = Window.x_min * sx
+        new_y_max = Window.y_max * sy
+        new_y_min = Window.x_min * sy
+
+        if new_x_max - new_x_min < 10 or new_y_max - new_y_min < 10:
+            Logger.log(LogLevel.WARN, "Zoom limited exceeded, further \
+            zooming will be surpressed!")
+        else:
+            Window.x_max = new_x_max
+            Window.x_min = new_x_min
+            Window.y_max = new_y_max
+            Window.y_min = new_y_min

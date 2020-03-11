@@ -27,7 +27,7 @@ class ViewPort(ViewPort_Common):
     @staticmethod
     def viewport_transform(point):
         """ Change of basis: World -> Viewport. """
-        x_w, y_w = point
+        x_w, y_w, _ = point
         x_vp = (x_w - Window.x_min) / (Window.x_max - Window.x_min) \
             * ViewPort.RESOLUTION[0]
         y_vp = (1 - (y_w - Window.y_min) / (Window.y_max - Window.y_min)) \
@@ -36,10 +36,11 @@ class ViewPort(ViewPort_Common):
 
     def clear(self):
         """ Paints the viewport white. """
-        Logger.log(LogLevel.INFO, "viewport.clear()")
         cr = Context(self._surface)
         cr.set_source_rgb(*ViewPort.WHITE)
         cr.paint()
+
+    # Gtk signal handlers
 
     def _on_configure(self, wid, evt):
         """ Creates surface and paint's it white. It's called at the beginning
@@ -90,5 +91,5 @@ class ViewPort(ViewPort_Common):
             3: draw_wireframe,
         }
 
-        for obj in World.objects():
+        for obj in World.objects().values():
             obj_t2func[obj.type.value](obj.points)

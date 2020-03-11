@@ -1,4 +1,4 @@
-""" Log events to console. """
+""" Log events to standard output. """
 
 from enum import Enum
 
