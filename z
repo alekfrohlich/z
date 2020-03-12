@@ -10,20 +10,15 @@ from gui.main_window import MainWindow
 
 
 # TODO (first release):
-# define what is logged and what is not
 # Deselect rows
-# Dont allow things to resize?
-# move logic away from interface
-# factory pattern
-# python enums
-# fix console
 # requirements.txt?
 
 # TODO (second release):
-# Rotation of world
+# Move logic away from interface
+# Implement proper repl
+# Three rotations (world, object by it's center and object by point)
 
 # Future:
-# Fix requirements.txt
 # Typed python?
 
 if __name__ == "__main__":

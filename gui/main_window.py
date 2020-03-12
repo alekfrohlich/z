@@ -5,8 +5,6 @@ from gi.repository.Gtk import Builder
 from gi.repository.Gtk import ResponseType
 
 from core import DirectionType
-from core.log import Logger, LogLevel
-# from gui import ObjectFactory
 from gui.console import Console
 from gui.dialogs import CreateObjectDialog
 from gui.viewport import ViewPort
@@ -38,10 +36,13 @@ class MainWindow:
         self._treeview = self._builder.get_object("object_list")
         self._treeview.set_model(self._store)
 
-        self._console = Console(self._builder.get_object("console_text_view"),
-                                self._store)
-        self._create_object_dialog = CreateObjectDialog(self._builder,
-                                                        self._store)
+        self._console = Console(self._store, self._builder.get_object(
+                                "console_text_view"))
+        self._create_object_dialog = CreateObjectDialog(
+            self._builder.get_object("create_object_dialog"),
+            self._builder.get_object("create_object_dialog_name_field"),
+            self._builder.get_object("create_object_dialog_points_field"),
+            self._store)
         self._viewport = ViewPort(self._builder)
         handlers = {
             "on_destroy": main_quit,

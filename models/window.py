@@ -1,4 +1,6 @@
-""""""
+""" A fraction of World. """
+
+from core.log import Logger, LogLevel
 
 
 class Window:
@@ -7,6 +9,7 @@ class Window:
 
     @staticmethod
     def translate(dx, dy):
+        """ Translates window by dx and dy. """
         Window.x_max += dx
         Window.x_min += dx
         Window.y_max += dy
@@ -14,6 +17,7 @@ class Window:
 
     @staticmethod
     def scale(sx, sy):
+        """ Scales window by sx on x coordinates and sy on y coordinates. """
         new_x_max = Window.x_max * sx
         new_x_min = Window.x_min * sx
         new_y_max = Window.y_max * sy

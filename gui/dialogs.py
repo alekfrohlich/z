@@ -1,7 +1,5 @@
 """"""
 
-import re
-
 from gi.repository.Gtk import ResponseType
 
 from core.log import Logger, LogLevel
@@ -11,12 +9,10 @@ from wml import parse_points, POINTS_PATTERN
 
 class CreateObjectDialog():
 
-    def __init__(self, builder, list_store):
-        self._dialog = builder.get_object("create_object_dialog")
-        self._name_field = builder.get_object(
-            "create_object_dialog_name_field")
-        self._points_field = builder.get_object(
-            "create_object_dialog_points_field")
+    def __init__(self, dialog, name_field, points_field, list_store):
+        self._dialog = dialog
+        self._name_field = name_field
+        self._points_field = points_field
         self.handlers = {
             "on_create_object_ok": self._on_ok,
             "on_create_object_cancel": self._on_cancel,

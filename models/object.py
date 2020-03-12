@@ -38,8 +38,8 @@ class Object:
     def translate(self, dx, dy):
         """ Translates object by (dx, dy). """
         translate_tr = np.array([[1, 0, 0],
-                              [0, 1, 0],
-                              [dx, dy, 1]])
+                                 [0, 1, 0],
+                                 [dx, dy, 1]])
         self.transform(translate_tr)
 
     def scale(self, sx, sy):
@@ -52,8 +52,8 @@ class Object:
                                  [-x_center, -y_center, 1]])
 
         scale_tr = np.array([[sx, 0, 0],
-                              [0, sy, 0],
-                              [0, 0, 1]])
+                             [0, sy, 0],
+                             [0, 0, 1]])
 
         from_origin_tr = np.array([[1, 0, 0],
                                    [0, 1, 0],
