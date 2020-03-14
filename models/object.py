@@ -63,7 +63,7 @@ class Object:
         self.transform(concat_tr)
 
     def rotate(self, degrees, point=None):
-        """"""
+        """ Rotates object by 'degrees' in respect to a point. """
         if point is None:
             point = self.center
         x, y = point

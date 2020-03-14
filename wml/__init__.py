@@ -1,4 +1,4 @@
-""""""
+""" World Manipulation Language (WML) related stuff. not yet organized. """
 
 import re
 from enum import Enum

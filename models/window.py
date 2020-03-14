@@ -4,33 +4,36 @@ from core.log import Logger, LogLevel
 
 
 class Window:
-    x_max, y_max = (500, 500)
-    x_min, y_min = (0, 0)
+    def __init__(self, bounds=(0, 500, 0, 500)):
+        self._x_min, self._x_max, self._y_min, self._y_max = bounds
 
-    @staticmethod
-    def translate(dx, dy):
+    @property
+    def bounds(self):
+        """ Bounds of the window. """
+        return (self._x_min, self._x_max, self._y_min, self._y_max)
+
+    def translate(self, dx, dy):
         """ Translates window by dx and dy. """
-        Window.x_max += dx
-        Window.x_min += dx
-        Window.y_max += dy
-        Window.y_min += dy
+        self._x_max += dx
+        self._x_min += dx
+        self._y_max += dy
+        self._y_min += dy
 
-    @staticmethod
-    def scale(sx, sy):
+    def scale(self, sx, sy):
         """ Scales window by sx on x coordinates and sy on y coordinates. """
-        new_x_max = Window.x_max * sx
-        new_x_min = Window.x_min * sx
-        new_y_max = Window.y_max * sy
-        new_y_min = Window.x_min * sy
+        new_x_max = self._x_max * sx
+        new_x_min = self._x_min * sx
+        new_y_max = self._y_max * sy
+        new_y_min = self._x_min * sy
 
         if new_x_max - new_x_min < 10 or new_y_max - new_y_min < 10:
             Logger.log(LogLevel.WARN, "Zoom limited exceeded, further \
             zooming will be surpressed!")
         else:
-            Window.x_max = new_x_max
-            Window.x_min = new_x_min
-            Window.y_max = new_y_max
-            Window.y_min = new_y_min
+            self._x_max = new_x_max
+            self._x_min = new_x_min
+            self._y_max = new_y_max
+            self._y_min = new_y_min
 
-    def rotate(degrees):
+    def rotate(self, degrees):
         pass

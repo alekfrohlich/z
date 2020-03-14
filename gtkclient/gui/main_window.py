@@ -26,14 +26,16 @@ class MainWindow:
         self._builder = Builder()
         self._builder.add_from_file("gtkclient/glade/z_gui_layout.glade")
         self._viewport = self._builder.get_object("viewport")
-        self._viewport.set_size_request(*ViewPort.RESOLUTION)
 
+        self._world = World()
         self._store = self._builder.get_object("object_list_store")
         self._treeview = self._builder.get_object("object_list")
         self._treeview.set_model(self._store)
 
-        self._viewport = ViewPort(self._builder)
-        self._obj_factory = GtkObjectFactory(self._store, self._viewport)
+        self._viewport.set_size_request(500, 500) # TWO VIEWPORTS?
+        self._window = Window()
+        self._viewport = ViewPort(self._builder, self._window, self._world)
+        self._obj_factory = GtkObjectFactory(self._store, self._viewport, self._world)
         self._console = Console(self._builder.get_object("console_text_view").get_buffer(),
                                 WML_Interpreter(self._obj_factory))
         self._create_object_dialog = CreateObjectDialog(
@@ -93,7 +95,7 @@ class MainWindow:
         """ Currently selected object in TreeView. """
         tree_model, tree_iter = self._treeview.get_selection().get_selected()
         if tree_iter is not None:
-            return World.objects()[tree_model.get_value(tree_iter, 0)]
+            return self._world.objects()[tree_model.get_value(tree_iter, 0)]
         else:
             return None
 
@@ -128,7 +130,7 @@ class MainWindow:
         if self.selected_object is not None:
             self.selected_object.translate(dx * self.step, dy * self.step)
         else:
-            Window.translate(dx * self.step, dy * self.step)
+            self._window.translate(dx * self.step, dy * self.step)
 
     @ViewPort.needs_redraw
     def _on_scale(self, expand):
@@ -140,7 +142,7 @@ class MainWindow:
             self.selected_object.scale(factor, factor)
         else:
             factor = (1 + self.step/100) ** (-1 if expand else 1)
-            Window.scale(factor, factor)
+            self._window.scale(factor, factor)
 
     @ViewPort.needs_redraw
     def _on_rotate(self, axis):
@@ -155,4 +157,4 @@ class MainWindow:
                 # FIXME: parse point into tuple of ints
                 self.selected_object.rotate(rads, self.point_entry)
         else:
-            Window.rotate(self.degrees)
+            self._window.rotate(self.degrees)
