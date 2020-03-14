@@ -31,3 +31,6 @@ class Window:
             Window.x_min = new_x_min
             Window.y_max = new_y_max
             Window.y_min = new_y_min
+
+    def rotate(degrees):
+        pass

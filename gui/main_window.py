@@ -4,12 +4,15 @@ from gi.repository.Gtk import main_quit
 from gi.repository.Gtk import Builder
 from gi.repository.Gtk import ResponseType
 
-from core import DirectionType
+import numpy as np
+
+from core import AxisType, DirectionType
 from gui.console import Console
 from gui.dialogs import CreateObjectDialog
 from gui.viewport import ViewPort
 from models.world import World
 from models.window import Window
+from wml import WML_Interpreter
 
 
 class MainWindow:
@@ -36,8 +39,8 @@ class MainWindow:
         self._treeview = self._builder.get_object("object_list")
         self._treeview.set_model(self._store)
 
-        self._console = Console(self._store, self._builder.get_object(
-                                "console_text_view"))
+        self._console = Console(self._builder.get_object("console_text_view"),
+                                WML_Interpreter(self._store))
         self._create_object_dialog = CreateObjectDialog(
             self._builder.get_object("create_object_dialog"),
             self._builder.get_object("create_object_dialog_name_field"),
@@ -54,14 +57,13 @@ class MainWindow:
             "on_down_button": lambda _: self._on_translate(DirectionType.DOWN),
             "on_zoom_in": lambda _: self._on_scale(expand=True),
             "on_zoom_out": lambda _: self._on_scale(expand=False),
-            "on_x_button": self.fixme,
-            "on_y_button": self.fixme,
-            "on_z_button": self.fixme,
+            "on_x_button": lambda _: self._on_rotate(axis=AxisType.X),
+            "on_y_button": lambda _: self._on_rotate(axis=AxisType.Y),
+            "on_z_button": lambda _: self._on_rotate(axis=AxisType.Z),
             # Menu bar
             "on_menu_bar_quit": main_quit,
             "on_create_object": self._on_create_object,
         }
-        handlers.update(self._console.handlers)
         handlers.update(self._create_object_dialog.handlers)
         handlers.update(self._viewport.handlers)
         self._builder.connect_signals(handlers)
@@ -74,6 +76,16 @@ class MainWindow:
         self._builder.get_object("main_window").show_all()
 
     # Attributes
+
+    @property
+    def degrees(self):
+        """"""
+        return float(self._builder.get_object("degrees_entry").get_text())
+
+    @property
+    def point(self):
+        """"""
+        return int(self._builder.get_object("point_entry").get_text())
 
     @property
     def step(self):
@@ -89,6 +101,14 @@ class MainWindow:
             return World.objects()[tree_model.get_value(tree_iter, 0)]
         else:
             return None
+
+    @property
+    def rotation_strategy(self):
+        group = self._builder.get_object(
+            "center_of_world_radio_button").get_group()
+        for radio in group:
+            if radio.get_active():
+                return radio.get_name()
 
     # Gtk signal handlers
 
@@ -126,3 +146,18 @@ class MainWindow:
         else:
             factor = (1 + self.step/100) ** (-1 if expand else 1)
             Window.scale(factor, factor)
+
+    @needs_redraw
+    def _on_rotate(self, axis):
+        """"""
+        rads = np.deg2rad(self.degrees)
+        if self.selected_object is not None:
+            if self.rotation_strategy == "world":
+                self.selected_object.rotate(rads, (0, 0))
+            elif self.rotation_strategy == "object":
+                self.selected_object.rotate(rads)
+            else:
+                # FIXME: parse point into tuple of ints
+                self.selected_object.rotate(rads, self.point_entry)
+        else:
+            Window.rotate(self.degrees)

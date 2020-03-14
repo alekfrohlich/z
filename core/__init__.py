@@ -8,3 +8,9 @@ class DirectionType(Enum):
     LEFT = (-1, 0)
     RIGHT = (1, 0)
     DOWN = (0, -1)
+
+
+class AxisType(Enum):
+    X = 1
+    Y = 2
+    Z = 3

@@ -62,6 +62,27 @@ class Object:
         concat_tr = to_origin_tr.dot(scale_tr.dot(from_origin_tr))
         self.transform(concat_tr)
 
+    def rotate(self, degrees, point=None):
+        """"""
+        if point is None:
+            point = self.center
+        x, y = point
+
+        to_origin_tr = np.array([[1, 0, 0],
+                                 [0, 1, 0],
+                                 [-x, -y, 1]])
+
+        scale_tr = np.array([[np.cos(degrees), -np.sin(degrees), 0],
+                             [np.sin(degrees), np.cos(degrees), 0],
+                             [0, 0, 1]])
+
+        from_origin_tr = np.array([[1, 0, 0],
+                                   [0, 1, 0],
+                                   [x, y, 1]])
+        concat_tr = to_origin_tr.dot(scale_tr.dot(from_origin_tr))
+        print(concat_tr)
+        self.transform(concat_tr)
+
     def transform(self, matrix_tr):
         """ Applies transformation matrix to each of the object's
             coordinates. """
