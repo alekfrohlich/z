@@ -80,7 +80,6 @@ class Object:
                                    [0, 1, 0],
                                    [x, y, 1]])
         concat_tr = to_origin_tr.dot(scale_tr.dot(from_origin_tr))
-        print(concat_tr)
         self.transform(concat_tr)
 
     def transform(self, matrix_tr):

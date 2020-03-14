@@ -3,12 +3,11 @@
 from cairo import Context, LineCap, CONTENT_COLOR
 
 from core.log import Logger, LogLevel
-from models.viewport import ViewPort_Common
 from models.world import World
 from models.window import Window
 
 
-class ViewPort(ViewPort_Common):
+class ViewPort:
 
     """ RBG colors for Cairo. """
     BLACK = (0, 0, 0)
@@ -25,6 +24,13 @@ class ViewPort(ViewPort_Common):
         }
 
     @staticmethod
+    def needs_redraw(method):
+        def wrapper(cls, *args, **kwargs):
+            method(cls, *args, **kwargs)
+            cls._viewport._drawing_area.queue_draw()
+        return wrapper
+
+    @staticmethod
     def viewport_transform(point):
         """ Change of basis: World -> Viewport. """
         x_w, y_w, _ = point
@@ -39,6 +45,9 @@ class ViewPort(ViewPort_Common):
         cr = Context(self._surface)
         cr.set_source_rgb(*ViewPort.WHITE)
         cr.paint()
+
+    def draw(self):
+        self._drawing_area.queue_draw()
 
     # Gtk signal handlers
 
