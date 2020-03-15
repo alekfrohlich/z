@@ -21,11 +21,6 @@ from wml import WML_Interpreter
 # TODO (first release):
 # Deselect rows
 
-# TODO (second release):
-# Move logic away from interface
-# Implement proper repl
-# Three rotations (world, object by it's center and object by point)
-
 # Future:
 # Typed python?
 
@@ -46,7 +41,7 @@ def init_client():
     viewport = ViewPort(drawing_area, window, world)
     obj_factory = GtkObjectFactory(store, viewport, world)
     console = Console(builder.get_object("console_text_view").get_buffer(),
-                                WML_Interpreter(obj_factory))
+                                WML_Interpreter(obj_factory, viewport, world))
     create_obj_dialog = CreateObjectDialog(
         builder.get_object("create_object_dialog"),
         builder.get_object("create_object_dialog_name_field"),

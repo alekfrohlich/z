@@ -5,6 +5,8 @@ class World:
     def __init__(self):
         self._display_file = {}
 
+    # make world accessible by object
+
     def add_object(self, obj):
         """ Adds world to display file (dict). """
         self._display_file[obj.name] = obj

@@ -61,7 +61,7 @@ class MainWindow:
         """ Point entry under the rotation menu. Used for specifying arbitrary
             reference of rotation. """
         p = self._point_entry.get_text().split(",")
-        return (int(p[0]), int(p[1]))
+        return (float(p[0]), float(p[1]))
 
     @property
     def step(self):
