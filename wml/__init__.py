@@ -105,7 +105,7 @@ class WML_Interpreter:
     def _rotate(self, match):
         """ Rotates named object. """
         name = match.group("name")
-        degrees = float(match.group("degrees"))
+        degrees = np.deg2rad(float(match.group("degrees")))
         x = float(match.group("x"))
         y = float(match.group("y"))
         self._world[name].rotate(degrees, (x, y))
