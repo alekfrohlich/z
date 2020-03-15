@@ -1,4 +1,7 @@
-""""""
+""" The ObjectFactory hierarchy enables the instantiation of the class Object
+    without it beeing forced to do implementation-specific bookkeeping: i.e.,
+    an Object should not need to know that it's creation has been logged or
+    that the newly created object's name needs to appear in a widget. """
 
 from abc import ABCMeta, abstractmethod
 

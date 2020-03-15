@@ -445,7 +445,7 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkEntry">
+                                          <object class="GtkEntry" id="point_entry">
                                             <property name="name">point_entry</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>

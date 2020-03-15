@@ -48,28 +48,25 @@ class MainWindow:
             "on_create_object": self._on_create_object,
         }
 
-    def fixme(self, _):
-        print("Feature not yet implemented!")
-
-    # def show(self):
-    #     """ Display application window. """
-    #     self._builder.get_object("main_window").show_all()
-
     # Attributes
 
     @property
     def degrees(self):
-        """"""
+        """ Degrees entry under rotation menu. Used for specifying the rotation
+            amount. """
         return float(self._degrees_entry.get_text())
 
     @property
     def point(self):
-        """"""
-        return int(self._point_entry.get_text())
+        """ Point entry under the rotation menu. Used for specifying arbitrary
+            reference of rotation. """
+        p = self._point_entry.get_text().split(",")
+        return (int(p[0]), int(p[1]))
 
     @property
     def step(self):
-        """ x-y offset/scale factor for translating/scaling objects and/or
+        """ Step entry under the window menu. Used for specifying the x-y
+            offset/scale factor for translating/scaling objects and
             the window. """
         return int(self._step_entry.get_text())
 
@@ -84,6 +81,7 @@ class MainWindow:
 
     @property
     def rotation_strategy(self):
+        """ Selects the active radio button from the rotation menu. """
         group = self._rotation_radio.get_group()
         for radio in group:
             if radio.get_active():
@@ -116,9 +114,9 @@ class MainWindow:
 
     @ViewPort.needs_redraw
     def _on_scale(self, expand):
-        """ Translate the selected object towards direction by the offset
-            specified in the control menu. If there is no selected object,
-            translates the window instead. """
+        """ Scales the selected object by the factor specified in the control
+            menu. If there is no selected object, scales the window
+            instead. """
         if self.selected_object is not None:
             factor = (1 + self.step/100) ** (1 if expand else -1)
             self.selected_object.scale(factor, factor)
@@ -128,7 +126,10 @@ class MainWindow:
 
     @ViewPort.needs_redraw
     def _on_rotate(self, axis):
-        """"""
+        # axis is not used (yet!)
+        """ Rotates the selected object in respect to the given rotation
+            strategy by the amount specified in the control menu. If there
+            is no selected object, translates the window instead. """
         rads = np.deg2rad(self.degrees)
         if self.selected_object is not None:
             if self.rotation_strategy == "world":
@@ -136,7 +137,6 @@ class MainWindow:
             elif self.rotation_strategy == "object":
                 self.selected_object.rotate(rads)
             else:
-                # FIXME: parse point into tuple of ints
-                self.selected_object.rotate(rads, self.point_entry)
+                self.selected_object.rotate(rads, self.point)
         else:
             self._window.rotate(self.degrees)

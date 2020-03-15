@@ -30,5 +30,5 @@ class GtkObjectFactory(ObjectFactory):
         return obj
 
     def default_object_name(self):
-        """ Default name for objects without it. """
+        """ Default name for anonymous objects. """
         return "object{}".format(self._world.size())
