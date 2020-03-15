@@ -25,9 +25,19 @@ class GtkObjectFactory(ObjectFactory):
             name = self.default_object_name()
         obj = Object(name, points)
         self._store.append([obj.name, str(obj.type)])
-        self._world.add_object(obj)
+        self._world[name] = obj
         Logger.log(LogLevel.INFO, obj)
         return obj
+
+    @ViewPort.needs_redraw
+    def remove_object(self, name):
+        """ Removes object from the world. """
+        for row in self._store:
+            if row[0] == name:
+                self._store.remove(row.iter)
+                break
+        del self._world[name]
+        Logger.log(LogLevel.INFO, name + " has been removed!")
 
     def default_object_name(self):
         """ Default name for anonymous objects. """

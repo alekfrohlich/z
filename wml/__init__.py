@@ -24,6 +24,10 @@ SCALE_PATTERN = re.compile(
 ROTATE_PATTERN = re.compile(
     r"^rotate\((?P<name>{0}),(?P<degrees>{1}),(?P<x>{1}),(?P<y>{1})\)$".format(
         name, floating))
+INFO_PATTERN = re.compile(
+    r"^info\((?P<name>{0})\)$".format(name))
+REMOVE_PATTERN = re.compile(
+    r"^remove\((?P<name>{0})\)$".format(name))
 
 
 class WML_Interpreter:
@@ -36,7 +40,16 @@ class WML_Interpreter:
             TRANSLATE_PATTERN: self._translate,
             SCALE_PATTERN: self._scale,
             ROTATE_PATTERN: self._rotate,
+            REMOVE_PATTERN: self._remove,
+            INFO_PATTERN: self._info,
         }
+
+    def points_as_list(self, string):
+        """ Extract list of points (numpy arrays) from string. """
+        return [
+            np.array((float(point[0]), float(point[1]), 1))
+            for point in map(lambda p: p.split(","),
+                            string.split(";"))]
 
     def run_command(self, string):
         """ Runs command based on python re patterns. Thus, there is almost
@@ -48,12 +61,29 @@ class WML_Interpreter:
                 return
         Logger.log(LogLevel.WARN, "Invalid command!")
 
+    def validate_object(self, name, points):
+        """ Throw RuntimeError if either list of points or the chosen name is
+            is badly formatted. Also checks if the name is already in use. """
+        if name in self._world:
+            raise RuntimeError(name + " already names an object!")
+
+        if not NAME_PATTERN.match(name):
+            raise RuntimeError("Invalid name!")
+
+        if not POINTS_PATTERN.match(points):
+            raise RuntimeError("Invalid list of points format!")
+
     @ViewPort.needs_redraw
     def _add(self, match):
         """ Adds object to the world. """
         name = match.group("name")
-        points = points_as_list(match.group("points"))
-        self._obj_factory.make_object(name, points)
+        points = match.group("points")
+        try:
+            self.validate_object(name, points)
+            points = self.points_as_list(points)
+            self._obj_factory.make_object(name, points)
+        except RuntimeError as error:
+            Logger.log(LogLevel.ERROR, error)
 
     @ViewPort.needs_redraw
     def _translate(self, match):
@@ -80,15 +110,14 @@ class WML_Interpreter:
         y = float(match.group("y"))
         self._world[name].rotate(degrees, (x, y))
 
+    @ViewPort.needs_redraw
+    def _info(self, match):
+        """ Prints info. """
+        name = match.group("name")
+        print(self._world[name])
 
-def parse_points(string):
-    """ Tests if the string is a list of points. """
-    return POINTS_PATTERN.match(string) is not None
-
-
-def points_as_list(string):
-    """ Extract list of points (numpy arrays) from string. """
-    return [
-        np.array((float(point[0]), float(point[1]), 1))
-        for point in map(lambda p: p.split(","),
-                         string.split(";"))]
+    @ViewPort.needs_redraw
+    def _remove(self, match):
+        """ Prints info. """
+        name = match.group("name")
+        self._obj_factory.remove_object(name)

@@ -13,4 +13,7 @@ class ObjectFactory(object):
     def make_object(self, name, points): raise NotImplementedError
 
     @abstractmethod
+    def remove_object(self, name): raise NotImplementedError
+
+    @abstractmethod
     def default_object_name(self, name, points): raise NotImplementedError

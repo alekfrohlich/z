@@ -18,9 +18,6 @@ from models.world import World
 
 from wml import WML_Interpreter
 
-# TODO (first release):
-# Deselect rows
-
 # Future:
 # Typed python?
 
@@ -40,14 +37,15 @@ def init_client():
     # Need something
     viewport = ViewPort(drawing_area, window, world)
     obj_factory = GtkObjectFactory(store, viewport, world)
+    wml_interpreter = WML_Interpreter(obj_factory, viewport, world)
     console = Console(builder.get_object("console_text_view").get_buffer(),
-                                WML_Interpreter(obj_factory, viewport, world))
+                                wml_interpreter)
     create_obj_dialog = CreateObjectDialog(
         builder.get_object("create_object_dialog"),
         builder.get_object("create_object_dialog_name_field"),
         builder.get_object("create_object_dialog_points_field"),
-        store,
-        obj_factory)
+        obj_factory,
+        wml_interpreter)
     main_window = MainWindow(create_obj_dialog, obj_factory, treeview,
                             viewport,
                             window,

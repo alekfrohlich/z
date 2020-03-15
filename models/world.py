@@ -5,14 +5,22 @@ class World:
     def __init__(self):
         self._display_file = {}
 
+    def __contains__(self, name):
+        """ Test containership in the world. """
+        return name in self._display_file
+
+    def __delitem__(self, key):
+        """ Removes object from the world. """
+        self._display_file.pop(key)
+
     def __getitem__(self, key):
         """ Restrict assignment and make accesing a specific world object
             more convenient. """
         return self._display_file[key]
 
-    def add_object(self, obj):
+    def __setitem__(self, key, value):
         """ Adds world to display file (dict). """
-        self._display_file[obj.name] = obj
+        self._display_file[key] = value
 
     def objects(self):
         """ Objects. """
