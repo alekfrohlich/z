@@ -7,7 +7,8 @@ from wml import points_as_list, parse_points
 
 
 class CreateObjectDialog():
-    def __init__(self, dialog, name_field, points_field, list_store, object_factory):
+    def __init__(self, dialog, name_field, points_field, list_store,
+                 object_factory):
         self._dialog = dialog
         self._name_field = name_field
         self._points_field = points_field
@@ -56,7 +57,8 @@ class CreateObjectDialog():
         self._dialog.response(ResponseType.CANCEL)
 
     def _on_ok(self, _):
-        """ Check if form input is valid. If so, returns OK, else logs error. """
+        """ Check if form input is valid. If so, returns OK, else logs
+            error. """
         try:
             self.validate()
             self._dialog.response(ResponseType.OK)

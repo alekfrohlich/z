@@ -4,7 +4,6 @@
 from cairo import Context, LineCap, CONTENT_COLOR
 
 from core.log import Logger, LogLevel
-from models.world import World
 
 
 class ViewPort:
@@ -13,12 +12,13 @@ class ViewPort:
     BLACK = (0, 0, 0)
     WHITE = (1, 1, 1)
 
-    def __init__(self, builder, window, world):
-        self._drawing_area = builder.get_object("viewport")
+    def __init__(self, drawing_area, window, world):
+        self._drawing_area = drawing_area
         self._surface = None
         self._window = window
         self._world = world
         self._resolution = (500, 500)
+        self._drawing_area.set_size_request(*self._resolution)
         self.handlers = {
             "on_draw": self._on_draw,
             "on_configure": self._on_configure,

@@ -8,7 +8,6 @@ from core.log import Logger, LogLevel
 from gtkclient.gui.viewport import ViewPort
 from models.object import Object
 from models.object_factory import ObjectFactory
-from models.world import World
 
 
 class GtkObjectFactory(ObjectFactory):

@@ -4,13 +4,22 @@
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository.Gtk import main, main_quit
+from gi.repository.Gtk import Builder
 
+from gtkclient.object_factory import GtkObjectFactory
+from gtkclient.gui.console import Console
+from gtkclient.gui.dialogs import CreateObjectDialog
 from gtkclient.gui.main_window import MainWindow
+from gtkclient.gui.viewport import ViewPort
+
+from models.window import Window
+from models.world import World
+
+from wml import WML_Interpreter
 
 # TODO (first release):
 # Deselect rows
-# requirements.txt?
 
 # TODO (second release):
 # Move logic away from interface
@@ -20,7 +29,50 @@ from gtkclient.gui.main_window import MainWindow
 # Future:
 # Typed python?
 
+def init_client():
+    builder = Builder()
+    builder.add_from_file("gtkclient/glade/z_gui_layout.glade")
+
+    # Dont need anything
+    window = Window()
+    world = World()
+
+    # Glade
+    drawing_area = builder.get_object("viewport_drawing_area")
+    store = builder.get_object("object_list_store")
+    treeview = builder.get_object("object_list")
+
+    # Need something
+    viewport = ViewPort(drawing_area, window, world)
+    obj_factory = GtkObjectFactory(store, viewport, world)
+    console = Console(builder.get_object("console_text_view").get_buffer(),
+                                WML_Interpreter(obj_factory))
+    create_obj_dialog = CreateObjectDialog(
+        builder.get_object("create_object_dialog"),
+        builder.get_object("create_object_dialog_name_field"),
+        builder.get_object("create_object_dialog_points_field"),
+        store,
+        obj_factory)
+    main_window = MainWindow(create_obj_dialog, obj_factory, treeview,
+                            viewport,
+                            window,
+                            world,
+                            builder.get_object("degrees_entry"),
+                            builder.get_object("point_entry"),
+                            builder.get_object("step_entry"),
+                            builder.get_object("center_of_world_radio_button"))
+
+    # Handlers
+    handlers = { "on_destroy": main_quit }
+    handlers.update(main_window.handlers)
+    handlers.update(create_obj_dialog.handlers)
+    handlers.update(viewport.handlers)
+    builder.connect_signals(handlers)
+
+    # main_window.show()
+    builder.get_object("main_window").show_all()
+    main()
+
+
 if __name__ == "__main__":
-    main_window = MainWindow()
-    main_window.show()
-    Gtk.main()
+    init_client()

@@ -9,7 +9,8 @@ class Console:
             "insert-text", self._on_insert_text)
         self._begin_command_mark = self._text_buffer.create_mark(
             "begin_command", self._start, True)
-        self._unaccessible_tag = self._text_buffer.create_tag("unaccessible_tag", editable=False, editable_set=True)
+        self._unaccessible_tag = self._text_buffer.create_tag(
+            "unaccessible_tag", editable=False, editable_set=True)
         self._insert_prompt()
 
     def _insert_prompt(self):
@@ -17,7 +18,7 @@ class Console:
             by user. """
         self._text_buffer.insert_at_cursor(">> ")
         self._text_buffer.apply_tag(self._unaccessible_tag, self._start,
-            self._end)
+                                    self._end)
         self._text_buffer.move_mark(self._begin_command_mark, self._end)
 
     # Attributes

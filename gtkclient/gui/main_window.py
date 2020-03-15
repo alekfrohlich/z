@@ -1,19 +1,12 @@
 """ Main application window. """
 
 from gi.repository.Gtk import main_quit
-from gi.repository.Gtk import Builder
 from gi.repository.Gtk import ResponseType
 
 import numpy as np
 
 from core import AxisType, DirectionType
-from gtkclient.object_factory import GtkObjectFactory
-from gtkclient.gui.console import Console
-from gtkclient.gui.dialogs import CreateObjectDialog
 from gtkclient.gui.viewport import ViewPort
-from models.world import World
-from models.window import Window
-from wml import WML_Interpreter
 
 
 class MainWindow:
@@ -22,30 +15,23 @@ class MainWindow:
         for passing it around to other Glade-related graphical components.
     """
 
-    def __init__(self):
-        self._builder = Builder()
-        self._builder.add_from_file("gtkclient/glade/z_gui_layout.glade")
-        self._viewport = self._builder.get_object("viewport")
+    def __init__(self, create_obj_dialog, obj_factory, treeview, viewport,
+                 window, world, degrees_entry, point_entry, step_entry,
+                 rotation_radio):
+        self._create_object_dialog = create_obj_dialog
+        self._obj_factory = obj_factory
+        self._treeview = treeview
+        self._viewport = viewport
+        self._window = window
+        self._world = world
 
-        self._world = World()
-        self._store = self._builder.get_object("object_list_store")
-        self._treeview = self._builder.get_object("object_list")
-        self._treeview.set_model(self._store)
+        self._degrees_entry = degrees_entry
+        self._point_entry = point_entry
+        self._step_entry = step_entry
 
-        self._viewport.set_size_request(500, 500) # TWO VIEWPORTS?
-        self._window = Window()
-        self._viewport = ViewPort(self._builder, self._window, self._world)
-        self._obj_factory = GtkObjectFactory(self._store, self._viewport, self._world)
-        self._console = Console(self._builder.get_object("console_text_view").get_buffer(),
-                                WML_Interpreter(self._obj_factory))
-        self._create_object_dialog = CreateObjectDialog(
-            self._builder.get_object("create_object_dialog"),
-            self._builder.get_object("create_object_dialog_name_field"),
-            self._builder.get_object("create_object_dialog_points_field"),
-            self._store,
-            self._obj_factory)
-        handlers = {
-            "on_destroy": main_quit,
+        self._rotation_radio = rotation_radio
+
+        self.handlers = {
             # Controls
             "on_up_button": lambda _: self._on_translate(DirectionType.UP),
             "on_left_button": lambda _: self._on_translate(DirectionType.LEFT),
@@ -61,34 +47,31 @@ class MainWindow:
             "on_menu_bar_quit": main_quit,
             "on_create_object": self._on_create_object,
         }
-        handlers.update(self._create_object_dialog.handlers)
-        handlers.update(self._viewport.handlers)
-        self._builder.connect_signals(handlers)
 
     def fixme(self, _):
         print("Feature not yet implemented!")
 
-    def show(self):
-        """ Display application window. """
-        self._builder.get_object("main_window").show_all()
+    # def show(self):
+    #     """ Display application window. """
+    #     self._builder.get_object("main_window").show_all()
 
     # Attributes
 
     @property
     def degrees(self):
         """"""
-        return float(self._builder.get_object("degrees_entry").get_text())
+        return float(self._degrees_entry.get_text())
 
     @property
     def point(self):
         """"""
-        return int(self._builder.get_object("point_entry").get_text())
+        return int(self._point_entry.get_text())
 
     @property
     def step(self):
         """ x-y offset/scale factor for translating/scaling objects and/or
             the window. """
-        return int(self._builder.get_object("step_entry").get_text())
+        return int(self._step_entry.get_text())
 
     @property
     def selected_object(self):
@@ -101,8 +84,7 @@ class MainWindow:
 
     @property
     def rotation_strategy(self):
-        group = self._builder.get_object(
-            "center_of_world_radio_button").get_group()
+        group = self._rotation_radio.get_group()
         for radio in group:
             if radio.get_active():
                 return radio.get_name()
