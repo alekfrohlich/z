@@ -5,7 +5,10 @@ class World:
     def __init__(self):
         self._display_file = {}
 
-    # make world accessible by object
+    def __getitem__(self, key):
+        """ Restrict assignment and make accesing a specific world object
+            more convenient. """
+        return self._display_file[key]
 
     def add_object(self, obj):
         """ Adds world to display file (dict). """

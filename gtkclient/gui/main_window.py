@@ -75,7 +75,7 @@ class MainWindow:
         """ Currently selected object in TreeView. """
         tree_model, tree_iter = self._treeview.get_selection().get_selected()
         if tree_iter is not None:
-            return self._world.objects()[tree_model.get_value(tree_iter, 0)]
+            return self._world[tree_model.get_value(tree_iter, 0)]
         else:
             return None
 

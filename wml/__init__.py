@@ -61,7 +61,7 @@ class WML_Interpreter:
         name = match.group("name")
         dx = float(match.group("dx"))
         dy = float(match.group("dy"))
-        self._world.objects()[name].translate(dx, dy)
+        self._world[name].translate(dx, dy)
 
     @ViewPort.needs_redraw
     def _scale(self, match):
@@ -69,7 +69,7 @@ class WML_Interpreter:
         name = match.group("name")
         dx = float(match.group("sx"))
         dy = float(match.group("sy"))
-        self._world.objects()[name].scale(dx, dy)
+        self._world[name].scale(dx, dy)
 
     @ViewPort.needs_redraw
     def _rotate(self, match):
@@ -78,7 +78,7 @@ class WML_Interpreter:
         degrees = float(match.group("degrees"))
         x = float(match.group("x"))
         y = float(match.group("y"))
-        self._world.objects()[name].rotate(degrees, (x, y))
+        self._world[name].rotate(degrees, (x, y))
 
 
 def parse_points(string):
