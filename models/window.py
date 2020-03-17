@@ -1,41 +1,101 @@
 """ A fraction of World. """
 
+import numpy as np
+
 from core.log import Logger, LogLevel
 
 
 class Window:
-    def __init__(self, bounds=(0, 500, 0, 500)):
-        self._x_min, self._x_max, self._y_min, self._y_max = bounds
+    def __init__(self):
+        self.points = [
+            np.array([0, 500, 1]),
+            np.array([500, 500, 1]),
+            np.array([500, 0, 1]),
+            np.array([0, 0, 1])]
+        self.angle = 0
 
     @property
-    def bounds(self):
-        """ Bounds of the window. """
-        return (self._x_min, self._x_max, self._y_min, self._y_max)
+    def center(self):
+        x_points = [point[0] for point in self.points]
+        y_points = [point[1] for point in self.points]
+        return (np.average(x_points), np.average(y_points))
 
     def translate(self, dx, dy):
-        """ Translates the window by dx and dy. """
-        self._x_max += dx
-        self._x_min += dx
-        self._y_max += dy
-        self._y_min += dy
+        """ Translates object by (dx, dy). """
+        translate_tr = np.array([[1, 0, 0],
+                                 [0, 1, 0],
+                                 [dx, dy, 1]])
+        self.transform(translate_tr)
 
     def scale(self, sx, sy):
-        """ Scales the window by sx on x coordinates and sy on y
+        """ Scales object by sx in the x coordinate and sy in the
+            y coordinate. """
+        x_center, y_center = self.center
+
+        to_origin_tr = np.array([[1, 0, 0],
+                                 [0, 1, 0],
+                                 [-x_center, -y_center, 1]])
+
+        scale_tr = np.array([[sx, 0, 0],
+                             [0, sy, 0],
+                             [0, 0, 1]])
+
+        from_origin_tr = np.array([[1, 0, 0],
+                                   [0, 1, 0],
+                                   [x_center, y_center, 1]])
+
+        concat_tr = to_origin_tr.dot(scale_tr.dot(from_origin_tr))
+        self.transform(concat_tr)
+
+    def rotate(self, degrees, point=None):
+        """ Rotates object by 'degrees' in respect to a point. """
+        if point is None:
+            point = self.center
+        x, y = point
+
+        to_origin_tr = np.array([[1, 0, 0],
+                                 [0, 1, 0],
+                                 [-x, -y, 1]])
+
+        rotate_tr = np.array([[np.cos(degrees), -np.sin(degrees), 0],
+                             [np.sin(degrees), np.cos(degrees), 0],
+                             [0, 0, 1]])
+
+        from_origin_tr = np.array([[1, 0, 0],
+                                   [0, 1, 0],
+                                   [x, y, 1]])
+        concat_tr = to_origin_tr.dot(rotate_tr.dot(from_origin_tr))
+        self.transform(concat_tr)
+        self.angle = (self.angle + degrees) % 360
+
+    def transform(self, matrix_tr):
+        """ Applies transformation matrix to each of the object's
             coordinates. """
-        new_x_max = self._x_max * sx
-        new_x_min = self._x_min * sx
-        new_y_max = self._y_max * sy
-        new_y_min = self._x_min * sy
+        for i in range(len(self.points)):
+            self.points[i] = self.points[i].dot(matrix_tr)
+        print(self.points)
 
-        if new_x_max - new_x_min < 10 or new_y_max - new_y_min < 10:
-            Logger.log(LogLevel.WARN, "Zoom limited exceeded, further \
-            zooming will be surpressed!")
-        else:
-            self._x_max = new_x_max
-            self._x_min = new_x_min
-            self._y_max = new_y_max
-            self._y_min = new_y_min
+    def window_transform(self, points):
+        x, y = self.center
 
-    def rotate(self, degrees):
-        """ Rotates the window by 'degrees'. """
-        pass
+        to_origin_tr = np.array([[1, 0, 0],
+                                 [0, 1, 0],
+                                 [-x, -y, 1]])
+
+        rotate_tr = np.array([[np.cos(self.angle), -np.sin(self.angle), 0],
+                              [np.sin(self.angle), np.cos(self.angle), 0],
+                              [0, 0, 1]])
+
+        vup = ((self.points[0][0] - self.points[3][0])**2 + (self.points[0][1] - self.points[3][1])**2)**0.5
+        vright = ((self.points[2][0] - self.points[3][0])**2 + (self.points[2][1] - self.points[3][1])**2)**0.5
+
+        scale_tr = np.array([[2/vup, 0, 0],
+                             [0, 2/vright, 0],
+                             [0, 0, 1]])
+
+        concat_tr = to_origin_tr.dot(rotate_tr.dot(scale_tr))
+
+        new_points = []
+        for i in range(len(points)):
+            new_points.append(points[i].dot(concat_tr))
+        return new_points

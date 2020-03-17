@@ -139,4 +139,4 @@ class MainWindow:
             else:
                 self.selected_object.rotate(rads, self.point)
         else:
-            self._window.rotate(self.degrees)
+            self._window.rotate(rads)

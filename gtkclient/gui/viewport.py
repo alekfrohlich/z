@@ -37,11 +37,11 @@ class ViewPort:
     def viewport_transform(self, point):
         """ Change of basis: World -> Viewport. """
         x_w, y_w, _ = point
-        x_win_min, x_win_max, y_win_min, y_win_max = self._window.bounds
-        x_vp = (x_w - x_win_min) / (x_win_max - x_win_min) \
-            * self._resolution[0]
-        y_vp = (1 - (y_w - y_win_min) / (y_win_max - y_win_min)) \
-            * self._resolution[1]
+        # x_win_min, x_win_max, y_win_min, y_win_max = self._window.bounds
+        x_vp = (x_w + 1) / (2) * self._resolution[0]
+        y_vp = (1 - (y_w + 1) / (2)) * self._resolution[1]
+        # print(point)
+        # print((x_vp, y_vp))
         return (x_vp, y_vp)
 
     def clear(self):
@@ -103,4 +103,4 @@ class ViewPort:
         }
 
         for obj in self._display_file.values():
-            obj_t2func[obj.type.value](obj.points)
+            obj_t2func[obj.type.value](self._window.window_transform(obj.points))
