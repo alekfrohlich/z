@@ -5,18 +5,16 @@
 """
 
 from core.log import Logger, LogLevel
-from gtkclient.gui.viewport import ViewPort
 from models.object import Object
 from models.object_factory import ObjectFactory
 
 
 class GtkObjectFactory(ObjectFactory):
-    def __init__(self, store, viewport, world):
+    def __init__(self, store, viewport, display_file):
         self._store = store
         self._viewport = viewport
-        self._world = world
+        self._display_file = display_file
 
-    @ViewPort.needs_redraw
     def make_object(self, name, points):
         """ Creates new object and adds it to the world. The returned object is
             not owned by the caller, so weird things will happen if it is
@@ -25,20 +23,19 @@ class GtkObjectFactory(ObjectFactory):
             name = self.default_object_name()
         obj = Object(name, points)
         self._store.append([obj.name, str(obj.type)])
-        self._world[name] = obj
+        self._display_file[name] = obj
         Logger.log(LogLevel.INFO, obj)
         return obj
 
-    @ViewPort.needs_redraw
     def remove_object(self, name):
         """ Removes object from the world. """
         for row in self._store:
             if row[0] == name:
                 self._store.remove(row.iter)
                 break
-        del self._world[name]
+        self._display_file.pop(name)
         Logger.log(LogLevel.INFO, name + " has been removed!")
 
     def default_object_name(self):
         """ Default name for anonymous objects. """
-        return "object{}".format(self._world.size())
+        return "object{}".format(len(self._display_file))

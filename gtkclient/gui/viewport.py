@@ -12,11 +12,11 @@ class ViewPort:
     BLACK = (0, 0, 0)
     WHITE = (1, 1, 1)
 
-    def __init__(self, drawing_area, window, world, resolution=(500, 500)):
+    def __init__(self, drawing_area, window, display_file, resolution=(500, 500)):
         self._drawing_area = drawing_area
         self._surface = None
         self._window = window
-        self._world = world
+        self._display_file = display_file
         self._resolution = resolution
         self._drawing_area.set_size_request(*self._resolution)
         self.handlers = {
@@ -102,5 +102,5 @@ class ViewPort:
             3: draw_wireframe,
         }
 
-        for obj in self._world.objects().values():
+        for obj in self._display_file.values():
             obj_t2func[obj.type.value](obj.points)

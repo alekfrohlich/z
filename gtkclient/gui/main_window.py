@@ -16,14 +16,14 @@ class MainWindow:
     """
 
     def __init__(self, create_obj_dialog, obj_factory, treeview, viewport,
-                 window, world, degrees_entry, point_entry, step_entry,
+                 window, display_file, degrees_entry, point_entry, step_entry,
                  rotation_radio):
         self._create_object_dialog = create_obj_dialog
         self._obj_factory = obj_factory
         self._treeview = treeview
         self._viewport = viewport
         self._window = window
-        self._world = world
+        self._display_file = display_file
 
         self._degrees_entry = degrees_entry
         self._point_entry = point_entry
@@ -75,7 +75,7 @@ class MainWindow:
         """ Currently selected object in TreeView. """
         tree_model, tree_iter = self._treeview.get_selection().get_selected()
         if tree_iter is not None:
-            return self._world[tree_model.get_value(tree_iter, 0)]
+            return self._display_file[tree_model.get_value(tree_iter, 0)]
         else:
             return None
 

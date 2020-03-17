@@ -26,7 +26,8 @@ class Object:
         self.type = ObjectType(3 if len(points) > 3 else len(points))
 
     def __str__(self):
-        return self.name + "(" + str(self.type) + ") at " + str(self.points) + " with size = " + str(self.size())
+        return self.name + "(" + str(self.type) + ") at " + str(self.points) \
+            + " with size = " + str(self.size())
 
     @property
     def center(self):
@@ -92,5 +93,6 @@ class Object:
         """ Sum of the distances between points of the object. """
         size = 0
         for i in range(len(self.points)-1):
-            size += ((self.points[i+1][0] - self.points[i][0])**2 + (self.points[i+1][1] - self.points[i][1])**2)**0.5
+            size += ((self.points[i+1][0] - self.points[i][0])**2 +
+                     (self.points[i+1][1] - self.points[i][1])**2)**0.5
         return size

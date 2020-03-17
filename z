@@ -14,7 +14,7 @@ from gtkclient.gui.main_window import MainWindow
 from gtkclient.gui.viewport import ViewPort
 
 from models.window import Window
-from models.world import World
+# from models.world import World
 
 from wml import WML_Interpreter
 
@@ -27,7 +27,7 @@ def init_client():
 
     # Dont need anything
     window = Window()
-    world = World()
+    display_file = {}
 
     # Glade
     drawing_area = builder.get_object("viewport_drawing_area")
@@ -35,9 +35,9 @@ def init_client():
     treeview = builder.get_object("object_list")
 
     # Need something
-    viewport = ViewPort(drawing_area, window, world)
-    obj_factory = GtkObjectFactory(store, viewport, world)
-    wml_interpreter = WML_Interpreter(obj_factory, viewport, world)
+    viewport = ViewPort(drawing_area, window, display_file)
+    obj_factory = GtkObjectFactory(store, viewport, display_file)
+    wml_interpreter = WML_Interpreter(obj_factory, viewport, display_file)
     console = Console(builder.get_object("console_text_view").get_buffer(),
                                 wml_interpreter)
     create_obj_dialog = CreateObjectDialog(
@@ -49,7 +49,7 @@ def init_client():
     main_window = MainWindow(create_obj_dialog, obj_factory, treeview,
                             viewport,
                             window,
-                            world,
+                            display_file,
                             builder.get_object("degrees_entry"),
                             builder.get_object("point_entry"),
                             builder.get_object("step_entry"),

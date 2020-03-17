@@ -31,10 +31,10 @@ REMOVE_PATTERN = re.compile(
 
 
 class WML_Interpreter:
-    def __init__(self, obj_factory, viewport, world):
+    def __init__(self, obj_factory, viewport, display_file):
         self._obj_factory = obj_factory
         self._viewport = viewport
-        self._world = world
+        self._display_file = display_file
         self.executors = {
             ADD_PATTERN: self._add,
             TRANSLATE_PATTERN: self._translate,
@@ -64,7 +64,7 @@ class WML_Interpreter:
     def validate_object(self, name, points):
         """ Throw RuntimeError if either list of points or the chosen name is
             is badly formatted. Also checks if the name is already in use. """
-        if name in self._world:
+        if name in self._display_file:
             raise RuntimeError(name + " already names an object!")
 
         if not NAME_PATTERN.match(name):
@@ -86,12 +86,18 @@ class WML_Interpreter:
             Logger.log(LogLevel.ERROR, error)
 
     @ViewPort.needs_redraw
+    def _remove(self, match):
+        """ Prints info. """
+        name = match.group("name")
+        self._obj_factory.remove_object(name)
+
+    @ViewPort.needs_redraw
     def _translate(self, match):
         """ Translates named object. """
         name = match.group("name")
         dx = float(match.group("dx"))
         dy = float(match.group("dy"))
-        self._world[name].translate(dx, dy)
+        self._display_file[name].translate(dx, dy)
 
     @ViewPort.needs_redraw
     def _scale(self, match):
@@ -99,7 +105,7 @@ class WML_Interpreter:
         name = match.group("name")
         dx = float(match.group("sx"))
         dy = float(match.group("sy"))
-        self._world[name].scale(dx, dy)
+        self._display_file[name].scale(dx, dy)
 
     @ViewPort.needs_redraw
     def _rotate(self, match):
@@ -108,16 +114,9 @@ class WML_Interpreter:
         degrees = np.deg2rad(float(match.group("degrees")))
         x = float(match.group("x"))
         y = float(match.group("y"))
-        self._world[name].rotate(degrees, (x, y))
+        self._display_file[name].rotate(degrees, (x, y))
 
-    @ViewPort.needs_redraw
     def _info(self, match):
         """ Prints info. """
         name = match.group("name")
-        print(self._world[name])
-
-    @ViewPort.needs_redraw
-    def _remove(self, match):
-        """ Prints info. """
-        name = match.group("name")
-        self._obj_factory.remove_object(name)
+        print(self._display_file[name])

@@ -50,7 +50,8 @@ class CreateObjectDialog():
         """ Check if form input is valid. If so, returns OK, else logs
             error. """
         try:
-            self._wml_interpreter.validate_object(self.name, self._points_field.get_text())
+            self._wml_interpreter.validate_object(
+                self.name, self._points_field.get_text())
             self._dialog.response(ResponseType.OK)
         except RuntimeError as error:
             Logger.log(LogLevel.ERROR, error)
