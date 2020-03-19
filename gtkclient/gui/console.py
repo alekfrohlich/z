@@ -1,53 +1,58 @@
 """ Console for inputing WML commands. """
 
+from gi.repository.Gdk import KEY_Return, KEY_Up, KEY_Down
+from gi.repository.Gtk import TextBuffer
 
-class Console:
-    def __init__(self, text_buffer, wml_interpreter):
-        self._text_buffer = text_buffer
-        self._wml_interpreter = wml_interpreter
-        self._on_insert_text_handler_id = self._text_buffer.connect(
-            "insert-text", self._on_insert_text)
-        self._begin_command_mark = self._text_buffer.create_mark(
-            "begin_command", self._start, True)
-        self._unaccessible_tag = self._text_buffer.create_tag(
+
+class CommandBuffer(TextBuffer):
+    def __init__(self):
+        super().__init__()
+        self._begin_command_mark = self.create_mark(
+            "begin_command", self.get_start_iter(), True)
+        self._unaccessible_tag = self.create_tag(
             "unaccessible_tag", editable=False, editable_set=True)
-        self._insert_prompt()
+        self.insert_prompt(initial_prompt=True)
 
-    def _insert_prompt(self):
+    def insert_prompt(self, initial_prompt=False):
         """ Inserts new prompt while making previously typed text not editable
             by user. """
-        self._text_buffer.insert_at_cursor(">> ")
-        self._text_buffer.apply_tag(self._unaccessible_tag, self._start,
-                                    self._end)
-        self._text_buffer.move_mark(self._begin_command_mark, self._end)
+        self.insert_at_cursor(">> " if initial_prompt else "\n>> ")
+        self.apply_tag(self._unaccessible_tag, self.get_start_iter(),
+                                    self.get_end_iter())
+        self.move_mark(self._begin_command_mark, self.get_end_iter())
 
     # Attributes
 
     @property
     def command_text(self):
         """ Last line of user-typed text.  """
-        return self._text_buffer.get_text(self._text_buffer.get_iter_at_mark(
-            self._begin_command_mark), self._end, False)
+        return self.get_text(self.get_iter_at_mark(
+            self._begin_command_mark), self.get_end_iter(), False)
 
-    @property
-    def _start(self):
-        """ Start of buffer TextIter (Gtk). """
-        return self._text_buffer.get_start_iter()
 
-    @property
-    def _end(self):
-        """ End of buffer TextIter (Gtk). """
-        return self._text_buffer.get_end_iter()
+class Console:
+    def __init__(self, textview, wml_interpreter):
+        self._command_buff = CommandBuffer()
+        self._wml_interpreter = wml_interpreter
+
+        textview.set_buffer(self._command_buff)
+        textview.connect("key-press-event", self._on_press)
 
     # Gtk signal handlers
 
-    def _on_insert_text(self, buff, location, text, length):
-        """ If the user finished typing a line, forwards such line to the
-            WML interpreter to process. """
-        if text == '\n':
-            buff.handler_block(self._on_insert_text_handler_id)
-            self._wml_interpreter.run_command(self.command_text)
-            buff.insert_at_cursor("\n")
-            self._insert_prompt()
-            buff.handler_unblock(self._on_insert_text_handler_id)
-            buff.emit_stop_by_name("insert-text")
+    def _on_press(self, btn, event):
+        """ Signal handler for key presses that happen while the textview has
+            focus. """
+        key = event.keyval
+        if key == KEY_Return:
+            self._wml_interpreter.run_command(self._command_buff.command_text)
+            self._command_buff.insert_prompt()
+            return True
+
+        elif key == KEY_Up:
+            print("Up!")
+            return True
+
+        elif key == KEY_Down:
+            print("Down!")
+            return True

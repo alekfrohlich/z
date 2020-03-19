@@ -14,12 +14,9 @@ from gtkclient.gui.main_window import MainWindow
 from gtkclient.gui.viewport import ViewPort
 
 from models.window import Window
-# from models.world import World
 
 from wml import WML_Interpreter
 
-# Future:
-# Typed python?
 
 def init_client():
     builder = Builder()
@@ -38,8 +35,7 @@ def init_client():
     viewport = ViewPort(drawing_area, window, display_file)
     obj_factory = GtkObjectFactory(store, viewport, display_file)
     wml_interpreter = WML_Interpreter(obj_factory, viewport, display_file)
-    console = Console(builder.get_object("console_text_view").get_buffer(),
-                                wml_interpreter)
+    console = Console(builder.get_object("console_text_view"), wml_interpreter)
     create_obj_dialog = CreateObjectDialog(
         builder.get_object("create_object_dialog"),
         builder.get_object("create_object_dialog_name_field"),
@@ -62,10 +58,8 @@ def init_client():
     handlers.update(viewport.handlers)
     builder.connect_signals(handlers)
 
-    # main_window.show()
     builder.get_object("main_window").show_all()
     main()
-
 
 if __name__ == "__main__":
     init_client()

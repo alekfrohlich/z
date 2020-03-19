@@ -73,7 +73,6 @@ class Window:
             coordinates. """
         for i in range(len(self.points)):
             self.points[i] = self.points[i].dot(matrix_tr)
-        print(self.points)
 
     def window_transform(self, points):
         x, y = self.center
