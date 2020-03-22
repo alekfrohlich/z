@@ -5,6 +5,26 @@ import numpy as np
 from core.log import Logger, LogLevel
 
 
+def cohen_sutherland(points):
+    """ Cohen-Sutherland line clipping algorithm based on normalized
+        coordinate system. """
+    def rc(x, y):
+        rc = 0
+        if x < -1:
+            rc += 1
+        elif x > 1:
+            rc += 2
+        if y < -1:
+            rc += 4
+        elif y > 1:
+            rc += 8
+        return rc
+    print(points)
+    for (x,y, _) in points:
+        print(rc(x,y))
+    return points
+
+
 class Window:
     def __init__(self):
         self.points = [
@@ -29,8 +49,7 @@ class Window:
                 return points
 
         def clip_line(points):
-            """ Cohen-Sutherland line clipping algorithm. """
-            return points
+            return cohen_sutherland(points)
 
         def clip_wireframe(points):
             return points
