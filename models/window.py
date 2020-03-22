@@ -8,21 +8,31 @@ from core.log import Logger, LogLevel
 def cohen_sutherland(points):
     """ Cohen-Sutherland line clipping algorithm based on normalized
         coordinate system. """
-    def rc(x, y):
-        rc = 0
+    def region_code(x, y):
+        code = 0
         if x < -1:
-            rc += 1
+            code += 1
         elif x > 1:
-            rc += 2
+            code += 2
         if y < -1:
-            rc += 4
+            code += 4
         elif y > 1:
-            rc += 8
-        return rc
+            code += 8
+        return code
     print(points)
-    for (x,y, _) in points:
-        print(rc(x,y))
-    return points
+    clipped_points = []
+    x1, y1, _ = points[0]
+    x2, y2, _ = points[1]
+    rc1 = region_code(x1, y1)
+    rc2 = region_code(x2, y2)
+    print((rc1, rc2))
+    if rc1 == 0 and rc2 == 0:
+        # completely inside
+        return points
+    elif (rc1 & rc2) != 0:
+        return None
+    else:
+        return points
 
 
 class Window:
@@ -59,7 +69,6 @@ class Window:
             2: clip_line,
             3: clip_wireframe,
         }
-        print("clip!")
         return obj_t2func[obj_type.value](points)
 
 
