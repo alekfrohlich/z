@@ -18,7 +18,7 @@ class ViewPort:
         self._window = window
         self._display_file = display_file
         self._resolution = resolution
-        self._drawing_area.set_size_request(*self._resolution)
+        self._drawing_area.set_size_request(self._resolution[0]+20, self._resolution[1]+20)
         self.handlers = {
             "on_draw": self._on_draw,
             "on_configure": self._on_configure,
@@ -37,11 +37,9 @@ class ViewPort:
     def viewport_transform(self, point):
         """ Change of basis: World -> Viewport. """
         x_w, y_w, _ = point
-        # x_win_min, x_win_max, y_win_min, y_win_max = self._window.bounds
-        x_vp = (x_w + 1) / (2) * self._resolution[0]
-        y_vp = (1 - (y_w + 1) / (2)) * self._resolution[1]
-        # print(point)
-        # print((x_vp, y_vp))
+        # Add (10,10) to account for clip region!
+        x_vp = (x_w + 1) / (2) * self._resolution[0] + 10
+        y_vp = (1 - (y_w + 1) / (2)) * self._resolution[1] + 10
         return (x_vp, y_vp)
 
     def clear(self):
@@ -58,7 +56,7 @@ class ViewPort:
         win = wid.get_window()
         width = wid.get_allocated_width()
         height = wid.get_allocated_height()
-        self._resolution = (width, height)
+        # self._resolution = (width, height) Dont resize viewport!
         self._surface = win.create_similar_surface(
             CONTENT_COLOR,
             width,
@@ -69,6 +67,14 @@ class ViewPort:
 
     def _on_draw(self, wid, cr):
         """ Redraws the screen from the surface. """
+        def draw_clip_region():
+            cr.move_to(10,10)
+            cr.line_to(self._resolution[0] + 10, 10)
+            cr.line_to(self._resolution[0] + 10, self._resolution[1] + 10)
+            cr.line_to(10, self._resolution[1] + 10)
+            cr.line_to(10,10)
+            cr.stroke()
+
         def draw_point(points):
             cr.move_to(*self.viewport_transform(points[0]))
             cr.set_line_cap(LineCap.ROUND)
@@ -102,5 +108,9 @@ class ViewPort:
             3: draw_wireframe,
         }
 
+        draw_clip_region()
+
         for obj in self._display_file.values():
-            obj_t2func[obj.type.value](self._window.window_transform(obj.points))
+            clipped_points = self._window.clip(self._window.window_transform(obj.points), obj.type)
+            if clipped_points is not None:
+                obj_t2func[obj.type.value](clipped_points)

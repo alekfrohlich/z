@@ -20,6 +20,30 @@ class Window:
         y_points = [point[1] for point in self.points]
         return (np.average(x_points), np.average(y_points))
 
+    def clip(self, points, obj_type):
+        def clip_point(points):
+            x, y, _ = points[0]
+            if x > 1 or x < -1 or y > 1 or y < -1:
+                return None
+            else:
+                return points
+
+        def clip_line(points):
+            """ Cohen-Sutherland line clipping algorithm. """
+            return points
+
+        def clip_wireframe(points):
+            return points
+
+        obj_t2func = {
+            1: clip_point,
+            2: clip_line,
+            3: clip_wireframe,
+        }
+        print("clip!")
+        return obj_t2func[obj_type.value](points)
+
+
     def translate(self, dx, dy):
         """ Translates object by (dx, dy). """
         translate_tr = np.array([[1, 0, 0],
