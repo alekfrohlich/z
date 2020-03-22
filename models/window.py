@@ -27,7 +27,7 @@ def cohen_sutherland(points):
         return (x + 1/m * (1 - y), 1)
 
     def right_intersect(x, y):
-        return (-1, m * (1 - x) + y)
+        return (1, m * (1 - x) + y)
 
     def down_intersect(x, y):
         return (x + 1/m * (-1 - y), -1)
@@ -40,7 +40,7 @@ def cohen_sutherland(points):
             5: [left_intersect, down_intersect],
             6: [right_intersect, down_intersect],
             8: [up_intersect],
-            9:  [left_intersect, up_intersect],
+            9: [left_intersect, up_intersect],
             10: [right_intersect, up_intersect],
         }
         return [i(x, y) for i in rc2int[code]]
@@ -55,8 +55,6 @@ def cohen_sutherland(points):
     x2, y2, _ = points[1]
     rc1 = region_code(x1, y1)
     rc2 = region_code(x2, y2)
-    print(points)
-    print((rc1, rc2))
     if rc1 == 0 and rc2 == 0: # completely inside
         return points
     elif (rc1 & rc2) != 0: # completely outside
@@ -68,15 +66,14 @@ def cohen_sutherland(points):
                 i = valid_intersection(intersections(x1, y1, rc1))
                 return (i, np.array([x2, y2, 1]))
             else:
-                i = valid_intersection(intesections(x2, y2, rc2))
+                i = valid_intersection(intersections(x2, y2, rc2))
                 return (i, np.array([x1, y1, 1]))
         else: # possibly two intersections
-            int1 = valid_intersection(intersections(x1, y1, rc1))
-            int2 = valid_intersection(intersections(x2, y2, rc2))
-            if int1 is None or int2 is None: # outside
+            i1 = valid_intersection(intersections(x1, y1, rc1))
+            i2 = valid_intersection(intersections(x2, y2, rc2))
+            if i1 is None or i2 is None: # outside
                 return None
-            return (int1, int2)
-            # corner case
+            return (i1, i2)
 
 
 class Window:
