@@ -75,6 +75,10 @@ def cohen_sutherland(points):
                 return None
             return (i1, i2)
 
+def nicholl_lee_nicholl(points):
+    """ Nicholl-Lee-Nicholl line clipping algorithm. """
+    return points
+
 
 class Window:
     def __init__(self):
@@ -100,7 +104,7 @@ class Window:
                 return points
 
         def clip_line(points):
-            return cohen_sutherland(points)
+            return nicholl_lee_nicholl(points)
 
         def clip_wireframe(points):
             return points
