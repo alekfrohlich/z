@@ -97,8 +97,9 @@ class MainWindow:
         response = self._create_object_dialog.run()
 
         if response == ResponseType.OK:
-            self._obj_factory.make_object(self._create_object_dialog.name,
+            obj = self._obj_factory.make_object(self._create_object_dialog.name,
                                           self._create_object_dialog.points)
+            obj.setColor(self._create_object_dialog.color)
         self._create_object_dialog.hide()
 
     @ViewPort.needs_redraw
