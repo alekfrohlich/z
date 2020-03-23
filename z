@@ -40,6 +40,7 @@ def init_client():
         builder.get_object("create_object_dialog"),
         builder.get_object("create_object_dialog_name_field"),
         builder.get_object("create_object_dialog_points_field"),
+        builder.get_object("create_object_dialog_color_field"),
         obj_factory,
         wml_interpreter)
     main_window = MainWindow(create_obj_dialog, obj_factory, treeview,

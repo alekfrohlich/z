@@ -28,6 +28,9 @@ INFO_PATTERN = re.compile(
     r"^info\((?P<name>{0})\)$".format(name))
 REMOVE_PATTERN = re.compile(
     r"^remove\((?P<name>{0})\)$".format(name))
+COLOR_PATTERN =  re.compile(
+    r"^setColor\((?P<name>{0}),(?P<red>{1}),(?P<green>{1}),(?P<blue>{1})\)$".format(
+        name, floating, floating, floating))
 
 
 class WML_Interpreter:
@@ -42,6 +45,7 @@ class WML_Interpreter:
             ROTATE_PATTERN: self._rotate,
             REMOVE_PATTERN: self._remove,
             INFO_PATTERN: self._info,
+            COLOR_PATTERN: self._setColor,
         }
 
     def points_as_list(self, string):
@@ -50,6 +54,10 @@ class WML_Interpreter:
             np.array((float(point[0]), float(point[1]), 1))
             for point in map(lambda p: p.split(","),
                             string.split(";"))]
+
+    def color_as_tuple(self, string):
+        lis = re.split(r',', string)
+        return (float(lis[0]), float(lis[1]), float(lis[2]))
 
     def run_command(self, string):
         """ Runs command based on python re patterns. Thus, there is almost
@@ -115,6 +123,15 @@ class WML_Interpreter:
         x = float(match.group("x"))
         y = float(match.group("y"))
         self._display_file[name].rotate(degrees, (x, y))
+
+    @ViewPort.needs_redraw
+    def _setColor(self, match):
+        """ Rotates named object. """
+        name = match.group("name")
+        red = float(match.group("red"))
+        green = float(match.group("green"))
+        blue = float(match.group("blue"))
+        self._display_file[name].setColor((red, green, blue))
 
     def _info(self, match):
         """ Prints info. """
