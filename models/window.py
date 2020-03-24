@@ -5,6 +5,7 @@ import numpy as np
 from core.log import Logger, LogLevel
 from algorithmics.clipping.cohen_sutherland import cohen_sutherland
 from algorithmics.clipping.nicholl_lee_nicholl import nln
+from algorithmics.clipping.sutherland_hodgeman import sutherHodge
 
 class Window:
     def __init__(self):
@@ -34,7 +35,8 @@ class Window:
             # return cohen_sutherland(points)
 
         def clip_wireframe(points):
-            return points
+            return sutherHodge(points)
+            # return points
 
         obj_t2func = {
             1: clip_point,
