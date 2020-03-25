@@ -22,7 +22,7 @@ class Window:
         y_points = [point[1] for point in self.points]
         return (np.average(x_points), np.average(y_points))
 
-    def clip(self, points, obj_type):
+    def clip(self, points, obj_type, polygon):
         def clip_point(points):
             x, y, _ = points[0]
             if x > 1 or x < -1 or y > 1 or y < -1:
@@ -35,8 +35,25 @@ class Window:
             # return cohen_sutherland(points)
 
         def clip_wireframe(points):
-            return sutherHodge(points)
-            # return points
+            if polygon:
+                return sutherHodge(points)
+            else:
+                print("NOT POLYGON\nNOT POLYGON\nNOT POLYGON\nNOT POLYGON\nNOT POLYGON\n")
+                return points
+            # if polygon:
+            #     return sutherHodge(points)
+            # else:
+            #     clipped = []
+            #     for i in range(len(points)-1):
+            #         line = nln([points[i], points[i+1]])
+            #         if line == None:
+            #             pass
+            #         else:
+            #             if len(clipped) == 0 or not np.array_equal(line[0], clipped[len(clipped)-1]):
+            #                 clipped.append(line[0])
+            #             clipped.append(line[1])
+            #     return clipped
+
 
         obj_t2func = {
             1: clip_point,

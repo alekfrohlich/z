@@ -26,6 +26,7 @@ class Object:
         self.points = points
         self.type = ObjectType(3 if len(points) > 3 else len(points))
         self.color = (0.,0.,0.)
+        self.polygon = np.array_equal(points[0], points[len(points)-1]) and len(points) != 1
 
     def __str__(self):
         return self.name + "(" + str(self.type) + ") at " + str(self.points) \

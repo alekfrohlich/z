@@ -2,23 +2,30 @@ import numpy as np
 
 # y = m*x + b
 def intersect(p1, p2,xw,yw):
-    print("INTERSECT")
+    # print("INTERSECT")
     x1,y1,_ = p1
     x2,y2,_ = p2
 
-    m = (y1-y2) / (x1-x2)
-    b = y1 - m*x1
+    if x1-x2 != 0:
+        m = (y1-y2) / (x1-x2)
+        b = y1 - m*x1
 
-    print(m)
-    print(b)
+        # print(m)
+        # print(b)
 
-    if yw != None:
-        xw = (yw-b)/m
+        if yw != None:
+            xw = (yw-b)/m
+        else:
+            yw = m*xw + b
     else:
-        yw = m*xw + b
+        if yw != None:
+            xw = x1
+        else:
+            pass
+            # print("OOOOOps")
 
-    print(xw)
-    print(yw)
+    # print(xw)
+    # print(yw)
     return np.array([xw,yw,1])
 
 xw = [-1, None, 1, None]
@@ -26,7 +33,7 @@ yw = [None, 1, None, -1]
 
 def sutherHodge(points):
 
-    border = 2
+    border = 0
 
     def out(point):
         if   border == 0:
@@ -44,34 +51,34 @@ def sutherHodge(points):
     new_points = []
 
     for _ in range(border, 4):
-        print("BORDER===================")
-        print(border)
+        # print("BORDER===================")
+        # print(border)
         for i in range(len(old_points) - 1):
             if   out(old_points[i]) and out(old_points[i+1]):
-                print("OO")
-                # pass
+                # print("OO")
+                pass
             elif (not out(old_points[i])) and out(old_points[i+1]):
-                print("IO")
+                # print("IO")
                 new_points.append(intersect(old_points[i], old_points[i+1], xw[border], yw[border]))
             elif out(old_points[i]) and (not out(old_points[i+1])):
-                print("OI")
+                # print("OI")
                 new_points.append(intersect(old_points[i], old_points[i+1], xw[border], yw[border]))
                 new_points.append(old_points[i+1])
             else:
-                print("II")
+                # print("II")
                 new_points.append(old_points[i+1])
-
-        new_points.append(new_points[0])
+        if len(new_points) != 0:
+            new_points.append(new_points[0])
         old_points = new_points[:]
         new_points = []
         border+=1
 
 
-    print("POINTS")
-    print(points)
-    print("OLD")
-    print(old_points)
-    print("NEW")
-    print(new_points)
+    # print("POINTS")
+    # print(points)
+    # print("OLD")
+    # print(old_points)
+    # print("NEW")
+    # print(new_points)
 
     return old_points
