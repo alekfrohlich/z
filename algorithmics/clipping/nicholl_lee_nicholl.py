@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 # Inside
 # add(x1,10,10;20,20)
@@ -68,10 +69,18 @@ def nln(points):
     pos1 = pos(x1,y1)
     pos2 = pos(x2,y2)
     m = []
-    ml = (y1-y2)/(x1-x2)
+    ml = 0
+    function = True
+    if x1-x2 == 0:
+        function = False
+    if function:
+        ml = (y1-y2)/(x1-x2)
     valid = False
 
     def calculateMs():
+        # precisa tratar casos em que p1 ta embaixo ou em cima de uma das bordas? SIMMMMMMM!!!!!!! (quando eh funcao)
+        # dar valor de m grande eh uma solucao? nos testes o algoritmo funcionou (continua sem solucao)
+
         m.append((y1-1)/(x1+1))
         m.append((y1-1)/(x1-1))
         m.append((y1+1)/(x1-1))
@@ -85,7 +94,7 @@ def nln(points):
         new_points+=1
         valid = True
         # print(npo)
-        # print("north")
+        print("north")
 
     def intersectSouth():
         nonlocal new_points, valid, npo
@@ -94,17 +103,16 @@ def nln(points):
         new_points+=1
         valid = True
         # print(npo)
-        # print("south")
+        print("south")
 
     def intersectWest():
         nonlocal new_points, valid, npo
-        nonlocal npo
         npo[new_points][1] = ml*(-1-x1) + y1
         npo[new_points][0] = -1
         new_points+=1
         valid = True
         # print(npo)
-        # print("west")
+        print("west")
 
     def intersectEast():
         nonlocal new_points, valid, npo
@@ -113,16 +121,41 @@ def nln(points):
         new_points+=1
         valid = True
         # print(npo)
-        # print("east")
+        print("east")
 
+    def intersectNorthNotFunction():
+        nonlocal new_points, valid, npo
+        npo[new_points][0] = x1
+        npo[new_points][1] = 1
+        new_points+=1
+        valid = True
+        # print(npo)
+        print("northSpe")
+
+    def intersectSouthNotFunction():
+        nonlocal new_points, valid, npo
+        npo[new_points][0] = x1
+        npo[new_points][1] = -1
+        new_points+=1
+        valid = True
+        # print(npo)
+        print("southSpe")
 
     def inside():
         nonlocal valid
-        # print("inside")
+        print("inside")
         if pos2 == "I":
-            # print("doubleinside")
+            print("doubleinside")
             valid = True
-            return
+        elif not function:
+            if  pos2 == "N":
+                print("nnnnnnnn")
+                intersectNorthNotFunction()
+            elif pos2 == "S":
+                print("sssssssss")
+                intersectSouthNotFunction()
+            else:
+                print("EEEEEEErro")
         else:
             calculateMs()
             # north
@@ -141,58 +174,92 @@ def nln(points):
                 print("error")
 
     def side():
-        calculateMs()
+        if function:
+            calculateMs()
         if pos1 in pos2:
+            print("impossivel")
             return
             # print("same side")
 
         elif pos1 == "W":
             if ml < m[0] and ml > m[1]:
                 intersectWest()
-                intersectNorth()
+                if "N" in pos2:
+                    intersectNorth()
             elif ml <= m[1] and ml >= m[2]:
                 intersectWest()
                 if pos2 != "I":
                     intersectEast()
             elif ml < m[2] and ml > m[3]:
                 intersectWest()
-                intersectSouth()
+                if "S" in pos2:
+                    intersectSouth()
 
         elif pos1 == "N":
-            if ml < m[1] and ml > m[2]:
-                intersectNorth()
-                intersectEast()
-            elif abs(ml) >= m[2] and abs(ml) >= m[3]:
-                intersectNorth()
-                if pos2 != "I":
-                    intersectSouth()
-            elif ml > m[0] and ml < m[3]:
-                intersectNorth()
-                intersectWest()
+            if function:
+                if ml < m[1] and ml > m[2]:
+                    intersectNorth()
+                    if "E" in pos2:
+                        intersectEast()
+                elif ml <= m[2] or ml >= m[3]:
+                    intersectNorth()
+                    if pos2 != "I":
+                        intersectSouth()
+                elif ml > m[0] and ml < m[3]:
+                    intersectNorth()
+                    if "W" in pos2:
+                        intersectWest()
+            else:
+                print("descobrir se intersecta north and south")
+                if  pos2 == "I":
+                    print("iiiiiiii")
+                    intersectNorthNotFunction()
+                elif pos2 == "S":
+                    print("ssssssss")
+                    intersectNorthNotFunction()
+                    intersectSouthNotFunction()
+                else:
+                    print("Errrrrro")
 
         elif pos1 == "E":
             if ml < m[2] and ml > m[3]:
                 intersectEast()
-                intersectSouth()
-            elif abs(ml) <=m[3] and abs(ml) <= abs(m[0]):
+                if "S" in pos2:
+                    intersectSouth()
+            elif ml <= m[3] and ml >= m[0]:
                 intersectEast()
                 if pos2 != "I":
                     intersectWest()
             elif ml < m[0] and ml > m[1]:
                 intersectEast()
-                intersectNorth()
+                if "N" in pos2:
+                    intersectNorth()
 
         elif pos1 == "S":
-            if ml < m[3] and ml > m[0]:
-                intersectSouth()
-                intersectWest()
-            elif abs(ml) >= abs(m[0]) and abs(ml) >= m[1]:
-                intersectSouth()
-                if pos2 != "I":
-                    intersectNorth()
-            elif ml < m[1] and ml > m[2]:
-                intersectSouth()
-                intersectEast()
+            if function:
+                if ml < m[3] and ml > m[0]:
+                    intersectSouth()
+                    if "W" in pos2:
+                        intersectWest()
+                elif ml <= m[0] or ml >= m[1]:
+                    intersectSouth()
+                    if pos2 != "I":
+                        intersectNorth()
+                elif ml < m[1] and ml > m[2]:
+                    intersectSouth()
+                    if "E" in pos2:
+                        intersectEast()
+            else:
+                print("descobrir se intersecta north and south")
+                if  pos2 == "I":
+                    print("iiiiiiii")
+                    intersectSouthNotFunction()
+                elif pos2 == "N":
+                    print("nnnnnnnnn")
+                    intersectNorthNotFunction()
+                    intersectSouthNotFunction()
+                else:
+                    print("Errrrrro")
 
         if new_points == 0:
             print("out")
@@ -213,17 +280,21 @@ def nln(points):
                 second = 2
             if ml < m[1] and ml >= m[first]:
                 intersectNorth()
-                intersectEast()
+                if "E" in pos2:
+                    intersectEast()
             elif ml < m[first] and ml >= m[second]:
                 if m[0] < m[2]:
                     intersectNorth()
-                    intersectSouth()
+                    if "S" in pos2:
+                        intersectSouth()
                 else:
                     intersectWest()
-                    intersectEast()
+                    if "E" in pos2:
+                        intersectEast()
             elif ml < m[second] and ml >= m[3]:
                 intersectWest()
-                intersectSouth()
+                if "S" in pos2:
+                    intersectSouth()
 
         if pos1 == "SE":
             if "S" in pos2 or "E" in pos2:
@@ -236,18 +307,22 @@ def nln(points):
                 first = 0
                 second = 2
             if ml > m[1] and ml <= m[first]:
-                intersectNorth()
                 intersectEast()
+                if "N" in pos2:
+                    intersectNorth()
             elif ml > m[first] and ml <= m[second]:
                 if m[0] > m[2]:
-                    intersectNorth()
                     intersectSouth()
+                    if "N" in pos2:
+                        intersectNorth()
                 else:
-                    intersectWest()
                     intersectEast()
+                    if "W" in pos2:
+                        intersectWest()
             elif ml > m[second] and ml <= m[3]:
-                intersectWest()
                 intersectSouth()
+                if "W" in pos2:
+                    intersectWest()
 
         if pos1 == "SW":
             if "S" in pos2 or "W" in pos2:
@@ -261,17 +336,21 @@ def nln(points):
                 second = 1
             if ml < m[0] and ml >= m[first]:
                 intersectWest()
-                intersectNorth()
+                if "N" in pos2:
+                    intersectNorth()
             elif ml < m[first] and ml >= m[second]:
                 if m[1] > m[3]:
                     intersectWest()
-                    intersectEast()
+                    if "W" in pos2:
+                        intersectEast()
                 else:
                     intersectSouth()
-                    intersectNorth()
+                    if "N" in pos2:
+                        intersectNorth()
             elif ml < m[second] and ml >= m[2]:
                 intersectSouth()
-                intersectEast()
+                if "E" in pos2:
+                    intersectEast()
 
 
         if pos1 == "NE":
@@ -285,18 +364,22 @@ def nln(points):
                 first = 3
                 second = 1
             if ml > m[0] and ml <= m[first]:
-                intersectWest()
                 intersectNorth()
+                if "W" in pos2:
+                    intersectWest()
             elif ml > m[first] and ml <= m[second]:
                 if m[1] < m[3]:
-                    intersectWest()
                     intersectEast()
+                    if "W" in pos2:
+                        intersectWest()
                 else:
                     intersectNorth()
-                    intersectSouth()
+                    if "S" in pos2:
+                        intersectSouth()
             elif ml > m[second] and ml <= m[2]:
-                intersectSouth()
                 intersectEast()
+                if "S" in pos2:
+                    intersectSouth()
 
         if new_points == 0:
             pass
@@ -324,6 +407,7 @@ def nln(points):
         pass
     else:
         print("errorrrr")
-    # print(npo)
+
+    print(npo)
     return (npo[0], npo[1])
 
