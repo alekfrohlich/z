@@ -1,6 +1,5 @@
 """ Main application window. """
 
-from gi.repository.Gtk import main_quit
 from gi.repository.Gtk import ResponseType
 
 import numpy as np
@@ -10,11 +9,6 @@ from gtkclient.gui.viewport import ViewPort
 
 
 class MainWindow:
-    """
-        Main GUI window, has access to glade builder and thus is responsible
-        for passing it around to other Glade-related graphical components.
-    """
-
     def __init__(self, create_obj_dialog, obj_factory, treeview, viewport,
                  window, display_file, degrees_entry, point_entry, step_entry,
                  rotation_radio):
@@ -43,8 +37,7 @@ class MainWindow:
             "on_x_button": lambda _: self._on_rotate(axis=AxisType.X),
             "on_y_button": lambda _: self._on_rotate(axis=AxisType.Y),
             "on_z_button": lambda _: self._on_rotate(axis=AxisType.Z),
-            # Menu bar
-            "on_menu_bar_quit": main_quit,
+            # SHALL BE MOVED
             "on_create_object": self._on_create_object,
         }
 
