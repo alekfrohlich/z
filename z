@@ -2,9 +2,9 @@
 
 """ Entry point. """
 
-from client import Client
+from client.gtk.client import GtkClient
 
 
 if __name__ == "__main__":
-    gtk_client = Client()
+    gtk_client = GtkClient()
     gtk_client.run()

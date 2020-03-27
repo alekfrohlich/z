@@ -3,9 +3,9 @@
 import numpy as np
 
 from util.log import Logger, LogLevel
-from algorithmics.clipping.cohen_sutherland import cohen_sutherland
-from algorithmics.clipping.nicholl_lee_nicholl import nln
-from algorithmics.clipping.sutherland_hodgeman import sutherHodge
+from client.clipping.cohen_sutherland import cohen_sutherland
+from client.clipping.nicholl_lee_nicholl import nln
+from client.clipping.sutherland_hodgeman import sutherHodge
 
 class Window:
     def __init__(self):

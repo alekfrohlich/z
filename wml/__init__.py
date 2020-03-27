@@ -5,7 +5,7 @@ import re
 import numpy as np
 
 from util.log import Logger, LogLevel
-from gtkclient.gui.viewport import ViewPort
+from client.gtk.gui.viewport import ViewPort
 
 name = r"[a-zA-Z]+[a-zA-Z0-9_]*"
 floating = r"-?\d+.?\d*"

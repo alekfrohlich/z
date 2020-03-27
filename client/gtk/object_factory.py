@@ -6,7 +6,7 @@
 
 from util.log import Logger, LogLevel
 from objects.object import Object
-from models.object_factory import ObjectFactory
+from client.object_factory import ObjectFactory
 
 
 class GtkObjectFactory(ObjectFactory):

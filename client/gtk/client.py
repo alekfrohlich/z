@@ -5,22 +5,22 @@ gi.require_version('Gtk', '3.0')
 from gi.repository.Gtk import main_iteration_do
 from gi.repository.Gtk import Builder
 
-from gtkclient.object_factory import GtkObjectFactory
-from gtkclient.gui.console import Console
-from gtkclient.gui.dialogs import CreateObjectDialog
-from gtkclient.gui.main_window import MainWindow
-from gtkclient.gui.viewport import ViewPort
+from client.gtk.object_factory import GtkObjectFactory
+from client.gtk.gui.console import Console
+from client.gtk.gui.dialogs import CreateObjectDialog
+from client.gtk.gui.main_window import MainWindow
+from client.gtk.gui.viewport import ViewPort
 
 from objects.window import Window
 
 from wml import WML_Interpreter
 
 
-class Client:
+class GtkClient:
     def __init__(self):
         self._has_quit = False
         self._builder = Builder()
-        self._builder.add_from_file("gtkclient/glade/z_gui_layout.glade")
+        self._builder.add_from_file("client/gtk/glade/z_gui_layout.glade")
 
         # Dont need anything
         window = Window()
@@ -54,16 +54,16 @@ class Client:
 
         # Handlers
         handlers = {
-            "on_delete_event": self.quit,
+            "on_delete_event": lambda _, __: self.quit(),
             # Menu bar
-            "on_menu_bar_quit": self.quit,
+            "on_menu_bar_quit": lambda _: self.quit(),
         }
         handlers.update(main_window.handlers)
         handlers.update(create_obj_dialog.handlers)
         handlers.update(viewport.handlers)
         self._builder.connect_signals(handlers)
 
-    def quit(self, __=None, _=None):
+    def quit(self):
         self._has_quit = True
 
     def run(self):
