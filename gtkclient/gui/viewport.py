@@ -75,26 +75,34 @@ class ViewPort:
             cr.line_to(10,10)
             cr.stroke()
 
-        def draw_point(points):
-            cr.move_to(*self.viewport_transform(points[0]))
-            cr.set_line_cap(LineCap.ROUND)
-            cr.close_path()
-            cr.stroke()
+        def draw_point(points, color):
+            if len(points) != 0:
+                cr.move_to(*self.viewport_transform(points[0]))
+                r,g,b = color
+                cr.set_line_cap(LineCap.ROUND)
+                cr.close_path()
+                cr.set_source_rgb(r,g,b)
+                cr.stroke()
 
-        def draw_line(points):
-            first_point = self.viewport_transform(points[0])
-            second_point = self.viewport_transform(points[1])
-            cr.move_to(*first_point)
-            cr.line_to(*second_point)
-            cr.stroke()
+        def draw_line(points, color):
+            if len(points) != 0:
+                first_point = self.viewport_transform(points[0])
+                second_point = self.viewport_transform(points[1])
+                r,g,b = color
+                cr.move_to(*first_point)
+                cr.line_to(*second_point)
+                cr.set_source_rgb(r,g,b)
+                cr.stroke()
 
-        def draw_wireframe(points):
-            first_point = self.viewport_transform(points[0])
-            cr.move_to(*first_point)
-            for point in map(self.viewport_transform, points):
-                cr.line_to(*point)
-            cr.line_to(*first_point)
-            cr.stroke()
+        def draw_wireframe(points, color):
+            if len(points) != 0:
+                first_point = self.viewport_transform(points[0])
+                r,g,b = color
+                cr.move_to(*first_point)
+                for point in map(self.viewport_transform, points):
+                    cr.line_to(*point)
+                cr.set_source_rgb(r,g,b)
+                cr.stroke()
 
         cr.set_source_surface(self._surface, 0, 0)
         cr.paint()
@@ -111,6 +119,7 @@ class ViewPort:
         draw_clip_region()
 
         for obj in self._display_file.values():
-            clipped_points = self._window.clip(self._window.window_transform(obj.points), obj.type)
+            clipped_points = self._window.clip(self._window.window_transform(obj.points), obj.type, obj.polygon)
+            color = obj.color
             if clipped_points is not None:
-                obj_t2func[obj.type.value](clipped_points)
+                obj_t2func[obj.type.value](clipped_points, color)

@@ -20,10 +20,13 @@ class ObjectType(Enum):
 
 
 class Object:
+
     def __init__(self, name, points):
         self.name = name
         self.points = points
         self.type = ObjectType(3 if len(points) > 3 else len(points))
+        self.color = (0.,0.,0.)
+        self.polygon = np.array_equal(points[0], points[len(points)-1]) and len(points) != 1
 
     def __str__(self):
         return self.name + "(" + str(self.type) + ") at " + str(self.points) \
@@ -96,3 +99,6 @@ class Object:
             size += ((self.points[i+1][0] - self.points[i][0])**2 +
                      (self.points[i+1][1] - self.points[i][1])**2)**0.5
         return size
+
+    def setColor(self, color):
+        self.color = color

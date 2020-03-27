@@ -454,6 +454,7 @@
                                             <property name="max_length">7</property>
                                             <property name="width_chars">7</property>
                                             <property name="max_width_chars">7</property>
+                                            <property name="text" translatable="yes">0,0</property>
                                             <property name="input_purpose">digits</property>
                                           </object>
                                           <packing>
@@ -870,8 +871,6 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">5</property>
-                <property name="margin_right">5</property>
                 <property name="margin_top">5</property>
                 <property name="margin_bottom">5</property>
                 <property name="label" translatable="yes">Name:</property>
@@ -886,8 +885,6 @@
               <object class="GtkEntry" id="create_object_dialog_name_field">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="margin_left">5</property>
-                <property name="margin_right">5</property>
                 <property name="margin_top">5</property>
                 <property name="margin_bottom">5</property>
                 <property name="placeholder_text" translatable="yes">obj</property>
@@ -902,15 +899,13 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child>
           <object class="GtkFrame">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">5</property>
-            <property name="margin_right">5</property>
             <property name="margin_top">5</property>
             <property name="margin_bottom">5</property>
             <property name="label_xalign">0.10000000149011612</property>
@@ -919,8 +914,6 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">5</property>
-                <property name="margin_right">5</property>
                 <property name="margin_top">5</property>
                 <property name="margin_bottom">5</property>
                 <property name="label" translatable="yes">Insert the list of points comprising your object, be it a point,
@@ -935,6 +928,82 @@ number of points it has.</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">How to</property>
               </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="name">wireframe_page</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkFrame">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
+                <property name="label_xalign">0.15000000596046448</property>
+                <property name="shadow_type">in</property>
+                <child>
+                  <object class="GtkAlignment">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="left_padding">12</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_top">5</property>
+                            <property name="margin_bottom">5</property>
+                            <property name="label" translatable="yes">Expression:</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="create_object_dialog_points_field">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="margin_top">5</property>
+                            <property name="margin_bottom">5</property>
+                            <property name="text" translatable="yes">10,10;10,100</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">List of Point Coordinates</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -976,7 +1045,7 @@ number of points it has.</property>
                             <property name="margin_right">5</property>
                             <property name="margin_top">5</property>
                             <property name="margin_bottom">5</property>
-                            <property name="label" translatable="yes">Expression:</property>
+                            <property name="label" translatable="yes">RGB:</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -985,14 +1054,14 @@ number of points it has.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="create_object_dialog_points_field">
+                          <object class="GtkEntry" id="create_object_dialog_color_field">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="margin_left">5</property>
                             <property name="margin_right">5</property>
                             <property name="margin_top">5</property>
                             <property name="margin_bottom">5</property>
-                            <property name="text" translatable="yes">250,250;150,150;100,100</property>
+                            <property name="text" translatable="yes">1,0,0</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -1008,7 +1077,7 @@ number of points it has.</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">List of Point Coordinates</property>
+                    <property name="label" translatable="yes">Color</property>
                   </object>
                 </child>
               </object>

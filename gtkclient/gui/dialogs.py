@@ -6,11 +6,12 @@ from core.log import Logger, LogLevel
 
 
 class CreateObjectDialog():
-    def __init__(self, dialog, name_field, points_field,
+    def __init__(self, dialog, name_field, points_field, color_field,
                  object_factory, wml_interpreter):
         self._dialog = dialog
         self._name_field = name_field
         self._points_field = points_field
+        self._color_field = color_field
         self._object_factory = object_factory
         self._wml_interpreter = wml_interpreter
         self.handlers = {
@@ -28,6 +29,12 @@ class CreateObjectDialog():
         """ List of points already cleaned. """
         return self._wml_interpreter.points_as_list(
             self._points_field.get_text())
+
+    @property
+    def color(self):
+        """ Color of the object. """
+        return self._wml_interpreter.color_as_tuple(
+            self._color_field.get_text())
 
     # Gtk.Dialog wrappers
 
