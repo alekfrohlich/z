@@ -11,7 +11,7 @@ from gtkclient.gui.dialogs import CreateObjectDialog
 from gtkclient.gui.main_window import MainWindow
 from gtkclient.gui.viewport import ViewPort
 
-from models.window import Window
+from objects.window import Window
 
 from wml import WML_Interpreter
 

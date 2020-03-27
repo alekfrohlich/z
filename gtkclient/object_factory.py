@@ -5,7 +5,7 @@
 """
 
 from util.log import Logger, LogLevel
-from models.object import Object
+from objects.object import Object
 from models.object_factory import ObjectFactory
 
 
@@ -15,13 +15,13 @@ class GtkObjectFactory(ObjectFactory):
         self._viewport = viewport
         self._display_file = display_file
 
-    def make_object(self, name, points):
+    def make_object(self, name, points, color=(0.0, 0.0, 0.0)):
         """ Creates new object and adds it to the world. The returned object is
             not owned by the caller, so weird things will happen if it is
             modified. """
         if name == "":
             name = self.default_object_name()
-        obj = Object(name, points)
+        obj = Object(name, points, color)
         self._store.append([obj.name, str(obj.type)])
         self._display_file[name] = obj
         Logger.log(LogLevel.INFO, obj)

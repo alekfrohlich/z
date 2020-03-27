@@ -28,8 +28,8 @@ INFO_PATTERN = re.compile(
     r"^info\((?P<name>{0})\)$".format(name))
 REMOVE_PATTERN = re.compile(
     r"^remove\((?P<name>{0})\)$".format(name))
-COLOR_PATTERN =  re.compile(
-    r"^setColor\((?P<name>{0}),(?P<red>{1}),(?P<green>{1}),(?P<blue>{1})\)$".format(
+PAINT_PATTERN =  re.compile(
+    r"^paint\((?P<name>{0}),(?P<red>{1}),(?P<green>{1}),(?P<blue>{1})\)$".format(
         name, floating, floating, floating))
 
 
@@ -45,7 +45,7 @@ class WML_Interpreter:
             ROTATE_PATTERN: self._rotate,
             REMOVE_PATTERN: self._remove,
             INFO_PATTERN: self._info,
-            COLOR_PATTERN: self._setColor,
+            PAINT_PATTERN: self._paint,
         }
 
     def points_as_list(self, string):
@@ -125,13 +125,13 @@ class WML_Interpreter:
         self._display_file[name].rotate(degrees, (x, y))
 
     @ViewPort.needs_redraw
-    def _setColor(self, match):
-        """ Rotates named object. """
+    def _paint(self, match):
+        """ Paints named object. """
         name = match.group("name")
         red = float(match.group("red"))
         green = float(match.group("green"))
         blue = float(match.group("blue"))
-        self._display_file[name].setColor((red, green, blue))
+        self._display_file[name].color = (red, green, blue)
 
     def _info(self, match):
         """ Prints info. """
