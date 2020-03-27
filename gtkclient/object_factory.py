@@ -4,7 +4,7 @@
      - Stores the (name, type) tuple in the ListStore.
 """
 
-from core.log import Logger, LogLevel
+from util.log import Logger, LogLevel
 from models.object import Object
 from models.object_factory import ObjectFactory
 

@@ -4,7 +4,7 @@ from gi.repository.Gtk import ResponseType
 
 import numpy as np
 
-from core import AxisType, DirectionType
+from util import AxisType, DirectionType
 from gtkclient.gui.viewport import ViewPort
 
 

@@ -3,7 +3,7 @@
 
 from cairo import Context, LineCap, CONTENT_COLOR
 
-from core.log import Logger, LogLevel
+from util.log import Logger, LogLevel
 
 
 class ViewPort:

@@ -2,7 +2,7 @@
 
 from gi.repository.Gtk import ResponseType
 
-from core.log import Logger, LogLevel
+from util.log import Logger, LogLevel
 
 
 class CreateObjectDialog():

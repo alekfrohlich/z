@@ -4,7 +4,7 @@ import re
 
 import numpy as np
 
-from core.log import Logger, LogLevel
+from util.log import Logger, LogLevel
 from gtkclient.gui.viewport import ViewPort
 
 name = r"[a-zA-Z]+[a-zA-Z0-9_]*"
