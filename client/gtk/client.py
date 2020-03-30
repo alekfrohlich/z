@@ -5,13 +5,14 @@ gi.require_version('Gtk', '3.0')
 from gi.repository.Gtk import main_iteration_do
 from gi.repository.Gtk import Builder
 
+from objects.window import Window
+
+from client.window_manager import WindowManager
 from client.gtk.object_factory import GtkObjectFactory
 from client.gtk.gui.console import Console
 from client.gtk.gui.dialogs import CreateObjectDialog
 from client.gtk.gui.main_window import MainWindow
 from client.gtk.gui.viewport import ViewPort
-
-from objects.window import Window
 
 from wml import WML_Interpreter
 
@@ -22,18 +23,19 @@ class GtkClient:
         self._builder = Builder()
         self._builder.add_from_file("client/gtk/glade/z_gui_layout.glade")
 
-        # Dont need anything
-        window = Window()
-        display_file = {}
-
         # Glade
         drawing_area = self._builder.get_object("viewport_drawing_area")
         store = self._builder.get_object("object_list_store")
         treeview = self._builder.get_object("object_list")
 
+        window = Window()
+        window_manager = WindowManager(window)
+        display_file = {"window" : window}
+        store.append([window.name, str(window.type)])
+
         # Need something
-        viewport = ViewPort(drawing_area, window, display_file)
-        obj_factory = GtkObjectFactory(store, viewport, display_file)
+        viewport = ViewPort(drawing_area, window_manager, display_file)
+        obj_factory = GtkObjectFactory(store, viewport, display_file, window_manager)
         wml_interpreter = WML_Interpreter(obj_factory, viewport, display_file)
         console = Console(self._builder.get_object("console_text_view"), wml_interpreter)
         create_obj_dialog = CreateObjectDialog(

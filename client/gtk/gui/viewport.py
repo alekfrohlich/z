@@ -12,10 +12,10 @@ class ViewPort:
     BLACK = (0, 0, 0)
     WHITE = (1, 1, 1)
 
-    def __init__(self, drawing_area, window, display_file, resolution=(500, 500)):
+    def __init__(self, drawing_area, window_manager, display_file, resolution=(500, 500)):
         self._drawing_area = drawing_area
         self._surface = None
-        self._window = window
+        self._window_manager = window_manager
         self._display_file = display_file
         self._resolution = resolution
         self._drawing_area.set_size_request(self._resolution[0]+20, self._resolution[1]+20)
@@ -104,6 +104,11 @@ class ViewPort:
                 cr.set_source_rgb(r,g,b)
                 cr.stroke()
 
+        def draw_placeholder():
+            cr.move_to(60,260)
+            cr.set_font_size(30.0)
+            cr.show_text("You are without a window!")
+
         cr.set_source_surface(self._surface, 0, 0)
         cr.paint()
 
@@ -118,8 +123,13 @@ class ViewPort:
 
         draw_clip_region()
 
-        for obj in self._display_file.values():
-            clipped_points = self._window.clip(self._window.window_transform(obj.points), obj.type, obj.polygon)
-            color = obj.color
-            if clipped_points is not None:
-                obj_t2func[obj.type.value](clipped_points, color)
+        if self._window_manager.has_active_window:
+            for obj in self._display_file.values():
+                clipped_points = self._window_manager.clip(obj.points, obj.type, obj.polygon)
+                # COLOR COULD BE DEFINED BEFORE
+                color = obj.color
+                if clipped_points is not None:
+                    obj_t2func[obj.type.value](clipped_points, color)
+
+        else:
+            draw_placeholder()

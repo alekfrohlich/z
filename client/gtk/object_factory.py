@@ -10,10 +10,11 @@ from client.object_factory import ObjectFactory
 
 
 class GtkObjectFactory(ObjectFactory):
-    def __init__(self, store, viewport, display_file):
+    def __init__(self, store, viewport, display_file, window_manager):
         self._store = store
         self._viewport = viewport
         self._display_file = display_file
+        self._window_manager = window_manager
 
     def make_object(self, name, points, color=(0.0, 0.0, 0.0)):
         """ Creates new object and adds it to the world. The returned object is
@@ -33,7 +34,9 @@ class GtkObjectFactory(ObjectFactory):
             if row[0] == name:
                 self._store.remove(row.iter)
                 break
-        self._display_file.pop(name)
+        del self._display_file[name]
+        if self._window_manager.current_window_name == name:
+            self._window_manager.remove_window()
         Logger.log(LogLevel.INFO, name + " has been removed!")
 
     def default_object_name(self):

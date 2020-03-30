@@ -20,7 +20,6 @@ class ObjectType(Enum):
 
 
 class Object:
-
     def __init__(self, name, points, color):
         self.color = color
         self.name = name
