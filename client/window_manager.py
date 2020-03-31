@@ -5,7 +5,7 @@ from client.clipping.sutherland_hodgeman import sutherHodge
 
 
 class WindowManager:
-    def __init__(self, window):
+    def __init__(self, window=None):
         self._window = window
 
     def clip(self, points, obj_type, polygon):
@@ -42,3 +42,6 @@ class WindowManager:
 
     def remove_window(self):
         self._window = None
+
+    def set_window(self, window):
+        self._window = window

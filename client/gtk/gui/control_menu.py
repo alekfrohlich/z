@@ -7,9 +7,10 @@ import numpy as np
 from util import AxisType, DirectionType
 
 class ControlMenu:
-    def __init__(self, obj_store, degrees_entry, point_entry, step_entry,
+    def __init__(self, executor, obj_view, degrees_entry, point_entry, step_entry,
                  rotation_radio):
-        self._obj_store = obj_store
+        self._executor = executor
+        self._obj_view = obj_view
 
         self._degrees_entry = degrees_entry
         self._point_entry = point_entry
@@ -22,7 +23,6 @@ class ControlMenu:
             "on_right_button": lambda _: self._on_translate(
                 DirectionType.RIGHT),
             "on_down_button": lambda _: self._on_translate(DirectionType.DOWN),
-            # ON EXPAND, ON SHRINK
             "on_plus_button": lambda _: self._on_scale(expand=True),
             "on_minus_button": lambda _: self._on_scale(expand=False),
             "on_x_button": lambda _: self._on_rotate(axis=AxisType.X),
@@ -63,22 +63,30 @@ class ControlMenu:
     # Gtk signal handlers
 
     def _on_translate(self, direction):
-        """ Notifies ObjectStore that a translation happened. """
-        dx, dy = direction.value
-        self._obj_store.translate(dx * self.step, dy * self.step)
+        """ Translate the selected object by the offset specified in the
+            control menu. If there is no such object, translates the window
+            instead. """
+        if self._obj_view.selected_object is not None:
+            dx, dy = direction.value
+            self._executor.translate(self._obj_view.selected_object, dx * self.step, dy * self.step)
 
     def _on_scale(self, expand):
-        """ Notifies ObjectStore that an escalation happened. """
-        factor = (1 + self.step/100) ** (1 if expand else -1)
-        self._obj_store.scale(factor)
+        """ Scales the selected object by the factor specified in the control
+            menu. """
+        if self._obj_view.selected_object is not None:
+            factor = (1 + self.step/100) ** (1 if expand else -1)
+            self._executor.scale(self._obj_view.selected_object, factor)
 
     def _on_rotate(self, axis):
-        """ Notifies ObjectStore that a rotation happened. """
+        """ Rotates the selected object in respect to the given point
+            by the amount specified in the control menu. """
         # axis is not used (yet!)
-        rads = np.deg2rad(self.degrees)
-        if self.rotation_strategy == "world":
-            self._obj_store.rotate(rads, (0,0))
-        elif self.rotation_strategy == "object":
-            self._obj_store.rotate(rads, None)
-        else:
-            self._obj_store.rotate(rads, self.point)
+        selected = self._obj_view.selected_object
+        if selected is not None:
+            rads = np.deg2rad(self.degrees)
+            if self.rotation_strategy == "world":
+                self._executor.rotate(selected, rads, (0,0))
+            elif self.rotation_strategy == "object":
+                self._executor.rotate(selected, rads, None)
+            else:
+                self._executor.rotate(selected, rads, self.point)

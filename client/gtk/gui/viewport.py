@@ -6,17 +6,17 @@ from cairo import Context, LineCap, CONTENT_COLOR
 from util.log import Logger, LogLevel
 
 
-class ViewPort:
+class Viewport:
 
     """ RBG colors for Cairo. """
     BLACK = (0, 0, 0)
     WHITE = (1, 1, 1)
 
-    def __init__(self, drawing_area, window_manager, display_file, resolution=(500, 500)):
+    def __init__(self, drawing_area, obj_store, window_manager, resolution=(500, 500)):
         self._drawing_area = drawing_area
+        self._obj_store = obj_store
         self._surface = None
         self._window_manager = window_manager
-        self._display_file = display_file
         self._resolution = resolution
         self._drawing_area.set_size_request(self._resolution[0]+20, self._resolution[1]+20)
         self.handlers = {
@@ -45,7 +45,7 @@ class ViewPort:
     def clear(self):
         """ Paints the viewport white. """
         cr = Context(self._surface)
-        cr.set_source_rgb(*ViewPort.WHITE)
+        cr.set_source_rgb(*Viewport.WHITE)
         cr.paint()
 
     # Gtk signal handlers
@@ -108,7 +108,7 @@ class ViewPort:
         cr.paint()
 
         cr.set_line_width(2)
-        cr.set_source_rgb(*ViewPort.BLACK)
+        cr.set_source_rgb(*Viewport.BLACK)
 
         obj_t2func = {
             1: draw_point,
@@ -119,7 +119,7 @@ class ViewPort:
         draw_clip_region()
 
         if self._window_manager.has_active_window:
-            for obj in self._display_file.values():
+            for obj in self._obj_store.display_file:
                 clipped_points = self._window_manager.clip(obj.points, obj.type, obj.polygon)
                 cr.set_source_rgb(*obj.color)
                 if clipped_points is not None:

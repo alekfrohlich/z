@@ -6,9 +6,9 @@ from util.log import Logger, LogLevel
 
 
 class MenuBar:
-    def __init__(self, create_obj_dialog, obj_store):
+    def __init__(self, create_obj_dialog, executor):
         self._create_obj_dialog = create_obj_dialog
-        self._obj_store = obj_store
+        self._executor = executor
         self.handlers = {
             "on_create_object": self._on_create_object,
         }
@@ -20,7 +20,7 @@ class MenuBar:
         response = self._create_obj_dialog.run()
 
         if response == ResponseType.OK:
-            obj = self._obj_store.make_object(self._create_obj_dialog.name,
+            obj = self._executor.add(self._create_obj_dialog.name,
                                           self._create_obj_dialog.points,
                                           self._create_obj_dialog.color)
         self._create_obj_dialog.hide()
@@ -65,7 +65,7 @@ class CreateObjectDialog:
 
     def run(self):
         """ dialog.run wrapper that automatically updates the name field. """
-        self._name_field.set_text(self._obj_store.default_object_name)
+        self._name_field.set_text(self._obj_store.next_available_name)
         return self._dialog.run()
 
     # Gtk signal handlers

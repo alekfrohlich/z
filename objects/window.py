@@ -28,8 +28,6 @@ class Window(Object):
         rotate_tr = np.array([[np.cos(-self.angle), -np.sin(-self.angle), 0],
                               [np.sin(-self.angle), np.cos(-self.angle), 0],
                               [0, 0, 1]])
-        print(points[0].dot(to_origin_tr).dot(rotate_tr))
-        print(points[0].dot(to_origin_tr.dot(rotate_tr)))
 
         vup = ((self.points[0][0] - self.points[3][0])**2 + (self.points[0][1] - self.points[3][1])**2)**0.5
         vright = ((self.points[2][0] - self.points[3][0])**2 + (self.points[2][1] - self.points[3][1])**2)**0.5

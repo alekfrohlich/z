@@ -5,15 +5,16 @@ gi.require_version('Gtk', '3.0')
 from gi.repository.Gtk import main_iteration_do
 from gi.repository.Gtk import Builder
 
-from objects.window import Window
-
 from client.window_manager import WindowManager
+
+from client.gtk.executor import GtkExecutor
 from client.gtk.object_store import GtkObjectStore
 
 from client.gtk.gui.console import Console
-from client.gtk.gui.menu_bar import MenuBar, CreateObjectDialog
 from client.gtk.gui.control_menu import ControlMenu
-from client.gtk.gui.viewport import ViewPort
+from client.gtk.gui.menu_bar import MenuBar, CreateObjectDialog
+from client.gtk.gui.object_view import ObjectView
+from client.gtk.gui.viewport import Viewport
 
 from wml import WML_Interpreter
 
@@ -24,20 +25,18 @@ class GtkClient:
         self._builder = Builder()
         self._builder.add_from_file("client/gtk/glade/gtk_client.glade")
 
-        # Glade
-        drawing_area = self._builder.get_object("viewport_drawing_area")
-        # @FIXME: store -> obj_name_store to avoid confusion with ObjectStore
-        store = self._builder.get_object("object_list_store")
-        treeview = self._builder.get_object("object_list")
-        window = Window()
-        window_manager = WindowManager(window)
-        display_file = {"window" : window}
-        store.append([window.name, str(window.type)])
+        window_manager = WindowManager()
+        obj_store = GtkObjectStore(
+            self._builder.get_object("object_list_store"),
+            window_manager)
+        obj_view = ObjectView(obj_store, self._builder.get_object("object_list"))
 
-        # Need something
-        viewport = ViewPort(drawing_area, window_manager, display_file)
-        obj_store = GtkObjectStore(display_file, store, treeview, viewport, window_manager)
-        wml_interpreter = WML_Interpreter(obj_store, viewport, display_file)
+        viewport = Viewport(self._builder.get_object("viewport_drawing_area"), obj_store, window_manager)
+
+        executor = GtkExecutor(obj_store, viewport)
+
+        wml_interpreter = WML_Interpreter(obj_store, viewport)
+
         console = Console(self._builder.get_object("console_text_view"), wml_interpreter)
 
         create_obj_dialog = CreateObjectDialog(
@@ -47,9 +46,10 @@ class GtkClient:
             self._builder.get_object("create_object_dialog_color_field"),
             obj_store,
             wml_interpreter)
-        menu_bar = MenuBar(create_obj_dialog, obj_store)
+        menu_bar = MenuBar(create_obj_dialog, executor)
 
-        control_menu = ControlMenu(obj_store,
+        control_menu = ControlMenu(executor,
+                                obj_view,
                                 self._builder.get_object("degrees_entry"),
                                 self._builder.get_object("point_entry"),
                                 self._builder.get_object("step_entry"),
