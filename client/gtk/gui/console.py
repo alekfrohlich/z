@@ -3,7 +3,7 @@
 from gi.repository.Gdk import KEY_Return, KEY_Up, KEY_Down
 from gi.repository.Gtk import TextBuffer
 
-
+# @TODO: ExpressionBuffer, LineHistory, Console
 class CommandBuffer(TextBuffer):
     def __init__(self):
         super().__init__()
