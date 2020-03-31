@@ -315,12 +315,12 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="zoom_out_button">
+                                  <object class="GtkButton" id="minus_button">
                                     <property name="label" translatable="yes">-</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <signal name="clicked" handler="on_zoom_out" swapped="no"/>
+                                    <signal name="clicked" handler="on_minus_button" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">0</property>
@@ -328,12 +328,12 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="zoom_in_button">
+                                  <object class="GtkButton" id="plus_button">
                                     <property name="label" translatable="yes">+</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <signal name="clicked" handler="on_zoom_in" swapped="no"/>
+                                    <signal name="clicked" handler="on_plus_button" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left_attach">2</property>

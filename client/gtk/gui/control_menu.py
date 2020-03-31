@@ -23,8 +23,8 @@ class ControlMenu:
                 DirectionType.RIGHT),
             "on_down_button": lambda _: self._on_translate(DirectionType.DOWN),
             # ON EXPAND, ON SHRINK
-            "on_zoom_in": lambda _: self._on_scale(expand=True),
-            "on_zoom_out": lambda _: self._on_scale(expand=False),
+            "on_plus_button": lambda _: self._on_scale(expand=True),
+            "on_minus_button": lambda _: self._on_scale(expand=False),
             "on_x_button": lambda _: self._on_rotate(axis=AxisType.X),
             "on_y_button": lambda _: self._on_rotate(axis=AxisType.Y),
             "on_z_button": lambda _: self._on_rotate(axis=AxisType.Z),

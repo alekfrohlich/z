@@ -22,7 +22,7 @@ class GtkClient:
     def __init__(self):
         self._has_quit = False
         self._builder = Builder()
-        self._builder.add_from_file("client/gtk/glade/z_gui_layout.glade")
+        self._builder.add_from_file("client/gtk/glade/gtk_client.glade")
 
         # Glade
         drawing_area = self._builder.get_object("viewport_drawing_area")
