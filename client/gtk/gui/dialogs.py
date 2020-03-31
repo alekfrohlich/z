@@ -1,18 +1,39 @@
-""" Dialogs started by doing some action in the MainWindow. """
+""" Dialogs started by doing some action in the MenuBar. """
 
 from gi.repository.Gtk import ResponseType
 
 from util.log import Logger, LogLevel
 
 
-class CreateObjectDialog():
+class MenuBar:
+    def __init__(self, create_obj_dialog, obj_store):
+        self._create_obj_dialog = create_obj_dialog
+        self._obj_store = obj_store
+        self.handlers = {
+            "on_create_object": self._on_create_object,
+        }
+
+    def _on_create_object(self, _):
+        """ Show 'Create object' dialog and wait for it's response. If
+            successful the display is hidden (not destroyed) and an object
+            is created. """
+        response = self._create_obj_dialog.run()
+
+        if response == ResponseType.OK:
+            obj = self._obj_store.make_object(self._create_obj_dialog.name,
+                                          self._create_obj_dialog.points,
+                                          self._create_obj_dialog.color)
+        self._create_obj_dialog.hide()
+
+
+class CreateObjectDialog:
     def __init__(self, dialog, name_field, points_field, color_field,
-                 object_factory, wml_interpreter):
+                 obj_store, wml_interpreter):
         self._dialog = dialog
         self._name_field = name_field
         self._points_field = points_field
         self._color_field = color_field
-        self._object_factory = object_factory
+        self._obj_store = obj_store
         self._wml_interpreter = wml_interpreter
         self.handlers = {
             "on_create_object_ok": self._on_ok,
@@ -44,7 +65,7 @@ class CreateObjectDialog():
 
     def run(self):
         """ dialog.run wrapper that automatically updates the name field. """
-        self._name_field.set_text(self._object_factory.default_object_name())
+        self._name_field.set_text(self._obj_store.default_object_name)
         return self._dialog.run()
 
     # Gtk signal handlers

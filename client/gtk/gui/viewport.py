@@ -75,33 +75,28 @@ class ViewPort:
             cr.line_to(10,10)
             cr.stroke()
 
-        def draw_point(points, color):
-            if len(points) != 0:
-                cr.move_to(*self.viewport_transform(points[0]))
-                r,g,b = color
-                cr.set_line_cap(LineCap.ROUND)
-                cr.close_path()
-                cr.set_source_rgb(r,g,b)
-                cr.stroke()
+        def draw_point(points):
+            cr.move_to(*self.viewport_transform(points[0]))
+            cr.set_line_cap(LineCap.ROUND)
+            cr.close_path()
+            cr.stroke()
 
-        def draw_line(points, color):
+        def draw_line(points):
+            # if len(points) != 0:
+            first_point = self.viewport_transform(points[0])
+            second_point = self.viewport_transform(points[1])
+            cr.move_to(*first_point)
+            cr.line_to(*second_point)
+            # cr.set_source_rgb(*color)
+            cr.stroke()
+
+        def draw_wireframe(points):
             if len(points) != 0:
                 first_point = self.viewport_transform(points[0])
-                second_point = self.viewport_transform(points[1])
-                r,g,b = color
-                cr.move_to(*first_point)
-                cr.line_to(*second_point)
-                cr.set_source_rgb(r,g,b)
-                cr.stroke()
-
-        def draw_wireframe(points, color):
-            if len(points) != 0:
-                first_point = self.viewport_transform(points[0])
-                r,g,b = color
                 cr.move_to(*first_point)
                 for point in map(self.viewport_transform, points):
                     cr.line_to(*point)
-                cr.set_source_rgb(r,g,b)
+                # cr.set_source_rgb(*color)
                 cr.stroke()
 
         def draw_placeholder():
@@ -126,10 +121,8 @@ class ViewPort:
         if self._window_manager.has_active_window:
             for obj in self._display_file.values():
                 clipped_points = self._window_manager.clip(obj.points, obj.type, obj.polygon)
-                # COLOR COULD BE DEFINED BEFORE
-                color = obj.color
+                cr.set_source_rgb(*obj.color)
                 if clipped_points is not None:
-                    obj_t2func[obj.type.value](clipped_points, color)
-
+                    obj_t2func[obj.type.value](clipped_points)
         else:
             draw_placeholder()

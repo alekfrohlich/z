@@ -9,12 +9,14 @@ class ObjectType(Enum):
     POINT = 1
     LINE = 2
     WIREFRAME = 3
+    POLYGON = 4
 
     def __str__(self):
         pretty = {
             ObjectType.POINT.value: "Point",
             ObjectType.LINE.value: "Line",
             ObjectType.WIREFRAME.value: "Wireframe",
+            ObjectType.WIREFRAME.value: "Polygon",
         }
         return pretty[self.value]
 

@@ -6,7 +6,7 @@
 from abc import ABCMeta, abstractmethod
 
 
-class ObjectFactory(object):
+class ObjectStore(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
@@ -15,5 +15,8 @@ class ObjectFactory(object):
     @abstractmethod
     def remove_object(self, name): raise NotImplementedError
 
-    @abstractmethod
-    def default_object_name(self, name, points): raise NotImplementedError
+    # @abstractmethod
+    # def default_object_name(self, name, points): raise NotImplementedError
+
+    # @abstractmethod
+    # def selected_object(self): raise NotImplementedError
