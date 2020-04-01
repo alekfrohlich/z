@@ -5,7 +5,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository.Gtk import main_iteration_do
 from gi.repository.Gtk import Builder
 
-from client.window_manager import WindowManager
+# from client.window_manager import WindowManager
 
 from client.gtk.executor import GtkExecutor
 from client.gtk.object_store import GtkObjectStore
@@ -25,17 +25,14 @@ class GtkClient:
         self._builder = Builder()
         self._builder.add_from_file("client/gtk/glade/gtk_client.glade")
 
-        window_manager = WindowManager()
-        obj_store = GtkObjectStore(
-            self._builder.get_object("object_list_store"),
-            window_manager)
+        obj_store = GtkObjectStore()
         obj_view = ObjectView(obj_store, self._builder.get_object("object_list"))
 
-        viewport = Viewport(self._builder.get_object("viewport_drawing_area"), obj_store, window_manager)
+        viewport = Viewport(self._builder.get_object("viewport_drawing_area"), obj_store)
 
         executor = GtkExecutor(obj_store, viewport)
 
-        wml_interpreter = WML_Interpreter(obj_store, viewport)
+        wml_interpreter = WML_Interpreter(executor, viewport)
 
         console = Console(self._builder.get_object("console_text_view"), wml_interpreter)
 

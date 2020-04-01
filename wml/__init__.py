@@ -99,7 +99,7 @@ class WML_Interpreter:
     def _remove(self, match):
         """ Prints info. """
         name = match.group("name")
-        self._executor.remove_object(name)
+        self._executor.remove(name)
 
     @Viewport.needs_redraw
     def _translate(self, match):

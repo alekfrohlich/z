@@ -4,6 +4,7 @@
 from cairo import Context, LineCap, CONTENT_COLOR
 
 from util.log import Logger, LogLevel
+from client.clipping import clip
 
 
 class Viewport:
@@ -12,11 +13,10 @@ class Viewport:
     BLACK = (0, 0, 0)
     WHITE = (1, 1, 1)
 
-    def __init__(self, drawing_area, obj_store, window_manager, resolution=(500, 500)):
+    def __init__(self, drawing_area, obj_store, resolution=(500, 500)):
         self._drawing_area = drawing_area
         self._obj_store = obj_store
         self._surface = None
-        self._window_manager = window_manager
         self._resolution = resolution
         self._drawing_area.set_size_request(self._resolution[0]+20, self._resolution[1]+20)
         self.handlers = {
@@ -91,7 +91,7 @@ class Viewport:
             cr.stroke()
 
         def draw_wireframe(points):
-            if len(points) != 0:
+            # if len(points) != 0:
                 first_point = self.viewport_transform(points[0])
                 cr.move_to(*first_point)
                 for point in map(self.viewport_transform, points):
@@ -118,9 +118,11 @@ class Viewport:
 
         draw_clip_region()
 
-        if self._window_manager.has_active_window:
+        display_file = self._obj_store.display_file
+        if display_file is not None:
             for obj in self._obj_store.display_file:
-                clipped_points = self._window_manager.clip(obj.points, obj.type, obj.polygon)
+                # TEMP: Viewport should not have access to window manager.
+                clipped_points = clip(self._obj_store._wm.to_window_coordinates(obj.points), obj.type, obj.polygon)
                 cr.set_source_rgb(*obj.color)
                 if clipped_points is not None:
                     obj_t2func[obj.type.value](clipped_points)

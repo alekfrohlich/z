@@ -15,10 +15,9 @@ OBJ_NAME = 1
 OBJ_TYPE = 2
 
 class GtkObjectStore(ObjectStore, ListStore):
-    def __init__(self, store, window_manager):
-        super().__init__(TYPE_PYOBJECT, TYPE_STRING, TYPE_STRING)
-        self._window_manager = window_manager
-        window_manager.set_window(self._make_window())
+    def __init__(self):
+        ListStore.__init__(self, TYPE_PYOBJECT, TYPE_STRING, TYPE_STRING)
+        ObjectStore.__init__(self, self._make_window())
 
     def __getitem__(self, name):
         for row in self:
@@ -33,7 +32,10 @@ class GtkObjectStore(ObjectStore, ListStore):
 
     @property
     def display_file(self):
-        return [row[OBJ_POINTER] for row in self]
+        if self._wm.has_active_window:
+            return [row[OBJ_POINTER] for row in self]
+        else:
+            return None
 
     @property
     def next_available_name(self):
@@ -57,7 +59,7 @@ class GtkObjectStore(ObjectStore, ListStore):
             if row[OBJ_NAME] == name:
                 self.remove(row.iter)
                 break
-        if self._window_manager.current_window_name == name:
-            self._window_manager.remove_window()
+        if self._wm.current_window_name == name:
+            self._wm.remove_window()
         Logger.log(LogLevel.INFO, name + " has been removed!")
 
