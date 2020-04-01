@@ -2,7 +2,6 @@
 from cairo import Context, LineCap, CONTENT_COLOR
 
 from util.log import Logger, LogLevel
-from client.clipping import clip
 
 
 class Viewport:

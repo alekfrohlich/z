@@ -26,7 +26,9 @@ class Console:
                 self._expression_text = ""
                 self.insert_at_cursor(">> " if initial_prompt else "\n>> ")
             self.apply_tag(
-                self._unaccessible_tag, self.get_start_iter(), self.get_end_iter())
+                self._unaccessible_tag,
+                self.get_start_iter(),
+                self.get_end_iter())
             self.move_mark(self.begin_line_mark, self.get_end_iter())
 
         @property
@@ -48,7 +50,6 @@ class Console:
         def line_text(self):
             return self.get_text(
                 self.line_iter, self.get_end_iter(), False)
-
 
     class LineHistory:
         def __init__(self):

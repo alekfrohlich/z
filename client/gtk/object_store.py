@@ -20,7 +20,8 @@ class GtkObjectStore(ObjectStore, ListStore):
     def __init__(self):
         ListStore.__init__(self, TYPE_PYOBJECT, TYPE_STRING, TYPE_STRING)
         window = Window()
-        self.append([CachedObject(window, clipped_points=None), window.name, str(window.type)])
+        self.append([CachedObject(
+            window, clipped_points=None), window.name, str(window.type)])
         Logger.log(LogLevel.INFO, window)
         ObjectStore.__init__(self, window)
 
@@ -31,7 +32,8 @@ class GtkObjectStore(ObjectStore, ListStore):
         raise KeyError(name + " does not name an object!")
 
     def _cached_points(self, obj):
-        # TEMP: Will become clip[type(obj)](self._wm.to_window_coordinates(obj.points))
+        # TEMP: The following will become:
+        # clip[type(obj)](self._wm.to_window_coordinates(obj.points))
         return clip[obj.type.value](self._wm.to_window_coordinates(obj.points))
 
     @staticmethod
@@ -41,7 +43,8 @@ class GtkObjectStore(ObjectStore, ListStore):
             if obj.name == cls._obj_store._wm.current_window_name:
                 for row in cls._obj_store:
                     iter_obj = row[OBJ_POINTER]
-                    iter_obj.clipped_points = cls._obj_store._cached_points(iter_obj)
+                    iter_obj.clipped_points = cls._obj_store._cached_points(
+                        iter_obj)
             else:
                 obj.clipped_points = cls._obj_store._cached_points(obj)
         return wrapper
@@ -49,7 +52,8 @@ class GtkObjectStore(ObjectStore, ListStore):
     @property
     def display_file(self):
         if self._wm.has_active_window:
-            return [row[OBJ_POINTER] for row in self if row[OBJ_POINTER].visible]
+            return [
+                row[OBJ_POINTER] for row in self if row[OBJ_POINTER].visible]
         else:
             return None
 
@@ -61,7 +65,8 @@ class GtkObjectStore(ObjectStore, ListStore):
         if name in [row[OBJ_NAME] for row in self]:
             raise KeyError(name + " already names an object!")
         obj = Object(name, points, color)
-        self.append([CachedObject(obj, self._cached_points(obj)), obj.name, str(obj.type)])
+        self.append([CachedObject(
+                obj, self._cached_points(obj)), obj.name, str(obj.type)])
         Logger.log(LogLevel.INFO, obj)
         return obj
 
@@ -74,4 +79,3 @@ class GtkObjectStore(ObjectStore, ListStore):
                 Logger.log(LogLevel.INFO, name + " has been removed!")
                 return
         raise KeyError(name + " does not name an object!")
-

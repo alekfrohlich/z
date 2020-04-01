@@ -14,6 +14,7 @@ def _warn_undefined_object(method):
             Logger.log(LogLevel.ERROR, repr(e))
     return wrapper
 
+
 class GtkExecutor:
     def __init__(self, obj_store, viewport):
         self._obj_store = obj_store
