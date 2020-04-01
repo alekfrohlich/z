@@ -1,4 +1,4 @@
-""" Graphical object: Point, Line or Wireframe. """
+""" """
 
 from enum import Enum
 
@@ -40,21 +40,17 @@ class Object:
 
     @property
     def center(self):
-        """ Center of the object. """
         x_points = [point[0] for point in self.points]
         y_points = [point[1] for point in self.points]
         return (np.average(x_points), np.average(y_points))
 
     def translate(self, dx, dy):
-        """ Translates object by (dx, dy). """
         translate_tr = np.array([[1, 0, 0],
                                  [0, 1, 0],
                                  [dx, dy, 1]])
         self.transform(translate_tr)
 
     def scale(self, sx, sy):
-        """ Scales object by sx in the x coordinate and sy in the
-            y coordinate. """
         x_center, y_center = self.center
 
         to_origin_tr = np.array([[1, 0, 0],
@@ -73,7 +69,6 @@ class Object:
         self.transform(concat_tr)
 
     def rotate(self, degrees, point=None):
-        """ Rotates object by 'degrees' in respect to a point. """
         if point is None:
             point = self.center
         x, y = point
@@ -93,15 +88,5 @@ class Object:
         self.transform(concat_tr)
 
     def transform(self, matrix_tr):
-        """ Applies transformation matrix to each of the object's
-            coordinates. """
         for i in range(len(self.points)):
             self.points[i] = self.points[i].dot(matrix_tr)
-
-    def size(self):
-        """ Sum of the distances between points of the object. """
-        size = 0
-        for i in range(len(self.points)-1):
-            size += ((self.points[i+1][0] - self.points[i][0])**2 +
-                     (self.points[i+1][1] - self.points[i][1])**2)**0.5
-        return size

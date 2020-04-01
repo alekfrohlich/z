@@ -1,4 +1,4 @@
-""" Console for inputing WML commands. """
+"""  """
 
 from gi.repository.Gdk import KEY_Return, KEY_Up, KEY_Down
 from gi.repository.Gtk import TextBuffer
@@ -18,24 +18,19 @@ class CommandBuffer(TextBuffer):
         self.insert_prompt(initial_prompt=True)
 
     def insert_command(self, command):
-        """ Override line with given command. """
         self.delete(self.get_command_iter(), self.get_end_iter())
         self.insert_at_cursor(command)
 
     def insert_prompt(self, initial_prompt=False):
-        """ Inserts new prompt while making previously typed text not editable
-            by user. """
         self.insert_at_cursor(">> " if initial_prompt else "\n>> ")
         self.apply_tag(
             self._unaccessible_tag, self.get_start_iter(), self.get_end_iter())
         self.move_mark(self.begin_command_mark, self.get_end_iter())
 
     def get_command_iter(self):
-        """ Get iter at begin_command_mark. """
         return self.get_iter_at_mark(self.begin_command_mark)
 
     def get_command_text(self):
-        """ Get last line of user-typed text.  """
         return self.get_text(
             self.get_command_iter(), self.get_end_iter(), False)
 
@@ -46,17 +41,14 @@ class CommandHistory:
         self._scroll_index = 0
 
     def add_command(self, command):
-        """ Add command to command history. """
         self._commands.insert(1, command)
 
     def down(self):
-        """ Attempts to scroll down the history. Returns command at index. """
         if self._scroll_index > 0:
             self._scroll_index -= 1
         return self._commands[self._scroll_index]
 
     def up(self):
-        """ Attempts to scroll up the history. Returns command at index. """
         if self._scroll_index < len(self._commands) - 1:
             self._scroll_index += 1
         return self._commands[self._scroll_index]
@@ -75,8 +67,6 @@ class Console:
     # Gtk signal handlers
 
     def _on_key_press(self, btn, event):
-        """ Signal handler for key presses that happen while the textview has
-            focus. """
         stop_propagation = False
         key = event.keyval
         if key == KEY_Return:

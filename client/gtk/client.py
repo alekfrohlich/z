@@ -1,4 +1,4 @@
-""" Gtk client uses Builder with Glade to generate a GUI. """
+""""""
 
 import gi
 gi.require_version('Gtk', '3.0')

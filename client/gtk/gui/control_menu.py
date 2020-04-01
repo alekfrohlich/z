@@ -32,27 +32,19 @@ class ControlMenu:
 
     @property
     def degrees(self):
-        """ Degrees entry under rotation menu. Used for specifying the rotation
-            amount. """
         return float(self._degrees_entry.get_text())
 
     @property
     def point(self):
-        """ Point entry under the rotation menu. Used for specifying arbitrary
-            reference of rotation. """
         p = self._point_entry.get_text().split(",")
         return (float(p[0]), float(p[1]))
 
     @property
     def step(self):
-        """ Step entry under the window menu. Used for specifying the x-y
-            offset/scale factor for translating/scaling objects and
-            the window. """
         return int(self._step_entry.get_text())
 
     @property
     def rotation_strategy(self):
-        """ Selects the active radio button from the rotation menu. """
         group = self._rotation_radio.get_group()
         for radio in group:
             if radio.get_active():
@@ -61,24 +53,17 @@ class ControlMenu:
     # Gtk signal handlers
 
     def _on_translate(self, direction):
-        """ Translate the selected object by the offset specified in the
-            control menu. If there is no such object, translates the window
-            instead. """
         if self._obj_view.selected_object is not None:
             dx, dy = direction.value
             self._executor.translate(
                 self._obj_view.selected_object, dx * self.step, dy * self.step)
 
     def _on_scale(self, expand):
-        """ Scales the selected object by the factor specified in the control
-            menu. """
         if self._obj_view.selected_object is not None:
             factor = (1 + self.step/100) ** (1 if expand else -1)
             self._executor.scale(self._obj_view.selected_object, factor)
 
     def _on_rotate(self, axis):
-        """ Rotates the selected object in respect to the given point
-            by the amount specified in the control menu. """
         # axis is not used (yet!)
         selected = self._obj_view.selected_object
         if selected is not None:

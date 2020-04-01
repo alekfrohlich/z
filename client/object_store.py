@@ -1,17 +1,11 @@
-""" The ObjectStore type hierarchy is reponsible for abstracting how objects
-    are stored. """
 
 from abc import ABCMeta, abstractmethod
 
 
 class ObjectStore(object):
     __metaclass__ = ABCMeta
-    """Base class that provides the standard interface for accessing objects."""
 
     class WindowManager:
-        """ The WindowManager keeps track of which object, if any, currently
-            represents the window. Also helps changing coordinates systems
-            from World to Window. """
         def __init__(self, window=None):
             self._window = window
 

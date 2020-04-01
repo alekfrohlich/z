@@ -1,6 +1,5 @@
 """ """
 
-# from gobject import TYPE_PYOBJECT, TYPE_STRING
 from gi.repository.GObject import TYPE_PYOBJECT, TYPE_STRING
 from gi.repository.Gtk import ListStore
 
@@ -20,19 +19,16 @@ OBJ_TYPE = 2
 class GtkObjectStore(ObjectStore, ListStore):
     def __init__(self):
         ListStore.__init__(self, TYPE_PYOBJECT, TYPE_STRING, TYPE_STRING)
-        ObjectStore.__init__(self, self._make_window())
+        window = Window()
+        self.append([CachedObject(window, clipped_points=None), window.name, str(window.type)])
+        Logger.log(LogLevel.INFO, window)
+        ObjectStore.__init__(self, window)
 
     def __getitem__(self, name):
         for row in self:
             if row[OBJ_NAME] == name:
                 return row[OBJ_POINTER]
         raise KeyError(name + " does not name an object!")
-
-    def _make_window(self):
-        obj = Window()
-        self.append([CachedObject(obj, clipped_points=None), obj.name, str(obj.type)])
-        Logger.log(LogLevel.INFO, obj)
-        return obj
 
     def _cached_points(self, obj):
         # TEMP: Will become clip[type(obj)](self._wm.to_window_coordinates(obj.points))
@@ -59,13 +55,9 @@ class GtkObjectStore(ObjectStore, ListStore):
 
     @property
     def next_available_name(self):
-        """ Default name for anonymous objects. """
         return "object{}".format(len(self))
 
     def make_object(self, name, points, color):
-        """ Creates new object and adds it to the world. The returned object is
-            not owned by the caller, so weird things will happen if it is
-            modified. """
         if name in [row[OBJ_NAME] for row in self]:
             raise KeyError(name + " already names an object!")
         obj = Object(name, points, color)
@@ -74,7 +66,6 @@ class GtkObjectStore(ObjectStore, ListStore):
         return obj
 
     def remove_object(self, name):
-        """ Removes object from the world. """
         for row in self:
             if row[OBJ_NAME] == name:
                 self.remove(row.iter)

@@ -54,7 +54,6 @@ class WML_Interpreter:
         }
 
     def points_as_list(self, string):
-        """ Extract list of points (numpy arrays) from string. """
         return [
             np.array((float(point[0]), float(point[1]), 1))
             for point in map(lambda p: p.split(","),
@@ -65,8 +64,6 @@ class WML_Interpreter:
         return (float(lis[0]), float(lis[1]), float(lis[2]))
 
     def run_command(self, string):
-        """ Runs command based on python re patterns. Thus, there is almost
-            no error recovery. """
         for pattern in self.executors.keys():
             match = pattern.match(string)
             if match:
@@ -75,8 +72,6 @@ class WML_Interpreter:
         Logger.log(LogLevel.WARN, "Invalid command!")
 
     def validate_object(self, name, points):
-        """ Throw RuntimeError if either list of points or the chosen name is
-            is badly formatted. Also checks if the name is already in use. """
         if not NAME_PATTERN.match(name):
             raise RuntimeError("Invalid name!")
 
@@ -85,7 +80,6 @@ class WML_Interpreter:
 
     @Viewport.needs_redraw
     def _add(self, match):
-        """ Adds object to the world. """
         name = match.group("name")
         points = match.group("points")
         try:
@@ -97,13 +91,11 @@ class WML_Interpreter:
 
     @Viewport.needs_redraw
     def _remove(self, match):
-        """ Prints info. """
         name = match.group("name")
         self._executor.remove(name)
 
     @Viewport.needs_redraw
     def _translate(self, match):
-        """ Translates named object. """
         name = match.group("name")
         dx = float(match.group("dx"))
         dy = float(match.group("dy"))
@@ -111,7 +103,6 @@ class WML_Interpreter:
 
     @Viewport.needs_redraw
     def _scale(self, match):
-        """ Scales named object. """
         name = match.group("name")
         dx = float(match.group("sx"))
         dy = float(match.group("sy"))
@@ -119,7 +110,6 @@ class WML_Interpreter:
 
     @Viewport.needs_redraw
     def _rotate(self, match):
-        """ Rotates named object. """
         name = match.group("name")
         rads = np.deg2rad(float(match.group("degrees")))
         x = float(match.group("x"))
