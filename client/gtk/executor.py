@@ -23,12 +23,12 @@ class GtkExecutor:
 
     @Viewport.needs_redraw
     def translate(self, selected, dx, dy):
-        self._obj_store._display_file[selected].translate(dx, dy)
+        self._obj_store[selected].translate(dx, dy)
 
     @Viewport.needs_redraw
     def scale(self, selected, factor):
-        self._obj_store._display_file[selected].scale(factor, factor)
+        self._obj_store[selected].scale(factor, factor)
 
     @Viewport.needs_redraw
     def rotate(self, selected, rads, point):
-        self._obj_store._display_file[selected].rotate(rads, point)
+        self._obj_store[selected].rotate(rads, point)
