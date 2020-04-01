@@ -7,6 +7,12 @@ import numpy as np
 from util.log import Logger, LogLevel
 from client.gtk.gui.viewport import Viewport
 
+
+# NOTE: When implementing the WML Interpreter make sure that the object
+#       namespace is disctinct from the variable namespace, i.e., primitives,
+#       which are class methods, should be responsible for doing the look-up.
+
+
 name = r"[a-zA-Z]+[a-zA-Z0-9_]*"
 floating = r"-?\d+.?\d*"
 points = r"({0},{0};)*{0},{0}".format(floating)

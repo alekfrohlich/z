@@ -4,6 +4,10 @@ from client.clipping.cohen_sutherland import cohen_sutherland
 from client.clipping.sutherland_hodgeman import sutherHodge
 
 
+# TODO: Move clipping away from WindowManager.
+# TODO: Provide ways through the GUI for the user to set a new window.
+
+
 class WindowManager:
     def __init__(self, window=None):
         self._window = window

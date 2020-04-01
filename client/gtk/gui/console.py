@@ -3,7 +3,10 @@
 from gi.repository.Gdk import KEY_Return, KEY_Up, KEY_Down
 from gi.repository.Gtk import TextBuffer
 
-# @TODO: ExpressionBuffer, LineHistory, Console
+# TODO: Rename classes to: ExpressionBuffer; LineHistory; Console.
+# TODO: Accept line breaks ('\') and send resulting (possibly multi-line)
+#       expressions.
+
 class CommandBuffer(TextBuffer):
     def __init__(self):
         super().__init__()

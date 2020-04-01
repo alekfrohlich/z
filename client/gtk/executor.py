@@ -2,7 +2,10 @@
 
 from client.gtk.gui.viewport import Viewport
 
-# @TODO: add error recovery for other semantic actions
+
+# TODO: Handle KeyError
+
+
 class GtkExecutor:
     def __init__(self, obj_store, viewport):
         self._obj_store = obj_store

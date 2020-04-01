@@ -5,6 +5,17 @@
 from client.gtk.client import GtkClient
 
 
+# TODO: PEP8
+# IDEA: Dependency injection of clipping/drawing algortihms so that objects
+#       clip/draw themselves.
+# IDEA: Remote Object Manipulation Protocol (ROMP), toy protocol for simple
+#       demonstrations. The primivites provided by executor (add, remove, ...)
+#       could push commands to a network buffer which could then be forwarded
+#       in the main loop.
+# IDEA: ANImation Transfer Protocol (ANITP), toy protocol for sharing WML-based
+#       animations. Could be stateless and make use of a push-pop graphic frame
+#       scheme to avoid conflicts between client and animation.
+
 if __name__ == "__main__":
     gtk_client = GtkClient()
     gtk_client.run()

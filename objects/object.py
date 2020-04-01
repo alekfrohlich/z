@@ -5,6 +5,10 @@ from enum import Enum
 import numpy as np
 
 
+# TODO: Distinguish between different object types using a type hierarchy
+#       instead of an Enum.
+
+
 class ObjectType(Enum):
     POINT = 1
     LINE = 2

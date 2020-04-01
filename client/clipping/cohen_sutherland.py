@@ -1,5 +1,7 @@
 import numpy as np
 
+# TODO: Unify all clipping algorithms under a clipping.py module.
+
 def cohen_sutherland(points):
     # print("============================")
     # print(points)

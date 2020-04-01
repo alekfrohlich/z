@@ -27,6 +27,10 @@ class MenuBar:
 
 
 class CreateObjectDialog:
+    # QUESTION: Should CreateObjectDialog parse name and points by itself?
+    #           Remember that NAME_PATTERN will appear in the interpreter as
+    #           well.
+
     def __init__(self, dialog, name_field, points_field, color_field,
                  obj_store, wml_interpreter):
         self._dialog = dialog
