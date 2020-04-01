@@ -123,11 +123,10 @@ class Viewport:
         if display_file is not None:
             for obj in self._obj_store.display_file:
                 # TEMP: Viewport should not have access to window manager.
-                clipped_points = clip(
-                    self._obj_store._wm.to_window_coordinates(
-                        obj.points), obj.type, obj.polygon)
+                # clipped_points = clip(
+                #     self._obj_store._wm.to_window_coordinates(
+                #         obj.points), obj.type, obj.polygon)
                 cr.set_source_rgb(*obj.color)
-                if clipped_points is not None:
-                    obj_t2func[obj.type.value](clipped_points)
+                obj_t2func[obj.type.value](obj.clipped_points)
         else:
             draw_placeholder()

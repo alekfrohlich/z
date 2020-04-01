@@ -1,1 +1,1 @@
-""" Components of the user interface. """
+"""Components of the user interface."""

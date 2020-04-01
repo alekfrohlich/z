@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from util import AxisType, DirectionType
+from util import Axis, Direction
 
 
 class ControlMenu:
@@ -17,16 +17,15 @@ class ControlMenu:
         self._rotation_radio = rotation_radio
 
         self.handlers = {
-            "on_up_button": lambda _: self._on_translate(DirectionType.UP),
-            "on_left_button": lambda _: self._on_translate(DirectionType.LEFT),
-            "on_right_button": lambda _: self._on_translate(
-                DirectionType.RIGHT),
-            "on_down_button": lambda _: self._on_translate(DirectionType.DOWN),
+            "on_up_button": lambda _: self._on_translate(Direction.UP),
+            "on_left_button": lambda _: self._on_translate(Direction.LEFT),
+            "on_right_button": lambda _: self._on_translate(Direction.RIGHT),
+            "on_down_button": lambda _: self._on_translate(Direction.DOWN),
             "on_plus_button": lambda _: self._on_scale(expand=True),
             "on_minus_button": lambda _: self._on_scale(expand=False),
-            "on_x_button": lambda _: self._on_rotate(axis=AxisType.X),
-            "on_y_button": lambda _: self._on_rotate(axis=AxisType.Y),
-            "on_z_button": lambda _: self._on_rotate(axis=AxisType.Z),
+            "on_x_button": lambda _: self._on_rotate(axis=Axis.X),
+            "on_y_button": lambda _: self._on_rotate(axis=Axis.Y),
+            "on_z_button": lambda _: self._on_rotate(axis=Axis.Z),
         }
 
     # Attributes

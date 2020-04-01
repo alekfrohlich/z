@@ -1,29 +1,12 @@
 import numpy as np
 
 
-def clip(points, obj_type, polygon):
-    def clip_point(points):
-        x, y, _ = points[0]
-        if x > 1 or x < -1 or y > 1 or y < -1:
-            return None
-        else:
-            return points
-
-    def clip_line(points):
-        return cohen_sutherland(points)
-
-    def clip_wireframe(points):
-        if polygon:
-            return sutherHodge(points)
-        else:
-            return points
-
-    obj_t2func = {
-        1: clip_point,
-        2: clip_line,
-        3: clip_wireframe,
-    }
-    return obj_t2func[obj_type.value](points)
+def clip_point(points):
+    x, y, _ = points[0]
+    if x > 1 or x < -1 or y > 1 or y < -1:
+        return None
+    else:
+        return points
 
 def cohen_sutherland(points):
     """ Cohen-Sutherland line clipping algorithm based on a normalized
@@ -594,3 +577,11 @@ def sutherHodge(points):
 
 #     print(npo)
 #     return (npo[0], npo[1])
+
+
+clip = {
+    1: clip_point,
+    2: cohen_sutherland,
+    3: cohen_sutherland,
+    4: sutherHodge
+}

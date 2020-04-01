@@ -1,18 +1,17 @@
-""" The ObjectFactory hierarchy enables the instantiation of the class Object
-    without it beeing forced to do implementation-specific bookkeeping: i.e.,
-    an Object should not need to know that it's creation has been logged or
-    that the newly created object's name needs to appear in a widget. """
+""" The ObjectStore type hierarchy is reponsible for abstracting how objects
+    are stored. """
 
 from abc import ABCMeta, abstractmethod
 
 
 class ObjectStore(object):
     __metaclass__ = ABCMeta
-
-    def __init__(self, window):
-        self._wm = ObjectStore.WindowManager(window)
+    """Base class that provides the standard interface for accessing objects."""
 
     class WindowManager:
+        """ The WindowManager keeps track of which object, if any, currently
+            represents the window. Also helps changing coordinates systems
+            from World to Window. """
         def __init__(self, window=None):
             self._window = window
 
@@ -32,6 +31,12 @@ class ObjectStore(object):
 
         def to_window_coordinates(self, points):
             return self._window.window_transform(points)
+
+    def __init__(self, window):
+        self._wm = ObjectStore.WindowManager(window)
+
+    @abstractmethod
+    def __getitem__(self, key): raise NotImplementedError
 
     @abstractmethod
     def make_object(self, name, points): raise NotImplementedError
