@@ -47,7 +47,7 @@ class Viewport:
         win = wid.get_window()
         width = wid.get_allocated_width()
         height = wid.get_allocated_height()
-        # self._resolution = (width, height) Dont resize viewport!
+        # self._resolution = (width, height)
         self._surface = win.create_similar_surface(
             CONTENT_COLOR,
             width,

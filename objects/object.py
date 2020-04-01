@@ -36,7 +36,7 @@ class Object:
 
     def __str__(self):
         return self.name + "(" + str(self.type) + ") at " + str(self.points) \
-            + " with size = " + str(self.size())
+            + " with color = " + str(self.color)
 
     @property
     def center(self):
