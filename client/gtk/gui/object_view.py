@@ -8,6 +8,7 @@ class ObjectView:
         """ Currently selected object in TreeView. """
         tree_model, tree_iter = self._treeview.get_selection().get_selected()
         if tree_iter is not None:
-            return tree_model.get_value(tree_iter, 1) # TEMP: Use ObjectStore enum instead.
+            # TEMP: Use ObjectStore enum instead.
+            return tree_model.get_value(tree_iter, 1)
         else:
             return None

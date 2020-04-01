@@ -20,9 +20,9 @@ class MenuBar:
         response = self._create_obj_dialog.run()
 
         if response == ResponseType.OK:
-            obj = self._executor.add(self._create_obj_dialog.name,
-                                          self._create_obj_dialog.points,
-                                          self._create_obj_dialog.color)
+            self._executor.add(self._create_obj_dialog.name,
+                               self._create_obj_dialog.points,
+                               self._create_obj_dialog.color)
         self._create_obj_dialog.hide()
 
 

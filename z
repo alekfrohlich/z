@@ -6,8 +6,6 @@ from client.gtk.client import GtkClient
 
 
 # TODO: PEP8
-# IDEA: Dependency injection of clipping/drawing algortihms so that objects
-#       clip/draw themselves.
 # IDEA: Remote Object Manipulation Protocol (ROMP), toy protocol for simple
 #       demonstrations. The primivites provided by executor (add, remove, ...)
 #       could push commands to a network buffer which could then be forwarded

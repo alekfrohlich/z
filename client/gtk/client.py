@@ -5,8 +5,6 @@ gi.require_version('Gtk', '3.0')
 from gi.repository.Gtk import main_iteration_do
 from gi.repository.Gtk import Builder
 
-# from client.window_manager import WindowManager
-
 from client.gtk.executor import GtkExecutor
 from client.gtk.object_store import GtkObjectStore
 
@@ -26,15 +24,17 @@ class GtkClient:
         self._builder.add_from_file("client/gtk/glade/gtk_client.glade")
 
         obj_store = GtkObjectStore()
-        obj_view = ObjectView(obj_store, self._builder.get_object("object_list"))
+        obj_view = ObjectView(
+            obj_store, self._builder.get_object("object_list"))
 
-        viewport = Viewport(self._builder.get_object("viewport_drawing_area"), obj_store)
+        viewport = Viewport(
+            self._builder.get_object("viewport_drawing_area"), obj_store)
 
         executor = GtkExecutor(obj_store, viewport)
 
         wml_interpreter = WML_Interpreter(executor, viewport)
 
-        console = Console(self._builder.get_object("console_text_view"), wml_interpreter)
+        Console(self._builder.get_object("console_text_view"), wml_interpreter)
 
         create_obj_dialog = CreateObjectDialog(
             self._builder.get_object("create_object_dialog"),
@@ -46,11 +46,12 @@ class GtkClient:
         menu_bar = MenuBar(create_obj_dialog, executor)
 
         control_menu = ControlMenu(executor,
-                                obj_view,
-                                self._builder.get_object("degrees_entry"),
-                                self._builder.get_object("point_entry"),
-                                self._builder.get_object("step_entry"),
-                                self._builder.get_object("center_of_world_radio_button"))
+                                   obj_view,
+                                   self._builder.get_object("degrees_entry"),
+                                   self._builder.get_object("point_entry"),
+                                   self._builder.get_object("step_entry"),
+                                   self._builder.get_object(
+                                       "center_of_world_radio_button"))
 
         # Handlers
         handlers = {

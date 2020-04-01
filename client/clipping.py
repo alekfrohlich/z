@@ -1,6 +1,5 @@
 import numpy as np
 
-# TODO: Unify all clipping algorithms under a clipping.py module.
 
 def clip(points, obj_type, polygon):
     def clip_point(points):
@@ -27,8 +26,6 @@ def clip(points, obj_type, polygon):
     return obj_t2func[obj_type.value](points)
 
 def cohen_sutherland(points):
-    # print("============================")
-    # print(points)
     """ Cohen-Sutherland line clipping algorithm based on a normalized
         coordinate system. """
     def region_code(x, y):
@@ -597,4 +594,3 @@ def sutherHodge(points):
 
 #     print(npo)
 #     return (npo[0], npo[1])
-

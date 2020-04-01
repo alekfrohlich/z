@@ -9,10 +9,11 @@ from objects.object import Object
 from objects.window import Window
 from client.object_store import ObjectStore
 
-
+# TEMP: Enum this.
 OBJ_POINTER = 0
 OBJ_NAME = 1
 OBJ_TYPE = 2
+
 
 class GtkObjectStore(ObjectStore, ListStore):
     def __init__(self):
@@ -62,4 +63,3 @@ class GtkObjectStore(ObjectStore, ListStore):
         if self._wm.current_window_name == name:
             self._wm.remove_window()
         Logger.log(LogLevel.INFO, name + " has been removed!")
-

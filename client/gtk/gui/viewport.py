@@ -18,7 +18,8 @@ class Viewport:
         self._obj_store = obj_store
         self._surface = None
         self._resolution = resolution
-        self._drawing_area.set_size_request(self._resolution[0]+20, self._resolution[1]+20)
+        self._drawing_area.set_size_request(
+            self._resolution[0] + 20, self._resolution[1] + 20)
         self.handlers = {
             "on_draw": self._on_draw,
             "on_configure": self._on_configure,
@@ -68,11 +69,11 @@ class Viewport:
     def _on_draw(self, wid, cr):
         """ Redraws the screen from the surface. """
         def draw_clip_region():
-            cr.move_to(10,10)
+            cr.move_to(10, 10)
             cr.line_to(self._resolution[0] + 10, 10)
             cr.line_to(self._resolution[0] + 10, self._resolution[1] + 10)
             cr.line_to(10, self._resolution[1] + 10)
-            cr.line_to(10,10)
+            cr.line_to(10, 10)
             cr.stroke()
 
         def draw_point(points):
@@ -92,15 +93,15 @@ class Viewport:
 
         def draw_wireframe(points):
             # if len(points) != 0:
-                first_point = self.viewport_transform(points[0])
-                cr.move_to(*first_point)
-                for point in map(self.viewport_transform, points):
-                    cr.line_to(*point)
-                # cr.set_source_rgb(*color)
-                cr.stroke()
+            first_point = self.viewport_transform(points[0])
+            cr.move_to(*first_point)
+            for point in map(self.viewport_transform, points):
+                cr.line_to(*point)
+            # cr.set_source_rgb(*color)
+            cr.stroke()
 
         def draw_placeholder():
-            cr.move_to(60,260)
+            cr.move_to(60, 260)
             cr.set_font_size(30.0)
             cr.show_text("You are without a window!")
 
@@ -122,7 +123,9 @@ class Viewport:
         if display_file is not None:
             for obj in self._obj_store.display_file:
                 # TEMP: Viewport should not have access to window manager.
-                clipped_points = clip(self._obj_store._wm.to_window_coordinates(obj.points), obj.type, obj.polygon)
+                clipped_points = clip(
+                    self._obj_store._wm.to_window_coordinates(
+                        obj.points), obj.type, obj.polygon)
                 cr.set_source_rgb(*obj.color)
                 if clipped_points is not None:
                     obj_t2func[obj.type.value](clipped_points)

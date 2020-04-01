@@ -1,5 +1,7 @@
 """"""
 
+from util.log import Logger, LogLevel
+
 from client.gtk.gui.viewport import Viewport
 
 
@@ -21,7 +23,7 @@ class GtkExecutor:
     def remove(self, name):
         try:
             self._obj_store.remove_object(name)
-        except KeyError as e:
+        except KeyError:
             Logger.log(LogLevel.ERROR, name + " does not name an object!")
 
     @Viewport.needs_redraw

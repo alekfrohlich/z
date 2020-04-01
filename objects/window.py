@@ -3,7 +3,7 @@
 import numpy as np
 
 from objects.object import Object
-from util.log import Logger, LogLevel
+
 
 class Window(Object):
     def __init__(self, name="window", points=[
@@ -29,8 +29,10 @@ class Window(Object):
                               [np.sin(-self.angle), np.cos(-self.angle), 0],
                               [0, 0, 1]])
 
-        vup = ((self.points[0][0] - self.points[3][0])**2 + (self.points[0][1] - self.points[3][1])**2)**0.5
-        vright = ((self.points[2][0] - self.points[3][0])**2 + (self.points[2][1] - self.points[3][1])**2)**0.5
+        vup = ((self.points[0][0] - self.points[3][0])**2 +
+               (self.points[0][1] - self.points[3][1])**2)**0.5
+        vright = ((self.points[2][0] - self.points[3][0])**2 +
+                  (self.points[2][1] - self.points[3][1])**2)**0.5
 
         scale_tr = np.array([[2/vup, 0, 0],
                              [0, 2/vright, 0],

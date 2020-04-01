@@ -1,14 +1,13 @@
 """ Main application window. """
 
-from gi.repository.Gtk import ResponseType
-
 import numpy as np
 
 from util import AxisType, DirectionType
 
+
 class ControlMenu:
-    def __init__(self, executor, obj_view, degrees_entry, point_entry, step_entry,
-                 rotation_radio):
+    def __init__(self, executor, obj_view, degrees_entry, point_entry,
+                 step_entry, rotation_radio):
         self._executor = executor
         self._obj_view = obj_view
 
@@ -68,7 +67,8 @@ class ControlMenu:
             instead. """
         if self._obj_view.selected_object is not None:
             dx, dy = direction.value
-            self._executor.translate(self._obj_view.selected_object, dx * self.step, dy * self.step)
+            self._executor.translate(
+                self._obj_view.selected_object, dx * self.step, dy * self.step)
 
     def _on_scale(self, expand):
         """ Scales the selected object by the factor specified in the control
@@ -85,7 +85,7 @@ class ControlMenu:
         if selected is not None:
             rads = np.deg2rad(self.degrees)
             if self.rotation_strategy == "world":
-                self._executor.rotate(selected, rads, (0,0))
+                self._executor.rotate(selected, rads, (0, 0))
             elif self.rotation_strategy == "object":
                 self._executor.rotate(selected, rads, None)
             else:

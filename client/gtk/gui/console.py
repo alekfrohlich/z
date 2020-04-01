@@ -7,6 +7,7 @@ from gi.repository.Gtk import TextBuffer
 # TODO: Accept line breaks ('\') and send resulting (possibly multi-line)
 #       expressions.
 
+
 class CommandBuffer(TextBuffer):
     def __init__(self):
         super().__init__()
@@ -25,8 +26,8 @@ class CommandBuffer(TextBuffer):
         """ Inserts new prompt while making previously typed text not editable
             by user. """
         self.insert_at_cursor(">> " if initial_prompt else "\n>> ")
-        self.apply_tag(self._unaccessible_tag, self.get_start_iter(),
-                                    self.get_end_iter())
+        self.apply_tag(
+            self._unaccessible_tag, self.get_start_iter(), self.get_end_iter())
         self.move_mark(self.begin_command_mark, self.get_end_iter())
 
     def get_command_iter(self):
@@ -35,8 +36,8 @@ class CommandBuffer(TextBuffer):
 
     def get_command_text(self):
         """ Get last line of user-typed text.  """
-        return self.get_text(self.get_command_iter(), self.get_end_iter(),
-            False)
+        return self.get_text(
+            self.get_command_iter(), self.get_end_iter(), False)
 
 
 class CommandHistory:
@@ -91,5 +92,6 @@ class Console:
             self._command_buff.insert_command(self._command_hist.down())
             stop_propagation = True
 
-        self._text_view.scroll_mark_onscreen(self._command_buff.begin_command_mark)
+        self._text_view.scroll_mark_onscreen(
+            self._command_buff.begin_command_mark)
         return stop_propagation

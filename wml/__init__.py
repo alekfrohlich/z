@@ -58,7 +58,7 @@ class WML_Interpreter:
         return [
             np.array((float(point[0]), float(point[1]), 1))
             for point in map(lambda p: p.split(","),
-                            string.split(";"))]
+                             string.split(";"))]
 
     def color_as_tuple(self, string):
         lis = re.split(r',', string)
