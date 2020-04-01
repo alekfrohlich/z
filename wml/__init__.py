@@ -63,7 +63,7 @@ class WML_Interpreter:
         lis = re.split(r',', string)
         return (float(lis[0]), float(lis[1]), float(lis[2]))
 
-    def run_command(self, string):
+    def interpret(self, string):
         for pattern in self.executors.keys():
             match = pattern.match(string)
             if match:

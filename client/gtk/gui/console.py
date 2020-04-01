@@ -3,9 +3,6 @@
 from gi.repository.Gdk import KEY_Return, KEY_Up, KEY_Down
 from gi.repository.Gtk import TextBuffer
 
-# TODO: Accept line breaks ('\') and send resulting (possibly multi-line)
-#       expressions.
-
 
 class Console:
     class ConsoleBuffer(TextBuffer):
@@ -18,21 +15,39 @@ class Console:
             self.insert_prompt(initial_prompt=True)
 
         def insert_line(self, line):
-            self.delete(self.get_line_iter(), self.get_end_iter())
+            self.delete(self.line_iter, self.get_end_iter())
             self.insert_at_cursor(line)
 
         def insert_prompt(self, initial_prompt=False):
-            self.insert_at_cursor(">> " if initial_prompt else "\n>> ")
+            if self.broken_line:
+                self._expression_text += self.line_text[:-1]
+                self.insert_at_cursor("\n.. ")
+            else:
+                self._expression_text = ""
+                self.insert_at_cursor(">> " if initial_prompt else "\n>> ")
             self.apply_tag(
                 self._unaccessible_tag, self.get_start_iter(), self.get_end_iter())
             self.move_mark(self.begin_line_mark, self.get_end_iter())
 
-        def get_line_iter(self):
+        @property
+        def broken_line(self):
+            if len(self.line_text) > 0:
+                return self.line_text[-1] == "\\"
+            else:
+                return False
+
+        @property
+        def expression_text(self):
+            return self._expression_text + self.line_text
+
+        @property
+        def line_iter(self):
             return self.get_iter_at_mark(self.begin_line_mark)
 
-        def get_line_text(self):
+        @property
+        def line_text(self):
             return self.get_text(
-                self.get_line_iter(), self.get_end_iter(), False)
+                self.line_iter, self.get_end_iter(), False)
 
 
     class LineHistory:
@@ -68,10 +83,11 @@ class Console:
         stop_propagation = False
         key = event.keyval
         if key == KEY_Return:
-            line = self._console_buff.get_line_text()
-            self._wml_interpreter.run_line(line)
+            if not self._console_buff.broken_line:
+                raw = self._console_buff.expression_text
+                self._wml_interpreter.interpret(raw)
+            self._line_hist.add_line(self._console_buff.line_text)
             self._console_buff.insert_prompt()
-            self._line_hist.add_line(line)
             stop_propagation = True
         elif key == KEY_Up:
             self._console_buff.insert_line(self._line_hist.up())
