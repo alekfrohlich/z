@@ -1,12 +1,13 @@
 """ """
 
-from . import object
 
-
-class CachedObject(object.Object):
+class CachedObject:
     def __init__(self, obj, clipped_points):
-        super().__init__(obj.name, obj.points, obj.color)
+        self._obj = obj
         self.clipped_points = clipped_points
+
+    def __getattr__(self, name):
+        return self._obj.__getattribute__(name)
 
     @property
     def visible(self):

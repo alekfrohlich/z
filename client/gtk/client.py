@@ -5,14 +5,14 @@ gi.require_version('Gtk', '3.0')
 from gi.repository.Gtk import main_iteration_do
 from gi.repository.Gtk import Builder
 
-from client.gtk.executor import GtkExecutor
-from client.gtk.object_store import GtkObjectStore
+from .executor import GtkExecutor
+from .object_store import GtkObjectStore
 
-from client.gtk.gui.console import Console
-from client.gtk.gui.control_menu import ControlMenu
-from client.gtk.gui.menu_bar import MenuBar, CreateObjectDialog
-from client.gtk.gui.object_view import ObjectView
-from client.gtk.gui.viewport import Viewport
+from .gui.console import Console
+from .gui.control_menu import ControlMenu
+from .gui.menu_bar import MenuBar, CreateObjectDialog
+from .gui.object_view import ObjectView
+from .gui.viewport import Viewport
 
 from wml import WML_Interpreter
 

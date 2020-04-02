@@ -2,8 +2,8 @@
 
 from util.log import Logger, LogLevel
 
-from client.gtk.object_store import GtkObjectStore
-from client.gtk.gui.viewport import Viewport
+from .object_store import GtkObjectStore
+from .gui.viewport import Viewport
 
 
 def _warn_undefined_object(method):

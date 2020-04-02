@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from objects.object import Object
+from .object import Object
 
 
 class Window(Object):
@@ -12,11 +12,6 @@ class Window(Object):
             np.array([500, 0, 1]),
             np.array([0, 0, 1])]):
         super().__init__("window", points, (1.0, 0.0, 0.0))
-        self.angle = 0
-
-    def rotate(self, degrees, point=None):
-        super().rotate(degrees, point)
-        self.angle = (self.angle + degrees) % 360
 
     def window_transform(self, points):
         x, y = self.center
