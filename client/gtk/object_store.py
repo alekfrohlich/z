@@ -5,7 +5,7 @@ from enum import Enum
 from gi.repository.GObject import TYPE_PYOBJECT, TYPE_STRING
 from gi.repository.Gtk import ListStore
 
-from util.log import Logger, LogLevel
+from util import Logger, LogLevel
 from objects.cached_object import CachedObject
 from objects.window import Window
 
@@ -25,8 +25,9 @@ class GtkObjectStore(ObjectStore, ListStore):
         window = Window()
         self.append([CachedObject(
             window, clipped_points=None), window.name, str(window.type)])
-        Logger.log(LogLevel.INFO, window)
         ObjectStore.__init__(self, window)
+        self["window"].clipped_points = self._cached_points(self["window"])
+        Logger.log(LogLevel.INFO, window)
 
     # Container interface
 

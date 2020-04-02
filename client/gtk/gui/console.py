@@ -1,11 +1,47 @@
-"""  """
+"""This module provides a console for interpreting WML expressions.
+
+Classes
+-------
+    Console
+    Console.ConsoleBuffer
+    Console.LineHistory
+
+See also
+--------
+    `Gtk.TextView`
+    `Gtk.TextBuffer`
+    `wml.interpreter`
+"""
 
 from gi.repository.Gdk import KEY_Return, KEY_Up, KEY_Down
 from gi.repository.Gtk import TextBuffer
 
 
 class Console:
+    """Text console class.
+
+    See also
+    --------
+        `Gdk.KEY_Return`
+        `Gdk.KEY_Up`
+        `Gdk.KEY_Down`
+
+    """
+
     class ConsoleBuffer(TextBuffer):
+        """Class for buffering user input lines.
+
+        The ConsoleBuffer class makes text previously typed by user
+        uneditable as well as handles line breaks.
+
+        See also
+        --------
+            `Gtk.TextIter`
+            `Gtk.TextMark`
+            `Gtk.TextTag`
+
+        """
+
         def __init__(self):
             super().__init__()
             self.begin_line_mark = self.create_mark(
@@ -15,10 +51,25 @@ class Console:
             self.insert_prompt(initial_prompt=True)
 
         def insert_line(self, line):
+            """Insert line at prompt.
+
+            See also
+            --------
+                `LineHistory.add_line`
+
+            """
             self.delete(self.line_iter, self.get_end_iter())
             self.insert_at_cursor(line)
 
         def insert_prompt(self, initial_prompt=False):
+            r"""Insert command prompt.
+
+            Display line continuation prompt and save current line if it's
+            ended by a '\'. If it is not, display regular prompt and
+            discards stored lines. Also, always moves `begin_line_mark` to
+            the start of the line.
+
+            """
             if self.broken_line:
                 self._expression_text += self.line_text[:-1]
                 self.insert_at_cursor("\n.. ")
@@ -33,6 +84,7 @@ class Console:
 
         @property
         def broken_line(self):
+            r"""bool : Wether the last line ends in '\'."""
             if len(self.line_text) > 0:
                 return self.line_text[-1] == "\\"
             else:
@@ -40,36 +92,52 @@ class Console:
 
         @property
         def expression_text(self):
+            """str : The text accumulated from `insert_prompt`."""
             return self._expression_text + self.line_text
 
         @property
         def line_iter(self):
+            """Gtk.TextIter : iter at the begining of the currentline."""
             return self.get_iter_at_mark(self.begin_line_mark)
 
         @property
         def line_text(self):
+            """str : Current line's text."""
             return self.get_text(
                 self.line_iter, self.get_end_iter(), False)
 
     class LineHistory:
+        """Line history; Up and Down arrows to navigate history."""
+
         def __init__(self):
             self._lines = [""]
             self._scroll_index = 0
 
         def add_line(self, line):
+            """Add line at the beginning of history."""
             self._lines.insert(1, line)
 
         def down(self):
+            """Move `scroll_index` down and return pointed line."""
             if self._scroll_index > 0:
                 self._scroll_index -= 1
             return self._lines[self._scroll_index]
 
         def up(self):
+            """Move `scroll_index` up and return pointed line."""
             if self._scroll_index < len(self._lines) - 1:
                 self._scroll_index += 1
             return self._lines[self._scroll_index]
 
     def __init__(self, text_view, wml_interpreter):
+        """Console constructor.
+
+        Parameters
+        ----------
+            text_view : Gtk.TextView
+            wml_interpreter : wml.Interpreter
+
+        """
         self._console_buff = Console.ConsoleBuffer()
         self._line_hist = Console.LineHistory()
         self._text_view = text_view
@@ -78,9 +146,28 @@ class Console:
         self._text_view.set_buffer(self._console_buff)
         self._text_view.connect("key-press-event", self._on_key_press)
 
-    # Gtk signal handlers
-
     def _on_key_press(self, btn, event):
+        """Handle key-press-event from `_text_view`.
+
+        Capture new line, up and down key strokes. New line triggers
+        expression evaluation by the interpreter while up and down
+        update current line's text with that from `line_hist`.
+
+        Signals
+        -------
+            Gtk.Widget.signals.key_press_event
+
+        Notes
+        -----
+            Gtk keeps propagating signals until a handler returns True,
+            hence it's imperative that {Return, Up, Down} are intercepted
+            before being inserted.
+
+        See also
+        ----------
+        `Gtk.Widget.signals.key_press_event`
+
+        """
         stop_propagation = False
         key = event.keyval
         if key == KEY_Return:

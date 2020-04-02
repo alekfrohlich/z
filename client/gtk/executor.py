@@ -1,6 +1,6 @@
 """"""
 
-from util.log import Logger, LogLevel
+from util import Logger, LogLevel
 from objects.object import Object
 
 from .object_store import GtkObjectStore
@@ -12,7 +12,7 @@ def _warn_undefined_object(method):
         try:
             method(*args, **kwargs)
         except KeyError as e:
-            Logger.log(LogLevel.ERROR, repr(e))
+            Logger.log(LogLevel.ERRO, repr(e))
     return wrapper
 
 

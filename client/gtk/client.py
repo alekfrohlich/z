@@ -8,11 +8,7 @@ from gi.repository.Gtk import Builder
 from .executor import GtkExecutor
 from .object_store import GtkObjectStore
 
-from .gui.console import Console
-from .gui.control_menu import ControlMenu
-from .gui.menu_bar import MenuBar, CreateObjectDialog
-from .gui.object_view import ObjectView
-from .gui.viewport import Viewport
+from .gui import (Console, ControlMenu, MenuBar, CreateObjectDialog, ObjectView, Viewport)
 
 from wml import WML_Interpreter
 

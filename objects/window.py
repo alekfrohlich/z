@@ -11,7 +11,7 @@ class Window(Object):
             np.array([500, 500, 1]),
             np.array([500, 0, 1]),
             np.array([0, 0, 1])]):
-        super().__init__("window", points, (1.0, 0.0, 0.0))
+        super().__init__("window", points, (1.0, 0.7, 0.7))
 
     def window_transform(self, points):
         x, y = self.center

@@ -4,7 +4,7 @@ import re
 
 import numpy as np
 
-from util.log import Logger, LogLevel
+from util import Logger, LogLevel
 from client.gtk.gui.viewport import Viewport
 
 
@@ -87,7 +87,7 @@ class WML_Interpreter:
             points = self.points_as_list(points)
             self._executor.add(name, points)
         except RuntimeError as error:
-            Logger.log(LogLevel.ERROR, error)
+            Logger.log(LogLevel.ERRO, error)
 
     @Viewport.needs_redraw
     def _remove(self, match):
