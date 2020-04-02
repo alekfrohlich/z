@@ -27,7 +27,8 @@ class Object:
         self.points = points
         self.color = color
         self.angle = 0
-        if np.array_equal(points[0], points[len(points)-1]) and len(points) != 1:
+        if (np.array_equal(points[0], points[len(points)-1]) and
+                len(points) != 1):
             self.type = ObjectType.POLYGON
         else:
             self.type = ObjectType(3 if len(points) > 3 else len(points))

@@ -57,7 +57,7 @@ class CreateObjectDialog:
         self._dialog.hide()
 
     def run(self):
-        self._name_field.set_text(self._obj_store.next_available_name)
+        self._name_field.set_text("object{}".format(len(self._obj_store)))
         return self._dialog.run()
 
     # Gtk signal handlers

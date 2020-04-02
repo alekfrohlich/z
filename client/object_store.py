@@ -30,7 +30,13 @@ class ObjectStore(object):
         self._wm = ObjectStore.WindowManager(window)
 
     @abstractmethod
-    def __getitem__(self, key): raise NotImplementedError
+    def __getitem__(self, name): raise NotImplementedError
+
+    @abstractmethod
+    def __setitem__(self, name, obj): raise NotImplementedError
+
+    @abstractmethod
+    def __delitem__(self, name): raise NotImplementedError
 
     @abstractmethod
     def make_object(self, name, points): raise NotImplementedError

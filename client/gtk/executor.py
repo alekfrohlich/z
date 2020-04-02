@@ -1,6 +1,7 @@
 """"""
 
 from util.log import Logger, LogLevel
+from objects.object import Object
 
 from .object_store import GtkObjectStore
 from .gui.viewport import Viewport
@@ -23,14 +24,12 @@ class GtkExecutor:
     @Viewport.needs_redraw
     @_warn_undefined_object
     def add(self, name, points, color=(0.0, 0.0, 0.0)):
-        if name == "":
-            name = self.next_available_name
-        self._obj_store.make_object(name, points, color)
+        self._obj_store[name] = Object(name, points, color)
 
     @Viewport.needs_redraw
     @_warn_undefined_object
     def remove(self, name):
-        self._obj_store.remove_object(name)
+        del self._obj_store[name]
 
     @Viewport.needs_redraw
     @_warn_undefined_object

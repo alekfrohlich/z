@@ -6,12 +6,12 @@ from gi.repository.GObject import TYPE_PYOBJECT, TYPE_STRING
 from gi.repository.Gtk import ListStore
 
 from util.log import Logger, LogLevel
-from objects.object import Object
 from objects.cached_object import CachedObject
 from objects.window import Window
 
 from ..clipping import clip
 from ..object_store import ObjectStore
+
 
 class Column(Enum):
     OBJ = 0
@@ -28,15 +28,33 @@ class GtkObjectStore(ObjectStore, ListStore):
         Logger.log(LogLevel.INFO, window)
         ObjectStore.__init__(self, window)
 
+    # Container interface
+
     def __getitem__(self, name):
         for row in self:
             if row[Column.NAME.value] == name:
                 return row[Column.OBJ.value]
         raise KeyError(name + " does not name an object!")
 
+    def __setitem__(self, name, obj):
+        if name in [row[Column.NAME.value] for row in self]:
+            raise KeyError(name + " already names an object!")
+        self.append([CachedObject(
+                obj, self._cached_points(obj)), obj.name, str(obj.type)])
+        Logger.log(LogLevel.INFO, "new object: " + str(obj))
+
+    def __delitem__(self, name):
+        for row in self:
+            if row[Column.NAME.value] == name:
+                self.remove(row.iter)
+                if self._wm.current_window_name == name:
+                    self._wm.remove_window()
+                Logger.log(LogLevel.INFO, name + " has been removed!")
+                return
+        raise KeyError(name + " does not name an object!")
+
     def _cached_points(self, obj):
-        x = self._wm.to_window_coordinates(obj.points)
-        return clip[obj.type.value](x)
+        return clip[obj.type.value](self._wm.to_window_coordinates(obj.points))
 
     @staticmethod
     def invalidates_cache(method):
@@ -54,30 +72,7 @@ class GtkObjectStore(ObjectStore, ListStore):
     @property
     def display_file(self):
         if self._wm.has_active_window:
-            return [
-                row[Column.OBJ.value] for row in self if row[Column.OBJ.value].visible]
+            return [row[Column.OBJ.value] for row in self
+                    if row[Column.OBJ.value].visible]
         else:
             return None
-
-    @property
-    def next_available_name(self):
-        return "object{}".format(len(self))
-
-    def make_object(self, name, points, color):
-        if name in [row[Column.NAME.value] for row in self]:
-            raise KeyError(name + " already names an object!")
-        obj = Object(name, points, color)
-        self.append([CachedObject(
-                obj, self._cached_points(obj)), obj.name, str(obj.type)])
-        Logger.log(LogLevel.INFO, obj)
-        return obj
-
-    def remove_object(self, name):
-        for row in self:
-            if row[Column.NAME.value] == name:
-                self.remove(row.iter)
-                if self._wm.current_window_name == name:
-                    self._wm.remove_window()
-                Logger.log(LogLevel.INFO, name + " has been removed!")
-                return
-        raise KeyError(name + " does not name an object!")
