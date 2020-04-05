@@ -63,7 +63,7 @@ class CreateObjectDialog:
     """
 
     def __init__(self, dialog, name_field, points_field, color_field,
-                 obj_store, wml_interpreter):
+                 obj_view, interpreter):
         """CreateObjectDialog constructor.
 
         Parameters
@@ -72,16 +72,16 @@ class CreateObjectDialog:
             name_field : Gtk.Entry
             points_field : Gtk.Entry
             color_field : Gtk.Entry
-            obj_store : ObjectStore
-            wml_interpreter : wml.Interpreter
+            obj_view : ObjectView
+            interpreter : wml.Interpreter
 
         """
         self._dialog = dialog
         self._name_field = name_field
         self._points_field = points_field
         self._color_field = color_field
-        self._obj_store = obj_store
-        self._wml_interpreter = wml_interpreter
+        self._obj_view = obj_view
+        self._wml_interpreter = interpreter
         self.handlers = {
             "on_create_object_ok": self._on_ok,
             "on_create_object_cancel": self._on_cancel,
@@ -110,7 +110,7 @@ class CreateObjectDialog:
 
     def run(self):
         """Gtk.Dialog.run wrapper that automatically fills object name."""
-        self._name_field.set_text("object{}".format(len(self._obj_store)))
+        self._name_field.set_text("object{}".format(len(self._obj_view)))
         return self._dialog.run()
 
     def _on_cancel(self, _):

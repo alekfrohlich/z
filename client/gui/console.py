@@ -2,7 +2,7 @@
 
 Classes
 -------
-    Console
+    `Console`
     Console.ConsoleBuffer
     Console.LineHistory
 
@@ -63,6 +63,10 @@ class Console:
 
         def insert_prompt(self, initial_prompt=False):
             r"""Insert command prompt.
+
+            Paramters
+            ---------
+
 
             Display line continuation prompt and save current line if it's
             ended by a '\'. If it is not, display regular prompt and
@@ -129,19 +133,19 @@ class Console:
                 self._scroll_index += 1
             return self._lines[self._scroll_index]
 
-    def __init__(self, text_view, wml_interpreter):
+    def __init__(self, text_view, interpreter):
         """Console constructor.
 
         Parameters
         ----------
             text_view : Gtk.TextView
-            wml_interpreter : wml.Interpreter
+            interpreter : wml.Interpreter
 
         """
         self._console_buff = Console.ConsoleBuffer()
         self._line_hist = Console.LineHistory()
         self._text_view = text_view
-        self._wml_interpreter = wml_interpreter
+        self._wml_interpreter = interpreter
 
         self._text_view.set_buffer(self._console_buff)
         self._text_view.connect("key-press-event", self._on_key_press)

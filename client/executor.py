@@ -1,9 +1,9 @@
 """"""
 
 from util import Logger, LogLevel
-from objects.object import Object
+from .objects import Object
 
-from .object_store import GtkObjectStore
+from .object_store import ObjectStore
 from .gui.viewport import Viewport
 
 
@@ -33,24 +33,21 @@ class GtkExecutor:
 
     @Viewport.needs_redraw
     @_warn_undefined_object
-    @GtkObjectStore.invalidates_cache
     def translate(self, selected, dx, dy):
         obj = self._obj_store[selected]
         obj.translate(dx, dy)
-        return obj
+        self._obj_store.changed(obj)
 
     @Viewport.needs_redraw
     @_warn_undefined_object
-    @GtkObjectStore.invalidates_cache
     def scale(self, selected, factor):
         obj = self._obj_store[selected]
         obj.scale(factor, factor)
-        return obj
+        self._obj_store.changed(obj)
 
     @Viewport.needs_redraw
     @_warn_undefined_object
-    @GtkObjectStore.invalidates_cache
     def rotate(self, selected, rads, point):
         obj = self._obj_store[selected]
         obj.rotate(rads, point)
-        return obj
+        self._obj_store.changed(obj)

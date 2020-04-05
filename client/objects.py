@@ -87,6 +87,37 @@ class Object:
         self.transform(concat_tr)
         self.angle += rads
 
+    def in_basis(self, new_basis):
+        x, y = new_basis.center
+
+        to_origin_tr = np.array([[1, 0, 0],
+                                 [0, 1, 0],
+                                 [-x, -y, 1]])
+
+        rotate_tr = np.array([[np.cos(-new_basis.angle), -np.sin(-new_basis.angle), 0],
+                              [np.sin(-new_basis.angle), np.cos(-new_basis.angle), 0],
+                              [0, 0, 1]])
+
+        change_of_basis_tr = to_origin_tr.dot(rotate_tr)
+        return change_of_basis_tr
+
+    def normalized(self, reference):
+        vup = ((reference.points[0][0] - reference.points[3][0])**2 +
+               (reference.points[0][1] - reference.points[3][1])**2)**0.5
+        vright = ((reference.points[2][0] - reference.points[3][0])**2 +
+                  (reference.points[2][1] - reference.points[3][1])**2)**0.5
+
+        scale_tr = np.array([[2/vup, 0, 0],
+                             [0, 2/vright, 0],
+                             [0, 0, 1]])
+        return scale_tr
+
     def transform(self, matrix_tr):
         for i in range(len(self.points)):
             self.points[i] = self.points[i].dot(matrix_tr)
+
+    def transformed(self, matrix_tr):
+        new_points = []
+        for i in range(len(self.points)):
+            new_points.append(self.points[i].dot(matrix_tr))
+        return new_points

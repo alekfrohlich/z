@@ -132,9 +132,8 @@ class Viewport:
     def _on_draw(self, wid, cr):
         """Handle on_draw signal.
 
-        If there is a window, draw all objects as follows: Start from first
-        point and draw lines from every subsequent point; Connect extremes.
-        If there isn't, draw placeholder instead.
+        Draw all objects as follows: Start from first point and draw lines
+        from every subsequent point; Connect extremes.
 
         Parameters
         ----------
@@ -153,17 +152,11 @@ class Viewport:
         cr.set_source_rgb(*Viewport.BLACK)
         cr.set_line_cap(LineCap.ROUND)
 
-        display_file = self._obj_store.display_file
-        if display_file is not None:
-            for obj in self._obj_store.display_file:
-                cr.set_source_rgb(*obj.color)
-                first_point = self.viewport_transform(obj.clipped_points[0])
-                cr.move_to(*first_point)
-                for point in map(self.viewport_transform, obj.clipped_points):
-                    cr.line_to(*point)
-                cr.line_to(*first_point)
-                cr.stroke()
-        else:
-            cr.move_to(60, 260)
-            cr.set_font_size(30.0)
-            cr.show_text("You are without a window!")
+        for obj in self._obj_store.display_file:
+            cr.set_source_rgb(*obj.color)
+            first_point = self.viewport_transform(obj.clipped_points[0])
+            cr.move_to(*first_point)
+            for point in map(self.viewport_transform, obj.clipped_points):
+                cr.line_to(*point)
+            cr.line_to(*first_point)
+            cr.stroke()

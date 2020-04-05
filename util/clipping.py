@@ -1,6 +1,23 @@
 import numpy as np
 
 
+class ClippedObject:
+    def __init__(self, obj, window):
+        self._obj = obj
+        self.clipped_points = None
+        self.clip(window)
+
+    def __getattr__(self, name):
+        return self._obj.__getattribute__(name)
+
+    def clip(self, window):
+        self.clipped_points = clip[self.type.value](self.transformed(self.in_basis(window).dot(self.normalized(window))))
+
+    @property
+    def visible(self):
+        return self.clipped_points is not None
+
+
 def clip_point(points):
     x, y, _ = points[0]
     if x > 1 or x < -1 or y > 1 or y < -1:

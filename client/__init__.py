@@ -1,4 +1,5 @@
 """"""
+""""""
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -6,20 +7,20 @@ from gi.repository.Gtk import main_iteration_do
 from gi.repository.Gtk import Builder
 
 from .executor import GtkExecutor
-from .object_store import GtkObjectStore
+from .object_store import ObjectStore
 
 from .gui import (Console, ControlMenu, MenuBar, CreateObjectDialog, ObjectView, Viewport)
 
-from wml import WML_Interpreter
+from wml import Interpreter
 
 
 class GtkClient:
     def __init__(self):
         self._has_quit = False
         self._builder = Builder()
-        self._builder.add_from_file("client/gtk/glade/gtk_client.glade")
+        self._builder.add_from_file("glade/gtk_client.glade")
 
-        obj_store = GtkObjectStore()
+        obj_store = ObjectStore()
         obj_view = ObjectView(
             obj_store, self._builder.get_object("object_list"))
 
@@ -28,17 +29,17 @@ class GtkClient:
 
         executor = GtkExecutor(obj_store, viewport)
 
-        wml_interpreter = WML_Interpreter(executor, viewport)
+        interpreter = Interpreter(executor)
 
-        Console(self._builder.get_object("console_text_view"), wml_interpreter)
+        Console(self._builder.get_object("console_text_view"), interpreter)
 
         create_obj_dialog = CreateObjectDialog(
             self._builder.get_object("create_object_dialog"),
             self._builder.get_object("create_object_dialog_name_field"),
             self._builder.get_object("create_object_dialog_points_field"),
             self._builder.get_object("create_object_dialog_color_field"),
-            obj_store,
-            wml_interpreter)
+            obj_view,
+            interpreter)
         menu_bar = MenuBar(create_obj_dialog, executor)
 
         control_menu = ControlMenu(executor,

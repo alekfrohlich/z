@@ -23,12 +23,15 @@ class ObjectView:
 
         Paramters
         ---------
-            store : GtkObjectStore
+            store : ObjectStore
             treeview : Gtk.TreeView
 
         """
         self._treeview = treeview
         treeview.set_model(store)
+
+    def __len__(self):
+        return len(self._treeview.get_model())
 
     @property
     def selected_object(self):

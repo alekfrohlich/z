@@ -5,7 +5,6 @@ import re
 import numpy as np
 
 from util import Logger, LogLevel
-from client.gtk.gui.viewport import Viewport
 
 
 # NOTE: When implementing the WML Interpreter make sure that the object
@@ -39,10 +38,9 @@ REMOVE_PATTERN = re.compile(
 #         name, floating, floating, floating))
 
 
-class WML_Interpreter:
-    def __init__(self, executor, viewport):
+class Interpreter:
+    def __init__(self, executor):
         self._executor = executor
-        self._viewport = viewport
         self.executors = {
             ADD_PATTERN: self._add,
             TRANSLATE_PATTERN: self._translate,
@@ -78,7 +76,6 @@ class WML_Interpreter:
         if not POINTS_PATTERN.match(points):
             raise RuntimeError("Invalid list of points format!")
 
-    @Viewport.needs_redraw
     def _add(self, match):
         name = match.group("name")
         points = match.group("points")
@@ -89,26 +86,22 @@ class WML_Interpreter:
         except RuntimeError as error:
             Logger.log(LogLevel.ERRO, error)
 
-    @Viewport.needs_redraw
     def _remove(self, match):
         name = match.group("name")
         self._executor.remove(name)
 
-    @Viewport.needs_redraw
     def _translate(self, match):
         name = match.group("name")
         dx = float(match.group("dx"))
         dy = float(match.group("dy"))
         self._executor.translate(name, dx, dy)
 
-    @Viewport.needs_redraw
     def _scale(self, match):
         name = match.group("name")
         dx = float(match.group("sx"))
         dy = float(match.group("sy"))
         self._executor.scale(name, dx, dy)
 
-    @Viewport.needs_redraw
     def _rotate(self, match):
         name = match.group("name")
         rads = np.deg2rad(float(match.group("degrees")))
@@ -116,7 +109,6 @@ class WML_Interpreter:
         y = float(match.group("y"))
         self._executor.rotate(name, rads, (x, y))
 
-    # @Viewport.needs_redraw
     # def _paint(self, match):
     #     """ Paints named object. """
     #     name = match.group("name")
