@@ -19,7 +19,7 @@ class Logger:
     _LOG_LEVEL = LogLevel.INFO
 
     @staticmethod
-    def log(level, message):
+    def log(level, message: 'str'):
         """Log only if the message's log level is high enough."""
         if level.value >= Logger._LOG_LEVEL.value:
             print(message)

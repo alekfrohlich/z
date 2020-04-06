@@ -1,4 +1,11 @@
-"""This module provides dialogs for user actions initiated at the MenuBar."""
+"""This module provides dialogs for user actions initiated at the MenuBar.
+
+Classes
+-------
+    MenuBar
+    CreateObjectDialog
+
+"""
 from gi.repository.Gtk import ResponseType
 
 from util import Logger, LogLevel
@@ -13,15 +20,8 @@ class MenuBar:
 
     """
 
-    def __init__(self, create_obj_dialog, executor):
-        """MenuBar constructor.
-
-        Paramters
-        ---------
-            create_obj_dialog : CreateObjectDialog
-            executor : Executor
-
-        """
+    def __init__(self, create_obj_dialog: 'CreateObjectDialog', executor: 'Executor'):
+        """MenuBar constructor."""
         self._create_obj_dialog = create_obj_dialog
         self._executor = executor
         self.handlers = {
@@ -62,20 +62,9 @@ class CreateObjectDialog:
 
     """
 
-    def __init__(self, dialog, name_field, points_field, color_field,
-                 obj_view, interpreter):
-        """CreateObjectDialog constructor.
-
-        Parameters
-        ---------
-            dialog : Gtk.Dialog
-            name_field : Gtk.Entry
-            points_field : Gtk.Entry
-            color_field : Gtk.Entry
-            obj_view : ObjectView
-            interpreter : wml.Interpreter
-
-        """
+    def __init__(self, dialog: 'Gtk.Dialog', name_field: 'Gtk.Entry', points_field: 'Gtk.Entry', color_field: 'Gtk.Entry',
+                 obj_view: 'ObjectView', interpreter: 'Interpreter'):
+        """CreateObjectDialog constructor."""
         self._dialog = dialog
         self._name_field = name_field
         self._points_field = points_field
@@ -88,19 +77,19 @@ class CreateObjectDialog:
         }
 
     @property
-    def name(self):
-        """str : Object's name."""
+    def name(self) -> 'str':
+        """Object's name."""
         return self._name_field.get_text()
 
     @property
-    def points(self):
-        """list : Object's points."""
+    def points(self) -> 'list':
+        """Object's points."""
         return self._wml_interpreter.points_as_list(
             self._points_field.get_text())
 
     @property
-    def color(self):
-        """(float, float, float) : Object's color."""
+    def color(self) -> 'tuple':
+        """Object's color."""
         return self._wml_interpreter.color_as_tuple(
             self._color_field.get_text())
 

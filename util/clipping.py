@@ -1,24 +1,87 @@
+"""This module provides 2D clipping algorithms and ClippableObject.
+
+Implemented algorithms (by `ObjectType`):
+- Point clipping: No name.
+- Line clipping: Cohen-Sutherland.
+- Polygon clipping: Sutherland-Hodgeman.
+
+ClippableObject is an adapter of Object that extends it to perfom
+clipping of it's own coordinates against a given window.
+
+Notes
+-----
+    All algorithms are based on a normalized coordinate system where
+    the extremes of the window are at [(-1,1), (1,1), (1,-1), (-1,-1)].
+
+See Also
+--------
+    `Object`
+    `ObjectType`
+
+"""
 import numpy as np
 
+from client.objects import Object
+from util.linear_algebra import normalize_matrix, rotation_matrix, affine_transformed, normal
 
-class ClippedObject:
-    def __init__(self, obj, window):
+
+class ClippableObject:
+    def __init__(self, obj: 'Object', window: 'Object'):
+        """Construct ClippableObject and store it's clipped coordinates."""
         self._obj = obj
         self.clipped_points = None
+        self.clipping_algorithm = clip[self.type.value]
         self.clip(window)
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: 'str'):
+        """Provide access to the underlying object's attributes."""
         return self._obj.__getattribute__(name)
 
-    def clip(self, window):
-        self.clipped_points = clip[self.type.value](self.transformed(self.in_basis(window).dot(self.normalized(window))))
+    def clip(self, window: 'Object'):
+        """Update the object's `clipped_coordinates`.
+
+        The clipping algorithms work based on the assumption of
+        a normalized coordinate system where the origin lies on the
+        center of the window. Thus, we begin by calculating such
+        coordinates:
+
+            1. Calculate the normal (exiting) of the window's right edge.
+            2. Use atan2 to find the angle theta formed between the normal
+               and the positive x-axis.
+            3. Build the affine transform `window_tr` where coordinates are
+               translated by the window's center, then rotated by -theta, and
+               finnaly normalized.
+
+        See also
+        --------
+            `__init__`
+                Where the object's underlying clipping algorithm is selected.
+
+        """
+        v_up = (window.points[0], window.points[3])
+        v_right = (window.points[2], window.points[3])
+        x, y = window.center
+
+        xn, yn = normal(window.points[1], window.points[2])
+        angle = np.arctan2(yn, xn)
+        rotate_tr = rotation_matrix(-angle)
+        normalize_tr = normalize_matrix(v_up,v_right)
+
+        window_tr = rotate_tr@normalize_tr
+        self.clipped_points = self.clipping_algorithm(
+            affine_transformed((x, y), self.points, window_tr))
 
     @property
-    def visible(self):
+    def visible(self) -> 'bool':
+        """Wether the object is currently visible."""
         return self.clipped_points is not None
 
 
+# TODO: Document clipping algorithms
+
+
 def clip_point(points):
+    """Clip point by determining wether it lies inside the window."""
     x, y, _ = points[0]
     if x > 1 or x < -1 or y > 1 or y < -1:
         return None
@@ -27,8 +90,6 @@ def clip_point(points):
 
 
 def cohen_sutherland(points):
-    """Cohen-Sutherland line clipping algorithm based on a normalized
-        coordinate system."""
     def region_code(x, y):
         code = 0
         if x < -1:
@@ -121,7 +182,7 @@ xw = [-1, None, 1, None]
 yw = [None, 1, None, -1]
 
 
-def suther_hodge(points):
+def sutherland_hodgeman(points):
 
     border = 0
 
@@ -163,5 +224,5 @@ clip = {
     1: clip_point,
     2: cohen_sutherland,
     3: lambda p: p,
-    4: suther_hodge,
+    4: sutherland_hodgeman,
 }

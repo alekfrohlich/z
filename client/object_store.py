@@ -1,5 +1,4 @@
-""" """
-
+"""Module responsible for storing objects."""
 from enum import Enum
 
 import numpy as np
@@ -7,11 +6,12 @@ import numpy as np
 from gi.repository.GObject import TYPE_PYOBJECT, TYPE_STRING
 from gi.repository.Gtk import ListStore
 
-from util import ClippedObject, Logger, LogLevel
+from util import ClippableObject, Logger, LogLevel
 from .objects import Object
 
 
 class Column(Enum):
+    """Enum representing the columns of the underlying Gtk.ListStore."""
     OBJ = 0
     NAME = 1
     TYPE = 2
@@ -19,6 +19,20 @@ class Column(Enum):
 
 class ObjectStore(ListStore):
     def __init__(self):
+        """Construct ObjectStore.
+
+        Specify ListStore with 3 columns: one for storing the object, another
+        for storing it's name, and a third for storing it's type.
+
+        Notes
+        -----
+            The ObjectStore is initialized with 1 object, the window.
+
+        See also
+        --------
+            `Column`
+
+        """
         ListStore.__init__(self, TYPE_PYOBJECT, TYPE_STRING, TYPE_STRING)
         points = [np.array([0, 500, 1]),
             np.array([500, 500, 1]),
@@ -28,19 +42,43 @@ class ObjectStore(ListStore):
         self["window"] = self.window
         Logger.log(LogLevel.INFO, self.window)
 
-    def __getitem__(self, name):
+    def __getitem__(self, name: 'str') -> 'Object':
+        """Retrieve object from it's name.
+
+        Raises
+        ------
+            KeyError
+                The named object does not exist.
+
+        """
         for row in self:
             if row[Column.NAME.value] == name:
                 return row[Column.OBJ.value]
         raise KeyError(name + " does not name an object!")
 
-    def __setitem__(self, name, obj):
+    def __setitem__(self, name: 'str', obj: 'Object'):
+        """Add object.
+
+        Raises
+        ------
+            KeyError
+                The name is already in use.
+
+        """
         if name in [row[Column.NAME.value] for row in self]:
             raise KeyError(name + " already names an object!")
-        self.append([ClippedObject(obj, self.window), obj.name, str(obj.type)])
+        self.append([ClippableObject(obj, self.window), obj.name, str(obj.type)])
         Logger.log(LogLevel.INFO, "new object: " + str(obj))
 
-    def __delitem__(self, name):
+    def __delitem__(self, name: 'str'):
+        """Delete object.
+
+        Raises
+        ------
+            KeyError
+                The named object does not exist.
+
+        """
         for row in self:
             if row[Column.NAME.value] == name:
                 if self.window.name == name:
@@ -51,7 +89,17 @@ class ObjectStore(ListStore):
                     return
         raise KeyError(name + " does not name an object!")
 
-    def changed(self, obj):
+    def changed(self, obj: 'Object'):
+        """Notify that an object has been changed from the outside.
+
+        Update clipped coordinates of `obj`. If `obj` is the window,
+        update all stored objects instead.
+
+        See also
+        --------
+            `Executor`
+
+        """
         if obj.name == self.window.name:
             for row in self:
                 o = row[Column.OBJ.value]
@@ -60,6 +108,7 @@ class ObjectStore(ListStore):
             obj.clip(self.window)
 
     @property
-    def display_file(self):
+    def display_file(self) -> 'list':
+        """Visible objects."""
         return [row[Column.OBJ.value] for row in self
                 if row[Column.OBJ.value].visible]

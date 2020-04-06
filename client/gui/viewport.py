@@ -26,16 +26,8 @@ class Viewport:
     BLACK = (0, 0, 0)
     WHITE = (1, 1, 1)
 
-    def __init__(self, drawing_area, obj_store, resolution=(500, 500)):
-        """Viewport constructor.
-
-        Parameters
-        ----------
-            drawing_area : Gtk.DrawingArea
-            obj_store : ObjectStore
-            resolution : (float, float), optional
-
-        """
+    def __init__(self, drawing_area: 'Gtk.DrawingArea', obj_store: 'ObjectStore', resolution=(500, 500)):
+        """Viewport constructor."""
         self._drawing_area = drawing_area
         self._obj_store = obj_store
         self._surface = None
@@ -48,15 +40,11 @@ class Viewport:
         }
 
     @staticmethod
-    def needs_redraw(method):
+    def needs_redraw(method: 'function'):
         """Indicate that a method needs redraw to take visual effect.
 
         Decorate a method so that it queues a viewport redraw after
         finishing executing.
-
-        Parameters
-        ----------
-            method : class method
 
         Notes
         -----
@@ -71,7 +59,7 @@ class Viewport:
             cls._viewport._drawing_area.queue_draw()
         return wrapper
 
-    def viewport_transform(self, point):
+    def viewport_transform(self, point: 'tuple') -> 'tuple':
         """Change of basis from NCS to this viewport instance.
 
         As viewport is aligned with the window, the transform simplifies
@@ -106,7 +94,7 @@ class Viewport:
         cr.set_source_rgb(*Viewport.WHITE)
         cr.paint()
 
-    def _on_configure(self, wid, evt):
+    def _on_configure(self, wid: 'Gtk.Widget', evt: 'Gdk.EventConfigure'):
         """Handle on_configure signal.
 
         Create surface and paint it white; Log viewport resolution.
@@ -129,17 +117,11 @@ class Viewport:
                    .format(width, height))
         self.clear()
 
-    def _on_draw(self, wid, cr):
+    def _on_draw(self, wid: 'Gtk.Widget', cr: 'Cairo.Context'):
         """Handle on_draw signal.
 
         Draw all objects as follows: Start from first point and draw lines
         from every subsequent point; Connect extremes.
-
-        Parameters
-        ----------
-            wid : Gtk.Widget
-                Uppon which signal was notified
-            cr : Cairo.Context
 
         Notes
         -----

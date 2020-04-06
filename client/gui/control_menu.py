@@ -6,6 +6,8 @@ Classes
 
 """
 
+from gi.repository import Gtk
+
 import numpy as np
 
 from util import Axis, Direction
@@ -16,34 +18,26 @@ class ControlMenu:
 
     Handle move, zoom and rotate buttons. Acts upon selected object.
 
-    Signals
-    -------
-        on_up_button : Gtk.Button.signals.clicked
-        on_left_button : Gtk.Button.signals.clicked
-        on_right_button : Gtk.Button.signals.clicked
-        on_down_button : Gtk.Button.signals.clicked
-        on_plus_button : Gtk.Button.signals.clicked
-        on_minus_button : Gtk.Button.signals.clicked
-        on_x_button : Gtk.Button.signals.clicked
-        on_y_button : Gtk.Button.signals.clicked
-        on_z_button : Gtk.Button.signals.clicked
+    Notes
+    -----
+        This GUI Component handles the following signals:
+
+        - on_up_button : Gtk.Button.signals.clicked
+        - on_left_button : Gtk.Button.signals.clicked
+        - on_right_button : Gtk.Button.signals.clicked
+        - on_down_button : Gtk.Button.signals.clicked
+        - on_plus_button : Gtk.Button.signals.clicked
+        - on_minus_button : Gtk.Button.signals.clicked
+        - on_x_button : Gtk.Button.signals.clicked
+        - on_y_button : Gtk.Button.signals.clicked
+        - on_z_button : Gtk.Button.signals.clicked
 
     """
 
-    def __init__(self, executor, obj_view, degrees_entry, point_entry,
-                 step_entry, rotation_radio):
-        """ControlMenu constructor.
-
-        Parameters
-        ----------
-            executor : Executor
-            obj_view : ObjectView
-            degrees_entry : Gtk.Entry
-            point_entry : Gtk.Entry
-            step_entry : Gtk.Entry
-            rotation_radio : GtkButton
-
-        """
+    def __init__(self, executor: 'Executor', obj_view: 'ObjectView',
+                 degrees_entry: 'Gtk.Entry', point_entry: 'Gtk.Entry',
+                 step_entry: 'Gtk.Entry', rotation_radio: 'Gtk.RadioButton'):
+        """ControlMenu constructor."""
         self._executor = executor
         self._obj_view = obj_view
 
@@ -65,65 +59,49 @@ class ControlMenu:
         }
 
     @property
-    def degrees(self):
-        """float : Rotation angle."""
+    def degrees(self) -> 'float':
+        """Rotation angle."""
         return float(self._degrees_entry.get_text())
 
     @property
-    def point(self):
-        """(float, float) : Rotation reference point."""
+    def point(self) -> 'tuple':
+        """Rotation reference point."""
         p = self._point_entry.get_text().split(",")
         return (float(p[0]), float(p[1]))
 
     @property
-    def step(self):
-        """int : Move/zoom step/factor."""
+    def step(self) -> 'int':
+        """Move/zoom step/factor."""
         return int(self._step_entry.get_text())
 
     @property
-    def rotation_strategy(self):
-        """str : Rotate around world, object or point."""
+    def rotation_strategy(self) -> 'str':
+        """Rotate around world, object or point."""
         group = self._rotation_radio.get_group()
         for radio in group:
             if radio.get_active():
                 return radio.get_name()
 
-    def _on_translate(self, direction):
-        """Handle on_{up,left,right,down}_button signals.
-
-        Parameters
-        ----------
-            direction : {UP, LEFT, RIGHT, DOWN}
-
-        """
+    def _on_translate(self, direction: 'Direction'):
+        """Handle on_{up,left,right,down}_button signals."""
         if self._obj_view.selected_object is not None:
             dx, dy = direction.value
             self._executor.translate(
                 self._obj_view.selected_object, dx * self.step, dy * self.step)
 
-    def _on_scale(self, expand):
-        """Handle on_{plus,minus}_button signals.
-
-        Parameters
-        ----------
-            expand : bool
-                Enlarge or shrink?
-
-        """
+    def _on_scale(self, expand: 'bool'):
+        """Handle on_{plus,minus}_button signals."""
         if self._obj_view.selected_object is not None:
             factor = (1 + self.step/100) ** (1 if expand else -1)
             self._executor.scale(self._obj_view.selected_object, factor)
 
-    def _on_rotate(self, axis):
+    def _on_rotate(self, axis: 'Axis'):
         """Handle on_{x,y,z}_button signals.
-
-        Parameters
-        ----------
-            axis : {X, Y, Z}
 
         Note
         ----
             axis will be used once 3D support is implemented.
+
         """
         selected = self._obj_view.selected_object
         if selected is not None:

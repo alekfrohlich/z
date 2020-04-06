@@ -1,11 +1,33 @@
-""" """
+"""This module contains geometric objects.
+
+Object types:
+- Point: Defined by point.
+- Line: Defined by pair of points.
+- Sequence: Will be renamed to (parametric) curve, defined by the
+            corresponding parametric generation method: Hermite, Splite, etc.
+- Polygon: defined by list of points.
+
+Notes
+-----
+"""
+
+# FIXME: Currently all objects are drawn as polygons, i.e, by connecting
+#        the last point to the first.
+# NOTE: This wasn't previously the case; object's were drawn without connecting
+#       the extremes and polygons where defined by repeting the first point.
+#       This change was reverted because the .obj format expects objects to be
+#       defined without repeating the last vertex.
 
 from enum import Enum
 
 import numpy as np
 
+from util.linear_algebra import translation_matrix,
+escalation_matrix, rotation_matrix
+
 
 class ObjectType(Enum):
+    """Enum representing possible `Object` types."""
     POINT = 1
     LINE = 2
     SEQUENCE = 3
@@ -22,11 +44,11 @@ class ObjectType(Enum):
 
 
 class Object:
-    def __init__(self, name, points, color):
+    def __init__(self, name: 'str', points: 'list', color: 'tuple'):
+        """Construct object and identify it's type"""
         self.name = name
         self.points = points
         self.color = color
-        self.angle = 0
         if (np.array_equal(points[0], points[len(points)-1]) and
                 len(points) != 1):
             self.type = ObjectType.POLYGON
@@ -38,86 +60,39 @@ class Object:
             + " with color = " + str(self.color)
 
     @property
-    def center(self):
+    def center(self) -> 'tuple':
+        """Geometric center of object."""
         x_points = [point[0] for point in self.points]
         y_points = [point[1] for point in self.points]
         return (np.average(x_points), np.average(y_points))
 
-    def translate(self, dx, dy):
-        translate_tr = np.array([[1, 0, 0],
-                                 [0, 1, 0],
-                                 [dx, dy, 1]])
-        self.transform(translate_tr)
+    def translate(self, dx: 'int', dy: 'int'):
+        """Translate object by (dx, dy)."""
+        self.transform(translation_matrix(dx, dy))
 
-    def scale(self, sx, sy):
-        x_center, y_center = self.center
+    def scale(self, sx: 'int', sy: 'int'):
+        """Scale object by `sx` in the x-axis and `sy` in the y-axis."""
+        x, y = self.center
 
-        to_origin_tr = np.array([[1, 0, 0],
-                                 [0, 1, 0],
-                                 [-x_center, -y_center, 1]])
+        to_origin_tr = translation_matrix(-x, -y)
+        scale_tr = escalation_matrix(sx, sy)
+        from_origin_tr = translation_matrix(x, y)
 
-        scale_tr = np.array([[sx, 0, 0],
-                             [0, sy, 0],
-                             [0, 0, 1]])
+        self.transform(to_origin_tr@scale_tr@from_origin_tr)
 
-        from_origin_tr = np.array([[1, 0, 0],
-                                   [0, 1, 0],
-                                   [x_center, y_center, 1]])
-
-        concat_tr = to_origin_tr.dot(scale_tr.dot(from_origin_tr))
-        self.transform(concat_tr)
-
-    def rotate(self, rads, point=None):
+    def rotate(self, rads: 'float', point=None):
+        """Rotate object by `rads` around of `point`."""
         if point is None:
             point = self.center
         x, y = point
 
-        to_origin_tr = np.array([[1, 0, 0],
-                                 [0, 1, 0],
-                                 [-x, -y, 1]])
+        to_origin_tr = translation_matrix(-x, -y)
+        rotate_tr = rotation_matrix(rads)
+        from_origin_tr = translation_matrix(x, y)
 
-        rotate_tr = np.array([[np.cos(rads), -np.sin(rads), 0],
-                             [np.sin(rads), np.cos(rads), 0],
-                             [0, 0, 1]])
+        self.transform(to_origin_tr@rotate_tr@from_origin_tr)
 
-        from_origin_tr = np.array([[1, 0, 0],
-                                   [0, 1, 0],
-                                   [x, y, 1]])
-        concat_tr = to_origin_tr.dot(rotate_tr.dot(from_origin_tr))
-        self.transform(concat_tr)
-        self.angle += rads
-
-    def in_basis(self, new_basis):
-        x, y = new_basis.center
-
-        to_origin_tr = np.array([[1, 0, 0],
-                                 [0, 1, 0],
-                                 [-x, -y, 1]])
-
-        rotate_tr = np.array([[np.cos(-new_basis.angle), -np.sin(-new_basis.angle), 0],
-                              [np.sin(-new_basis.angle), np.cos(-new_basis.angle), 0],
-                              [0, 0, 1]])
-
-        change_of_basis_tr = to_origin_tr.dot(rotate_tr)
-        return change_of_basis_tr
-
-    def normalized(self, reference):
-        vup = ((reference.points[0][0] - reference.points[3][0])**2 +
-               (reference.points[0][1] - reference.points[3][1])**2)**0.5
-        vright = ((reference.points[2][0] - reference.points[3][0])**2 +
-                  (reference.points[2][1] - reference.points[3][1])**2)**0.5
-
-        scale_tr = np.array([[2/vup, 0, 0],
-                             [0, 2/vright, 0],
-                             [0, 0, 1]])
-        return scale_tr
-
-    def transform(self, matrix_tr):
+    def transform(self, matrix_tr: 'np.array'):
+        """Apply `matrix_tr` to the object's coordinates."""
         for i in range(len(self.points)):
-            self.points[i] = self.points[i].dot(matrix_tr)
-
-    def transformed(self, matrix_tr):
-        new_points = []
-        for i in range(len(self.points)):
-            new_points.append(self.points[i].dot(matrix_tr))
-        return new_points
+            self.points[i] = self.points[i]@matrix_tr
