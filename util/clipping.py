@@ -22,7 +22,8 @@ See Also
 import numpy as np
 
 from client.objects import Object
-from util.linear_algebra import normalize_matrix, rotation_matrix, affine_transformed, normal
+from util.linear_algebra import (
+    normalize_matrix, rotation_matrix, affine_transformed, normal)
 
 
 class ClippableObject:
@@ -65,7 +66,7 @@ class ClippableObject:
         xn, yn = normal(window.points[1], window.points[2])
         angle = np.arctan2(yn, xn)
         rotate_tr = rotation_matrix(-angle)
-        normalize_tr = normalize_matrix(v_up,v_right)
+        normalize_tr = normalize_matrix(v_up, v_right)
 
         window_tr = rotate_tr@normalize_tr
         self.clipped_points = self.clipping_algorithm(
@@ -80,7 +81,7 @@ class ClippableObject:
 # TODO: Document clipping algorithms
 
 
-def clip_point(points):
+def clip_point(points: 'list') -> 'list':
     """Clip point by determining wether it lies inside the window."""
     x, y, _ = points[0]
     if x > 1 or x < -1 or y > 1 or y < -1:
@@ -89,7 +90,7 @@ def clip_point(points):
         return points
 
 
-def cohen_sutherland(points):
+def cohen_sutherland(points: 'list') -> 'list':
     def region_code(x, y):
         code = 0
         if x < -1:

@@ -3,10 +3,10 @@ from enum import Enum
 
 import numpy as np
 
-from gi.repository.GObject import TYPE_PYOBJECT, TYPE_STRING
-from gi.repository.Gtk import ListStore
+from gi.repository import GObject
+from gi.repository import Gtk
 
-from util import ClippableObject, Logger, LogLevel
+from util import (ClippableObject, Logger, LogLevel)
 from .objects import Object
 
 
@@ -17,7 +17,7 @@ class Column(Enum):
     TYPE = 2
 
 
-class ObjectStore(ListStore):
+class ObjectStore(Gtk.ListStore):
     def __init__(self):
         """Construct ObjectStore.
 
@@ -33,14 +33,15 @@ class ObjectStore(ListStore):
             `Column`
 
         """
-        ListStore.__init__(self, TYPE_PYOBJECT, TYPE_STRING, TYPE_STRING)
+        Gtk.ListStore.__init__(self, GObject.TYPE_PYOBJECT,
+                                     GObject.TYPE_STRING,
+                                     GObject.TYPE_STRING)
         points = [np.array([0, 500, 1]),
-            np.array([500, 500, 1]),
-            np.array([500, 0, 1]),
-            np.array([0, 0, 1])]
+                  np.array([500, 500, 1]),
+                  np.array([500, 0, 1]),
+                  np.array([0, 0, 1])]
         self.window = Object("window", points, (1.0, 0.7, 0.7))
         self["window"] = self.window
-        Logger.log(LogLevel.INFO, self.window)
 
     def __getitem__(self, name: 'str') -> 'Object':
         """Retrieve object from it's name.
@@ -67,7 +68,8 @@ class ObjectStore(ListStore):
         """
         if name in [row[Column.NAME.value] for row in self]:
             raise KeyError(name + " already names an object!")
-        self.append([ClippableObject(obj, self.window), obj.name, str(obj.type)])
+        self.append(
+            [ClippableObject(obj, self.window), obj.name, str(obj.type)])
         Logger.log(LogLevel.INFO, "new object: " + str(obj))
 
     def __delitem__(self, name: 'str'):

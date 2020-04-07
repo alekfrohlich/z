@@ -10,7 +10,7 @@ from gi.repository import Gtk
 
 import numpy as np
 
-from util import Axis, Direction
+from util import (Axis, Direction)
 
 
 class ControlMenu:

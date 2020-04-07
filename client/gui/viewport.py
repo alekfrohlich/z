@@ -5,9 +5,9 @@ Classes
     Viewport
 
 """
-from cairo import Context, LineCap, CONTENT_COLOR
+import cairo
 
-from util import Logger, LogLevel
+from util import (Logger, LogLevel)
 
 
 class Viewport:
@@ -16,17 +16,20 @@ class Viewport:
     The actual Gtk.DrawingArea is 20 pixels larger in both width and height
     so that the clipping algorithms implemented in this project are visible.
 
-    Signals
-    -------
-        on_draw : Gtk.Widget.signals.draw
-        on_configure : Gtk.Widget.signals.configure_event
+    Notes
+    -----
+        This GUI Component handles the following signals:
+
+        - on_draw : Gtk.Widget.signals.draw
+        - on_configure : Gtk.Widget.signals.configure_event
 
     """
 
     BLACK = (0, 0, 0)
     WHITE = (1, 1, 1)
 
-    def __init__(self, drawing_area: 'Gtk.DrawingArea', obj_store: 'ObjectStore', resolution=(500, 500)):
+    def __init__(self, drawing_area: 'Gtk.DrawingArea',
+                 obj_store: 'ObjectStore', resolution=(500, 500)):
         """Viewport constructor."""
         self._drawing_area = drawing_area
         self._obj_store = obj_store
@@ -90,7 +93,7 @@ class Viewport:
 
     def clear(self):
         """Clear `_surface`, painting it white."""
-        cr = Context(self._surface)
+        cr = cairo.Context(self._surface)
         cr.set_source_rgb(*Viewport.WHITE)
         cr.paint()
 
@@ -110,7 +113,7 @@ class Viewport:
         width = wid.get_allocated_width()
         height = wid.get_allocated_height()
         self._surface = win.create_similar_surface(
-            CONTENT_COLOR,
+            cairo.CONTENT_COLOR,
             width,
             height)
         Logger.log(LogLevel.INFO, "viewport.config() at ({},{})"
@@ -132,7 +135,7 @@ class Viewport:
         cr.paint()
         cr.set_line_width(2)
         cr.set_source_rgb(*Viewport.BLACK)
-        cr.set_line_cap(LineCap.ROUND)
+        cr.set_line_cap(cairo.LineCap.ROUND)
 
         for obj in self._obj_store.display_file:
             cr.set_source_rgb(*obj.color)

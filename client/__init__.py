@@ -22,13 +22,13 @@ Notes
 """
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository.Gtk import main_iteration_do
-from gi.repository.Gtk import Builder
+from gi.repository import Gtk
 
 from .executor import Executor
 from .object_store import ObjectStore
 
-from .gui import (Console, ControlMenu, MenuBar, CreateObjectDialog, ObjectView, Viewport)
+from .gui import (
+    Console, ControlMenu, MenuBar, CreateObjectDialog, ObjectView, Viewport)
 
 from wml import Interpreter
 
@@ -41,7 +41,7 @@ class GtkClient:
 
         """
         self._has_quit = False
-        self._builder = Builder()
+        self._builder = Gtk.Builder()
         self._builder.add_from_file("glade/gtk_client.glade")
 
         obj_store = ObjectStore()
@@ -94,4 +94,4 @@ class GtkClient:
         """Process Gtk events until `quit()` is called."""
         self._builder.get_object("main_window").show_all()
         while not self._has_quit:
-            main_iteration_do(False)
+            Gtk.main_iteration_do(False)

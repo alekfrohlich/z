@@ -6,9 +6,9 @@ Classes
     CreateObjectDialog
 
 """
-from gi.repository.Gtk import ResponseType
+from gi.repository import Gtk
 
-from util import Logger, LogLevel
+from util import (Logger, LogLevel)
 
 
 class MenuBar:
@@ -20,7 +20,8 @@ class MenuBar:
 
     """
 
-    def __init__(self, create_obj_dialog: 'CreateObjectDialog', executor: 'Executor'):
+    def __init__(self, create_obj_dialog: 'CreateObjectDialog',
+                 executor: 'Executor'):
         """MenuBar constructor."""
         self._create_obj_dialog = create_obj_dialog
         self._executor = executor
@@ -37,7 +38,7 @@ class MenuBar:
         """
         response = self._create_obj_dialog.run()
 
-        if response == ResponseType.OK:
+        if response == Gtk.ResponseType.OK:
             self._executor.add(self._create_obj_dialog.name,
                                self._create_obj_dialog.points,
                                self._create_obj_dialog.color)
@@ -50,19 +51,20 @@ class CreateObjectDialog:
     CreateObjectDialog allows specifying the name, points and color
     of the future object.
 
-    Signals
-    -------
-        on_create_object_ok : Gtk.Button.signals.clicked
-        on_create_object_cancel : Gtk.Button.signals.clicked
-
     Notes
     -----
         CreateObjectDialog is dependency injected by Gtk.Builder during
         GtkClient construction.
 
+        This GUI Component handles the following signals:
+
+        - on_create_object_ok : Gtk.Button.signals.clicked
+        - on_create_object_cancel : Gtk.Button.signals.clicked
+
     """
 
-    def __init__(self, dialog: 'Gtk.Dialog', name_field: 'Gtk.Entry', points_field: 'Gtk.Entry', color_field: 'Gtk.Entry',
+    def __init__(self, dialog: 'Gtk.Dialog', name_field: 'Gtk.Entry',
+                 points_field: 'Gtk.Entry', color_field: 'Gtk.Entry',
                  obj_view: 'ObjectView', interpreter: 'Interpreter'):
         """CreateObjectDialog constructor."""
         self._dialog = dialog
@@ -108,7 +110,7 @@ class CreateObjectDialog:
         Forces dialog to quit with cancel response type.
 
         """
-        self._dialog.response(ResponseType.CANCEL)
+        self._dialog.response(Gtk.ResponseType.CANCEL)
 
     def _on_ok(self, _):
         """Handle on_create_object_ok signal.
@@ -125,6 +127,6 @@ class CreateObjectDialog:
         try:
             self._wml_interpreter.validate_object(
                 self.name, self._points_field.get_text())
-            self._dialog.response(ResponseType.OK)
+            self._dialog.response(Gtk.ResponseType.OK)
         except RuntimeError as error:
             Logger.log(LogLevel.ERRO, error)

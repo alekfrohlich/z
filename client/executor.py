@@ -1,4 +1,5 @@
-"""This modules provides a realization of the write-only interface to ObjectStore.
+"""This modules provides a realization of the write-only interface to
+ObjectStore.
 
 The interface is the following:
 
@@ -20,7 +21,7 @@ Notes
 
 import numpy as np
 
-from util import Logger, LogLevel
+from util import (Logger, LogLevel)
 from .objects import Object
 
 from .object_store import ObjectStore

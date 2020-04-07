@@ -22,8 +22,8 @@ from enum import Enum
 
 import numpy as np
 
-from util.linear_algebra import translation_matrix,
-escalation_matrix, rotation_matrix
+from util.linear_algebra import (
+    translation_matrix, escalation_matrix, rotation_matrix)
 
 
 class ObjectType(Enum):

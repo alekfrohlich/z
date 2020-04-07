@@ -151,13 +151,16 @@ class Console:
 
         Signals
         -------
-            Gtk.Widget.signals.key_press_event
 
         Notes
         -----
             Gtk keeps propagating signals until a handler returns True,
             hence it's imperative that {Return, Up, Down} are intercepted
             before being inserted.
+
+            This GUI Component handles the following signals:
+
+            - Gtk.Widget.signals.key_press_event
 
         See also
         ----------
