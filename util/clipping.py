@@ -25,6 +25,7 @@ from client.objects import Object
 from util.linear_algebra import (
     normalize_matrix, rotation_matrix, affine_transformed, normal)
 
+# QUESTION: How to change clipping algorithm at run time?
 
 class ClippableObject:
     def __init__(self, obj: 'Object', window: 'Object'):

@@ -27,9 +27,9 @@ from gi.repository import Gtk
 from .executor import Executor
 from .object_store import ObjectStore
 
-from .gui import (
-    Console, ControlMenu, MenuBar, CreateObjectDialog, ObjectView, Viewport)
+from .gui import *
 
+from util import DotObjParser
 from wml import Interpreter
 
 
@@ -52,6 +52,7 @@ class GtkClient:
             self._builder.get_object("viewport_drawing_area"), obj_store)
 
         executor = Executor(obj_store, viewport)
+        dot_obj_parser = DotObjParser(executor)
 
         interpreter = Interpreter(executor)
 
@@ -64,7 +65,15 @@ class GtkClient:
             self._builder.get_object("create_object_dialog_color_field"),
             obj_view,
             interpreter)
-        menu_bar = MenuBar(create_obj_dialog, executor)
+        load_obj_dialog = Gtk.FileChooserDialog(
+            "Please choose a .obj file",
+            self._builder.get_object("main_window"),  # Modal for
+            Gtk.FileChooserAction.OPEN,
+            (Gtk.STOCK_CANCEL,
+             Gtk.ResponseType.CANCEL,
+             Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        menu_bar = MenuBar(
+            create_obj_dialog, load_obj_dialog, executor, dot_obj_parser)
 
         control_menu = ControlMenu(executor,
                                    obj_view,
@@ -73,7 +82,6 @@ class GtkClient:
                                    self._builder.get_object("step_entry"),
                                    self._builder.get_object(
                                        "center_of_world_radio_button"))
-
         # Handlers
         handlers = {
             "on_delete_event": lambda _, __: self.quit(),

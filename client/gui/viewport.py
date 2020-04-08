@@ -120,6 +120,9 @@ class Viewport:
                    .format(width, height))
         self.clear()
 
+    # QUESTION: How to change drawing mode based on the type of the element?
+    #           Face/Curve/Surface.
+
     def _on_draw(self, wid: 'Gtk.Widget', cr: 'Cairo.Context'):
         """Handle on_draw signal.
 

@@ -5,18 +5,22 @@ Object types:
 - Line: Defined by pair of points.
 - Sequence: Will be renamed to (parametric) curve, defined by the
             corresponding parametric generation method: Hermite, Splite, etc.
-- Polygon: defined by list of points.
+- Polygon: defined by list of faces.
 
 Notes
 -----
 """
 
-# FIXME: Currently all objects are drawn as polygons, i.e, by connecting
-#        the last point to the first.
-# NOTE: This wasn't previously the case; object's were drawn without connecting
-#       the extremes and polygons where defined by repeting the first point.
-#       This change was reverted because the .obj format expects objects to be
-#       defined without repeating the last vertex.
+# FIXME: Currently all objects are drawn as face elements, i.e, by
+#        connecting the last point to the first.
+# QUESTION: How to structure polygon elements, face and curve elements?
+# NOTE: Current types do not reflect .obj format. We could instead
+#       represent objects as Primitive/Compound. Primitives could be one of:
+#           1. Face element, drawn by connecting list of points in a circular
+#              manner, first-last, as a polygon.
+#           2. Curve elements, drawn by connecting list of points.
+#           3. Surface elements, drawn by connecting list of points for
+#              each curve in the surface.
 
 from enum import Enum
 
@@ -30,15 +34,13 @@ class ObjectType(Enum):
     """Enum representing possible `Object` types."""
     POINT = 1
     LINE = 2
-    SEQUENCE = 3
-    POLYGON = 4
+    WIREFRAME = 3
 
     def __str__(self):
         pretty = {
             ObjectType.POINT.value: "Point",
             ObjectType.LINE.value: "Line",
-            ObjectType.SEQUENCE.value: "Sequence",
-            ObjectType.POLYGON.value: "Polygon",
+            ObjectType.WIREFRAME.value: "Wireframe",
         }
         return pretty[self.value]
 
@@ -49,11 +51,7 @@ class Object:
         self.name = name
         self.points = points
         self.color = color
-        if (np.array_equal(points[0], points[len(points)-1]) and
-                len(points) != 1):
-            self.type = ObjectType.POLYGON
-        else:
-            self.type = ObjectType(3 if len(points) > 3 else len(points))
+        self.type = ObjectType(3 if len(points) > 3 else len(points))
 
     def __str__(self):
         return self.name + "(" + str(type(self)) + ") at " + str(self.points) \

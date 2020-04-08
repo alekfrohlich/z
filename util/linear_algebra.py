@@ -44,6 +44,7 @@ def normalize_matrix(u, v):
 # UTIL
 def normal(p0, p1):
     # clockwise!
+    # not unitary
     return (p0[1] - p1[1], p1[0] - p0[0])
 
 

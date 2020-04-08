@@ -21,12 +21,16 @@ class MenuBar:
     """
 
     def __init__(self, create_obj_dialog: 'CreateObjectDialog',
-                 executor: 'Executor'):
+                 load_obj_dialog: 'Gtk.FileChooserDialog',
+                 executor: 'Executor', dot_obj_parser: 'DotObjParser'):
         """MenuBar constructor."""
         self._create_obj_dialog = create_obj_dialog
+        self._load_obj_dialog = load_obj_dialog
         self._executor = executor
+        self._dot_obj_parser = dot_obj_parser
         self.handlers = {
             "on_create_object": self._on_create_object,
+            "on_load_object": self._on_load_object,
         }
 
     def _on_create_object(self, _):
@@ -43,6 +47,19 @@ class MenuBar:
                                self._create_obj_dialog.points,
                                self._create_obj_dialog.color)
         self._create_obj_dialog.hide()
+
+    def _on_load_object(self, _):
+        """Handle on_load_object signal.
+
+        Run load_obj_dialog. Create object and hide dialog if it
+        ran successfully.
+
+        """
+        response = self._load_obj_dialog.run()
+        if response == Gtk.ResponseType.OK:
+            self._dot_obj_parser.compile_obj_file(
+                self._load_obj_dialog.get_filename())
+        self._load_obj_dialog.hide()
 
 
 class CreateObjectDialog:
