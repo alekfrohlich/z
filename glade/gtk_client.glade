@@ -885,20 +885,28 @@
           <object class="GtkFrame">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_top">5</property>
-            <property name="margin_bottom">5</property>
             <property name="label_xalign">0.10000000149011612</property>
             <property name="shadow_type">in</property>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkAlignment">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_top">5</property>
-                <property name="margin_bottom">5</property>
-                <property name="label" translatable="yes">Insert the list of points comprising your object, be it a point,
-a line or a wireframe (curves not yet implemented). The type
-of the object will be automatically deduced based on the
-number of points it has.</property>
+                <property name="left_padding">12</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_bottom">5</property>
+                    <property name="label" translatable="yes">Z supports two graphical types of graphical elements: Face elements and Curve elements.
+
+Face elements comprise points, lines and polygons and are expressed through a list of points.
+For example, the
+expression 10,10;10,100 represents a line from (10,10) to (10,100).
+
+Curve elements comprise cubic splines. Such splines can be represented by four
+control point such as in -100,0;0,100;50,-200;100,0</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child type="label">
@@ -913,6 +921,55 @@ number of points it has.</property>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="name">wireframe_page</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkFrame">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_top">5</property>
+                <property name="margin_bottom">5</property>
+                <property name="label_xalign">0.10000000149011612</property>
+                <property name="shadow_type">in</property>
+                <child>
+                  <object class="GtkComboBoxText" id="create_object_dialog_type_field">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_left">5</property>
+                    <property name="margin_right">5</property>
+                    <property name="margin_top">5</property>
+                    <property name="margin_bottom">5</property>
+                    <items>
+                      <item translatable="yes">Face element</item>
+                      <item translatable="yes">Curve</item>
+                    </items>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Type</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -988,89 +1045,76 @@ number of points it has.</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">2</property>
+            <property name="position">3</property>
           </packing>
         </child>
         <child>
-          <object class="GtkBox">
-            <property name="name">wireframe_page</property>
+          <object class="GtkFrame">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
+            <property name="margin_left">5</property>
+            <property name="margin_right">5</property>
+            <property name="margin_top">5</property>
+            <property name="margin_bottom">5</property>
+            <property name="label_xalign">0.15000000596046448</property>
+            <property name="shadow_type">in</property>
             <child>
-              <object class="GtkFrame">
+              <object class="GtkAlignment">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">5</property>
-                <property name="margin_right">5</property>
-                <property name="margin_top">5</property>
-                <property name="margin_bottom">5</property>
-                <property name="label_xalign">0.15000000596046448</property>
-                <property name="shadow_type">in</property>
+                <property name="left_padding">12</property>
                 <child>
-                  <object class="GtkAlignment">
+                  <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="left_padding">12</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="margin_left">5</property>
-                            <property name="margin_right">5</property>
-                            <property name="margin_top">5</property>
-                            <property name="margin_bottom">5</property>
-                            <property name="label" translatable="yes">RGB:</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="create_object_dialog_color_field">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="margin_left">5</property>
-                            <property name="margin_right">5</property>
-                            <property name="margin_top">5</property>
-                            <property name="margin_bottom">5</property>
-                            <property name="text" translatable="yes">1,0,0</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
+                        <property name="margin_left">5</property>
+                        <property name="margin_right">5</property>
+                        <property name="margin_top">5</property>
+                        <property name="margin_bottom">5</property>
+                        <property name="label" translatable="yes">RGB:</property>
                       </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="create_object_dialog_color_field">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="margin_left">5</property>
+                        <property name="margin_right">5</property>
+                        <property name="margin_top">5</property>
+                        <property name="margin_bottom">5</property>
+                        <property name="text" translatable="yes">1,0,0</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
                     </child>
                   </object>
                 </child>
-                <child type="label">
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Color</property>
-                  </object>
-                </child>
               </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
+            </child>
+            <child type="label">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Color</property>
+              </object>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">3</property>
+            <property name="position">5</property>
           </packing>
         </child>
       </object>

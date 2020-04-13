@@ -4,7 +4,6 @@ import numpy as np
 
 from client.objects import Object
 
-# TODO: DotObjParser class.
 # QUESTION: How to deal with hierarchical objects, i.e., one 'o' statement
 #           followed by multiple 'g' statements.
 # NOTE: Allowing multiple objects to share the same vertex would imply
@@ -27,6 +26,7 @@ from client.objects import Object
 #           That could be solved by turning `vertex` into a set and
 #           recalculating vertex indexes during parsing.
 #
+
 
 class DotObjParser:
     """Parser for Wavefront .obj files.

@@ -7,6 +7,7 @@ Classes
 """
 import cairo
 
+from client.objects import ObjectType
 from util import (Logger, LogLevel)
 
 
@@ -146,5 +147,6 @@ class Viewport:
             cr.move_to(*first_point)
             for point in map(self.viewport_transform, obj.clipped_points):
                 cr.line_to(*point)
-            cr.line_to(*first_point)
+            if obj.type is ObjectType.WIREFRAME:
+                cr.line_to(*first_point)
             cr.stroke()

@@ -7,7 +7,7 @@ from gi.repository import GObject
 from gi.repository import Gtk
 
 from util import (ClippableObject, Logger, LogLevel)
-from .objects import Object
+from .objects import (Object, ObjectType)
 
 
 class Column(Enum):
@@ -33,14 +33,16 @@ class ObjectStore(Gtk.ListStore):
             `Column`
 
         """
-        Gtk.ListStore.__init__(self, GObject.TYPE_PYOBJECT,
-                                     GObject.TYPE_STRING,
-                                     GObject.TYPE_STRING)
+        Gtk.ListStore.__init__(self,
+                               GObject.TYPE_PYOBJECT,
+                               GObject.TYPE_STRING,
+                               GObject.TYPE_STRING)
         points = [np.array([0, 500, 1]),
                   np.array([500, 500, 1]),
                   np.array([500, 0, 1]),
                   np.array([0, 0, 1])]
-        self.window = Object("window", points, (1.0, 0.7, 0.7))
+        self.window = Object(
+            "window", points, (1.0, 0.7, 0.7), ObjectType.WIREFRAME)
         self["window"] = self.window
 
     def __getitem__(self, name: 'str') -> 'Object':
