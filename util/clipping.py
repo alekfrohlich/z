@@ -25,7 +25,13 @@ from client.objects import Object
 from util.linear_algebra import (
     normalize_matrix, rotation_matrix, affine_transformed, normal)
 
-# QUESTION: How to change clipping algorithm at run time?
+# QUESTION: How to change clipping algorithm at run time? Clipper object
+#           common to each type of object (one clipper for face, other for
+#           curve, and another for surface).
+# NOTE: One does not need to know what specific case of a face element an
+#       object is before clipping as the size of the object gives that info
+#       away.
+
 
 class ClippableObject:
     def __init__(self, obj: 'Object', window: 'Object'):
@@ -222,9 +228,11 @@ def sutherland_hodgeman(points):
     return old_points
 
 
+# FIXME: Polygon clipping broken
 clip = {
     1: clip_point,
     2: cohen_sutherland,
+    # 3: sutherland_hodgeman,
     3: lambda p: p,
-    4: sutherland_hodgeman,
+    4: lambda p: p,
 }

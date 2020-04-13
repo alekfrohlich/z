@@ -8,8 +8,8 @@
 #           identity linear transformation but I dont know how to integrate
 #           this vision with homogeneous coordinates. On the other hand, one
 #           could define as mappings from different vector spaces (visulization
-#           vs workbench) and keep relying on the computational hack to arrive at
-#           the same affine coordinates.
+#           vs workbench) and keep relying on the computational hack to arrive
+#           at the same affine coordinates.
 
 # QUESTION: How to avoid gimbal locks? It seems that Aldo is going to teach us
 #           Euler angles and that is susceptible to gimbal lock. We could use
@@ -51,6 +51,7 @@ def normal(p0, p1):
 def size(u):
     return ((u[0][0] - u[1][0])**2 +
             (u[0][1] - u[1][1])**2)**0.5
+
 
 def affine_transformed(p, points, matrix_tr):
     affine_tr = translation_matrix(-p[0], -p[1])@matrix_tr

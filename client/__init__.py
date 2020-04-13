@@ -61,6 +61,7 @@ class GtkClient:
         create_obj_dialog = CreateObjectDialog(
             self._builder.get_object("create_object_dialog"),
             self._builder.get_object("create_object_dialog_name_field"),
+            self._builder.get_object("create_object_dialog_type_field"),
             self._builder.get_object("create_object_dialog_points_field"),
             self._builder.get_object("create_object_dialog_color_field"),
             obj_view,

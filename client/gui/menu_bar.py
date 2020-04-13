@@ -43,9 +43,14 @@ class MenuBar:
         response = self._create_obj_dialog.run()
 
         if response == Gtk.ResponseType.OK:
-            self._executor.add(self._create_obj_dialog.name,
-                               self._create_obj_dialog.points,
-                               self._create_obj_dialog.color)
+            if self._create_obj_dialog.object_type == "Curve":
+                self._executor.addc(self._create_obj_dialog.name,
+                                    self._create_obj_dialog.points,
+                                    self._create_obj_dialog.color)
+            else:
+                self._executor.add(self._create_obj_dialog.name,
+                                   self._create_obj_dialog.points,
+                                   self._create_obj_dialog.color)
         self._create_obj_dialog.hide()
 
     def _on_load_object(self, _):
@@ -81,11 +86,13 @@ class CreateObjectDialog:
     """
 
     def __init__(self, dialog: 'Gtk.Dialog', name_field: 'Gtk.Entry',
-                 points_field: 'Gtk.Entry', color_field: 'Gtk.Entry',
-                 obj_view: 'ObjectView', interpreter: 'Interpreter'):
+                 type_field: 'Gtk.ComboBoxText', points_field: 'Gtk.Entry',
+                 color_field: 'Gtk.Entry', obj_view: 'ObjectView',
+                 interpreter: 'Interpreter'):
         """CreateObjectDialog constructor."""
         self._dialog = dialog
         self._name_field = name_field
+        self._type_field = type_field
         self._points_field = points_field
         self._color_field = color_field
         self._obj_view = obj_view
@@ -99,6 +106,12 @@ class CreateObjectDialog:
     def name(self) -> 'str':
         """Object's name."""
         return self._name_field.get_text()
+
+    @property
+    def object_type(self) -> 'str':
+        # NOTE: already in face/curve/surface classification.
+        """Object's type."""
+        return self._type_field.get_active_text()
 
     @property
     def points(self) -> 'list':
