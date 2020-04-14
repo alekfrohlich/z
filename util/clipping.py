@@ -76,8 +76,9 @@ class ClippableObject:
         normalize_tr = normalize_matrix(v_up, v_right)
 
         window_tr = rotate_tr@normalize_tr
+        window_coordinates = affine_transformed((x, y), self.points, window_tr)
         self.clipped_points = self.clipping_algorithm(
-            affine_transformed((x, y), self.points, window_tr))
+            window_coordinates)
 
     @property
     def visible(self) -> 'bool':
@@ -228,11 +229,58 @@ def sutherland_hodgeman(points):
     return old_points
 
 
+def clip_composed_bezier(points: 'list') -> 'list':
+    """Generate C(1) composite bezier curve from 4n+2 control points.
+
+    The splines are constructed as follows:
+    1. The first spline uses the first 4 control points.
+    2. For each pair of remaining points remaining a new spline
+        is constructed. This spline shares two control points with it's
+        predecessor: If spline_i is made up from indexes 1,2,3,4, then
+        spline_i+1 is made up from indexes 4,3,5,6.
+
+    The construction ends if any of the generated points lands outside the
+    window.
+
+    Notes
+    -----
+        The algorithm relies on a normalized coordinate system to detect
+        points outside the window.
+
+    """
+    def generate_bezier(controls: 'list') -> 'list':
+        def p(t: 'float', i: 'int') -> 'float':
+            """Evaluate point at x/y spline depending on index 'i'."""
+            return np.array([t**3, t**2, t, 1]).dot(np.array([
+                [-1, 3, -3, 1],
+                [3, -6, 3, 0],
+                [-3, 3, 0, 0],
+                [1, 0, 0, 0],
+            ])).dot(np.array([p[i] for p in controls]))
+
+        cp = []
+        for t in np.linspace(0, 1, num=1000):
+            x = p(t, 0)
+            y = p(t, 1)
+            if not (x > 1 or x < -1 or y > 1 or y < - 1):
+                cp += [np.array([x, y, 1])]
+        return cp
+
+    clipped_points = generate_bezier(points[:4])
+    for i in range((len(points)-4)//2):
+        indexes = [2*i+3, 2*i+2, 2*i+4, 2*i+5]
+        clipped_points += generate_bezier([points[idx] for idx in indexes])
+    if clipped_points == []:
+        return None
+    else:
+        return clipped_points
+
+
 # FIXME: Polygon clipping broken
 clip = {
     1: clip_point,
     2: cohen_sutherland,
     # 3: sutherland_hodgeman,
     3: lambda p: p,
-    4: lambda p: p,
+    4: clip_composed_bezier,
 }

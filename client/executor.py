@@ -22,7 +22,7 @@ Notes
 import numpy as np
 
 from util import (Logger, LogLevel)
-from .objects import (Curve, Object, ObjectType)
+from .objects import (Object, ObjectType)
 
 from .object_store import ObjectStore
 from .gui.viewport import Viewport
@@ -46,18 +46,11 @@ class Executor:
 
     @Viewport.needs_redraw
     @_warn_undefined_object
-    def add(self, name: 'str', points: 'list', color=(0.0, 0.0, 0.0)):
+    def add(self, name: 'str', points: 'list', color=(0.0, 0.0, 0.0), t=None):
         """Attempt to add object to ObjectStore."""
-        self._obj_store[name] = Object(
-            name, points, color, ObjectType(
-                3 if len(points) > 3 else len(points)))
-
-    # TEMP: Rethink after bicubic splines
-    @Viewport.needs_redraw
-    @_warn_undefined_object
-    def addc(self, name: 'str', controls: 'list', color=(0.0, 0.0, 0.0)):
-        """Attempt to add curve to ObjectStore."""
-        self._obj_store[name] = Curve(name, controls, color)
+        if t is None:
+            t = ObjectType(3 if len(points) > 3 else len(points))
+        self._obj_store[name] = Object(name, points, color, t)
 
     @Viewport.needs_redraw
     @_warn_undefined_object

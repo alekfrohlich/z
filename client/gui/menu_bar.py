@@ -9,6 +9,7 @@ Classes
 from gi.repository import Gtk
 
 from util import (Logger, LogLevel)
+from client.objects import ObjectType
 
 
 class MenuBar:
@@ -43,14 +44,12 @@ class MenuBar:
         response = self._create_obj_dialog.run()
 
         if response == Gtk.ResponseType.OK:
-            if self._create_obj_dialog.object_type == "Curve":
-                self._executor.addc(self._create_obj_dialog.name,
-                                    self._create_obj_dialog.points,
-                                    self._create_obj_dialog.color)
-            else:
-                self._executor.add(self._create_obj_dialog.name,
-                                   self._create_obj_dialog.points,
-                                   self._create_obj_dialog.color)
+            t = ObjectType.CURVE if self._create_obj_dialog.object_type \
+                == "Curve" else None
+            self._executor.add(self._create_obj_dialog.name,
+                                self._create_obj_dialog.points,
+                                self._create_obj_dialog.color,
+                                t)
         self._create_obj_dialog.hide()
 
     def _on_load_object(self, _):

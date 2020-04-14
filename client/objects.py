@@ -72,7 +72,7 @@ class Object:
 
     def __str__(self):
         return "{}({}) with points = {} and color = {}".format(
-            self.name, str(self.type), str(self.points), str(self.color))
+            self.name, str(self.type), str([(p[0], p[1]) for p in self.points]), str(self.color))
 
     @property
     def center(self) -> 'tuple':
@@ -111,44 +111,3 @@ class Object:
         """Apply `matrix_tr` to the object's coordinates."""
         for i in range(len(self.points)):
             self.points[i] = self.points[i]@matrix_tr
-
-
-class Curve(Object):
-    """C(1) composite bezier curve."""
-    def __init__(self, name: 'str', controls: 'list', color: 'tuple'):
-        """Construct a C(1) composite bezier curve from 4+2n control points.
-
-        The splines are constructed as follows:
-            1. The first spline uses the first 4 control points.
-            2. For each pair of points remaining in `controls` a new spline
-               is made. This spline shares two control points with the last
-               spline, but in reverse order. I.e., if spline_i is made up from
-               indexes 1,2,3,4, spline_i+1 is made up from 4,3,5,6.
-
-        """
-        self.controls = controls
-        points = Curve._make_bezier(controls[:4])
-        for i in range((len(controls)-4)//2):
-            indexes = [2*i+3, 2*i+2, 2*i+4, 2*i+5]
-            points += Curve._make_bezier([controls[idx] for idx in indexes])
-        super().__init__(
-            name, points, color, ObjectType.CURVE)
-
-    def __str__(self):
-        return "{}({}) with control points = {} and color = {}".format(
-            self.name, str(self.type), str(self.controls), str(self.color))
-
-    @staticmethod
-    def _make_bezier(points: 'list') -> 'list':
-        """Generate bezier cubic spline from 4 control points."""
-        def p(t: 'float', i: 'int'):
-            """Evaluate point at x/y spline depending on index 'i'."""
-            return np.array([t**3, t**2, t, 1]).dot(np.array([
-                [-1, 3, -3, 1],
-                [3, -6, 3, 0],
-                [-3, 3, 0, 0],
-                [1, 0, 0, 0],
-            ])).dot(np.array([p[i] for p in points]))
-
-        return [np.array([p(t, 0), p(t, 1), 1]) for t in np.linspace(
-            0, 1, num=100)]
