@@ -146,6 +146,4 @@ class Viewport:
             cr.move_to(*first_point)
             for point in map(self.viewport_transform, obj.clipped_points):
                 cr.line_to(*point)
-            if obj.type is ObjectType.WIREFRAME:
-                cr.line_to(*first_point)
             cr.stroke()

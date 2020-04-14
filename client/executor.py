@@ -50,6 +50,8 @@ class Executor:
         """Attempt to add object to ObjectStore."""
         if t is None:
             t = ObjectType(3 if len(points) > 3 else len(points))
+        if t is ObjectType.WIREFRAME:
+            points.append(points[0])
         self._obj_store[name] = Object(name, points, color, t)
 
     @Viewport.needs_redraw

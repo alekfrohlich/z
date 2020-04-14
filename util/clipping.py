@@ -76,9 +76,8 @@ class ClippableObject:
         normalize_tr = normalize_matrix(v_up, v_right)
 
         window_tr = rotate_tr@normalize_tr
-        window_coordinates = affine_transformed((x, y), self.points, window_tr)
         self.clipped_points = self.clipping_algorithm(
-            window_coordinates)
+            affine_transformed((x, y), self.points, window_tr))
 
     @property
     def visible(self) -> 'bool':
@@ -167,32 +166,29 @@ def cohen_sutherland(points: 'list') -> 'list':
             return (i1, i2)
 
 
-def intersect(p1, p2, xw, yw):
-    x1, y1, _ = p1
-    x2, y2, _ = p2
-
-    if x1-x2 != 0:
-        m = (y1-y2) / (x1-x2)
-        b = y1 - m*x1
-
-        if yw is not None:
-            xw = (yw-b)/m
-        else:
-            yw = m*xw + b
-    else:
-        if yw is not None:
-            xw = x1
-        else:
-            pass
-    return np.array([xw, yw, 1])
-
-
-xw = [-1, None, 1, None]
-yw = [None, 1, None, -1]
-
-
 def sutherland_hodgeman(points):
+    """"""
+    def intersect(p1, p2, xw, yw):
+        x1, y1, _ = p1
+        x2, y2, _ = p2
 
+        if x1-x2 != 0:
+            m = (y1-y2) / (x1-x2)
+            b = y1 - m*x1
+
+            if yw is not None:
+                xw = (yw-b)/m
+            else:
+                yw = m*xw + b
+        else:
+            if yw is not None:
+                xw = x1
+            else:
+                pass
+        return np.array([xw, yw, 1])
+
+    xw = [-1, None, 1, None]
+    yw = [None, 1, None, -1]
     border = 0
 
     def out(point):
@@ -226,10 +222,10 @@ def sutherland_hodgeman(points):
         old_points = new_points[:]
         new_points = []
         border += 1
-    return old_points
+    return None if old_points is [] else old_points
 
 
-def clip_composed_bezier(points: 'list') -> 'list':
+def clip_curve(points: 'list') -> 'list':
     """Generate C(1) composite bezier curve from 4n+2 control points.
 
     The splines are constructed as follows:
@@ -242,13 +238,9 @@ def clip_composed_bezier(points: 'list') -> 'list':
     The construction ends if any of the generated points lands outside the
     window.
 
-    Notes
-    -----
-        The algorithm relies on a normalized coordinate system to detect
-        points outside the window.
-
     """
     def generate_bezier(controls: 'list') -> 'list':
+        """Generates visible part of bezier cubic spline."""
         def p(t: 'float', i: 'int') -> 'float':
             """Evaluate point at x/y spline depending on index 'i'."""
             return np.array([t**3, t**2, t, 1]).dot(np.array([
@@ -276,11 +268,9 @@ def clip_composed_bezier(points: 'list') -> 'list':
         return clipped_points
 
 
-# FIXME: Polygon clipping broken
 clip = {
     1: clip_point,
     2: cohen_sutherland,
-    # 3: sutherland_hodgeman,
-    3: lambda p: p,
-    4: clip_composed_bezier,
+    3: sutherland_hodgeman,
+    4: clip_curve,
 }

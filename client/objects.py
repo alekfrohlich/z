@@ -77,8 +77,8 @@ class Object:
     @property
     def center(self) -> 'tuple':
         """Geometric center of object."""
-        x_points = [point[0] for point in self.points]
-        y_points = [point[1] for point in self.points]
+        x_points = list({point[0] for point in self.points})
+        y_points = list({point[1] for point in self.points})
         return (np.average(x_points), np.average(y_points))
 
     def translate(self, dx: 'int', dy: 'int'):

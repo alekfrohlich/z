@@ -37,10 +37,12 @@ class ObjectStore(Gtk.ListStore):
                                GObject.TYPE_PYOBJECT,
                                GObject.TYPE_STRING,
                                GObject.TYPE_STRING)
-        points = [np.array([0, 500, 1]),
-                  np.array([500, 500, 1]),
-                  np.array([500, 0, 1]),
-                  np.array([0, 0, 1])]
+        points = [[0, 500, 1],
+                  [500, 500, 1],
+                  [500, 0, 1],
+                  [0, 0, 1],
+                  [0, 500, 1]]
+        map(np.array, points)
         self.window = Object(
             "window", points, (1.0, 0.7, 0.7), ObjectType.WIREFRAME)
         self["window"] = self.window
