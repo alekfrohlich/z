@@ -137,7 +137,6 @@ class Viewport:
         """
         cr.set_source_surface(self._surface, 0, 0)
         cr.paint()
-        cr.set_line_width(2)
         cr.set_source_rgb(*Viewport.BLACK)
         cr.set_line_cap(cairo.LineCap.ROUND)
 

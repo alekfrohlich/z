@@ -900,11 +900,17 @@
                     <property name="label" translatable="yes">Z supports two graphical types of graphical elements: Face elements and Curve elements.
 
 Face elements comprise points, lines and polygons and are expressed through a list of points.
-For example, the
-expression 10,10;10,100 represents a line from (10,10) to (10,100).
 
-Curve elements comprise cubic splines. Such splines can be represented by four
-control point such as in -100,0;0,100;50,-200;100,0</property>
+Line example:  10,10;10,100 represents a line from (10,10) to (10,100).
+
+Curve elements are C(1) composite bezier cubic splines. Such splines can be represented by
+4n+2 control point. 
+
+Composite curve example:  -100,0;0,100;50,-200;100,0;400,0;150,150 represents 2 bezier
+cubic splines:
+
+sp(0) = -100,0;0,100;50,-200;100,0
+sp(1) = 50,-200;100,0;400,0;150,150</property>
                   </object>
                 </child>
               </object>
@@ -945,9 +951,10 @@ control point such as in -100,0;0,100;50,-200;100,0</property>
                     <property name="margin_right">5</property>
                     <property name="margin_top">5</property>
                     <property name="margin_bottom">5</property>
+                    <property name="active">1</property>
                     <items>
-                      <item translatable="yes">Face element</item>
-                      <item translatable="yes">Curve</item>
+                      <item id="0" translatable="yes">Face element</item>
+                      <item id="1" translatable="yes">Curve</item>
                     </items>
                   </object>
                 </child>
@@ -1015,7 +1022,7 @@ control point such as in -100,0;0,100;50,-200;100,0</property>
                             <property name="can_focus">True</property>
                             <property name="margin_top">5</property>
                             <property name="margin_bottom">5</property>
-                            <property name="text" translatable="yes">10,10;10,100</property>
+                            <property name="text" translatable="yes">100,200;200,300;250,0;300,200;400,0;150,150</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>

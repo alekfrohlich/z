@@ -114,19 +114,32 @@ class Object:
 
 
 class Curve(Object):
-    """Bezier cubic spline."""
+    """C(1) composite bezier curve."""
     def __init__(self, name: 'str', controls: 'list', color: 'tuple'):
-        """"""
+        """Construct a C(1) composite bezier curve from 4+2n control points.
+
+        The splines are constructed as follows:
+            1. The first spline uses the first 4 control points.
+            2. For each pair of points remaining in `controls` a new spline
+               is made. This spline shares two control points with the last
+               spline, but in reverse order. I.e., if spline_i is made up from
+               indexes 1,2,3,4, spline_i+1 is made up from 4,3,5,6.
+
+        """
         self.controls = controls
+        points = Curve._make_bezier(controls[:4])
+        for i in range((len(controls)-4)//2):
+            indexes = [2*i+3, 2*i+2, 2*i+4, 2*i+5]
+            points += Curve._make_bezier([controls[idx] for idx in indexes])
         super().__init__(
-            name, Curve._make_bezier(controls), color, ObjectType.CURVE)
+            name, points, color, ObjectType.CURVE)
 
     def __str__(self):
         return "{}({}) with control points = {} and color = {}".format(
             self.name, str(self.type), str(self.controls), str(self.color))
 
     @staticmethod
-    def _make_bezier(points: 'list'):
+    def _make_bezier(points: 'list') -> 'list':
         """Generate bezier cubic spline from 4 control points."""
         def p(t: 'float', i: 'int'):
             """Evaluate point at x/y spline depending on index 'i'."""
