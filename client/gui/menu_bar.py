@@ -44,12 +44,15 @@ class MenuBar:
         response = self._create_obj_dialog.run()
 
         if response == Gtk.ResponseType.OK:
-            t = ObjectType.CURVE if self._create_obj_dialog.object_type \
-                == "Curve" else None
+            str2type = {
+                "Face element": None,
+                "Bezier": ObjectType.BEZIER,
+                "B-Spline": ObjectType.BSPLINE,
+            }
             self._executor.add(self._create_obj_dialog.name,
                                 self._create_obj_dialog.points,
                                 self._create_obj_dialog.color,
-                                t)
+                                str2type[self._create_obj_dialog.object_type])
         self._create_obj_dialog.hide()
 
     def _on_load_object(self, _):

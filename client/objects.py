@@ -48,15 +48,17 @@ class ObjectType(Enum):
     """Enum representing possible `Object` types."""
     POINT = 1
     LINE = 2
-    WIREFRAME = 3
-    CURVE = 4
+    WIREFRAME = 3  # FIXME: Rename to polygon
+    BEZIER = 4
+    BSPLINE = 5
 
     def __str__(self):
         pretty = {
             ObjectType.POINT.value: "Point",
             ObjectType.LINE.value: "Line",
             ObjectType.WIREFRAME.value: "Wireframe",
-            ObjectType.CURVE.value: "Curve"
+            ObjectType.BEZIER.value: "Bezier",
+            ObjectType.BSPLINE.value: "B-Spline",
         }
         return pretty[self.value]
 

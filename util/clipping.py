@@ -21,7 +21,7 @@ See Also
 """
 import numpy as np
 
-from client.objects import Object
+from client.objects import (Object, ObjectType)
 from util.linear_algebra import (
     normalize_matrix, rotation_matrix, affine_transformed, normal)
 
@@ -38,7 +38,13 @@ class ClippableObject:
         """Construct ClippableObject and store it's clipped coordinates."""
         self._obj = obj
         self.clipped_points = None
-        self.clipping_algorithm = clip[self.type.value]
+        self.clipping_algorithm = {
+            ObjectType.POINT: clip_point,
+            ObjectType.LINE: clip_line,
+            ObjectType.WIREFRAME: clip_polygon,
+            ObjectType.BEZIER: clip_bezier,
+            ObjectType.BSPLINE: clip_bspline,
+        }
         self.clip(window)
 
     def __getattr__(self, name: 'str'):
@@ -76,7 +82,7 @@ class ClippableObject:
         normalize_tr = normalize_matrix(v_up, v_right)
 
         window_tr = rotate_tr@normalize_tr
-        self.clipped_points = self.clipping_algorithm(
+        self.clipped_points = self.clipping_algorithm[self.type](
             affine_transformed((x, y), self.points, window_tr))
 
     @property
@@ -97,7 +103,8 @@ def clip_point(points: 'list') -> 'list':
         return points
 
 
-def cohen_sutherland(points: 'list') -> 'list':
+def clip_line(points: 'list') -> 'list':
+    """Cohen-Sutherland line clipping algorithm."""
     def region_code(x, y):
         code = 0
         if x < -1:
@@ -166,8 +173,8 @@ def cohen_sutherland(points: 'list') -> 'list':
             return (i1, i2)
 
 
-def sutherland_hodgeman(points):
-    """"""
+def clip_polygon(points):
+    """Sutherland-Hodgeman polygon clipping algortihm."""
     def intersect(p1, p2, xw, yw):
         x1, y1, _ = p1
         x2, y2, _ = p2
@@ -225,52 +232,80 @@ def sutherland_hodgeman(points):
     return None if old_points is [] else old_points
 
 
-def clip_curve(points: 'list') -> 'list':
-    """Generate C(1) composite bezier curve from 4n+2 control points.
+def generate_cubic_spline(geometry: 'list', spline_type: 'list') -> 'list':
+    """Generate cubic spline from geometry and spline matrices.
+
+    A point p at any cubic spline is given by:
+
+        p(t) = T * M * G
+
+    where T is the parameters's powers, M is the matrix that defines the
+    class of the spline, and G is the geometry of the spline instance.
+    E.g., a bezier cubic spline:
+
+        T = [t**3, t**2, t, 1]
+
+        M = [-1, 3, -3, 1],
+            [3, -6, 3, 0],
+            [-3, 3, 0, 0],
+            [1, 0, 0, 0],
+
+        G = [(100, 200),
+             (200, 300),
+             (250, 0),
+             (300, 200)]
+
+    Notes
+    -----
+        The constructed spline has, at a maximum, 1000 points, any point not
+        inside the window is removed.
+
+    """
+    def p(t: 'float', i: 'int') -> 'float':
+        """Evaluate parameter x or y of cubic spline depending on index 'i'."""
+        return np.array([t**3, t**2, t, 1])@spline_type@np.array(
+            [p[i] for p in geometry])
+
+    spline = []
+    for t in np.linspace(0, 1, num=1000):
+        x = p(t, 0)
+        y = p(t, 1)
+        if not (x > 1 or x < -1 or y > 1 or y < - 1):
+            spline += [np.array([x, y, 1])]
+    return spline
+
+
+def clip_bspline(points: 'list') -> 'list':
+    """Generate visible part of B-Spline curve from n > 3 control points."""
+    bspline = [[-1/6, 3/6, -3/6, 1/6],
+               [3/6, -6/6, 3/6, 0],
+               [-3/6, 0, 3/6, 0],
+               [1/6, 4/6, 1/6, 0]]
+
+    clipped_points = []
+    for i in range((len(points)-3)):
+        clipped_points += generate_cubic_spline(points[i:i+4], bspline)
+    return clipped_points if clipped_points != [] else None
+
+
+def clip_bezier(points: 'list') -> 'list':
+    """Generate visible part of C(1) composite bezier curve from 4n+2 control
+    points.
 
     The splines are constructed as follows:
     1. The first spline uses the first 4 control points.
-    2. For each pair of remaining points remaining a new spline
-        is constructed. This spline shares two control points with it's
-        predecessor: If spline_i is made up from indexes 1,2,3,4, then
-        spline_i+1 is made up from indexes 4,3,5,6.
-
-    The construction ends if any of the generated points lands outside the
-    window.
+    2. For each pair of remaining points a new spline is constructed. This
+       spline shares two control points with it's predecessor; If spline_i is
+       made from indexes 1,2,3,4, then spline_i+1 is made from indexes 4,3,5,6.
 
     """
-    def generate_bezier(controls: 'list') -> 'list':
-        """Generates visible part of bezier cubic spline."""
-        def p(t: 'float', i: 'int') -> 'float':
-            """Evaluate point at x/y spline depending on index 'i'."""
-            return np.array([t**3, t**2, t, 1]).dot(np.array([
-                [-1, 3, -3, 1],
-                [3, -6, 3, 0],
-                [-3, 3, 0, 0],
-                [1, 0, 0, 0],
-            ])).dot(np.array([p[i] for p in controls]))
+    bezier = [[-1, 3, -3, 1],
+              [3, -6, 3, 0],
+              [-3, 3, 0, 0],
+              [1, 0, 0, 0]]
 
-        cp = []
-        for t in np.linspace(0, 1, num=1000):
-            x = p(t, 0)
-            y = p(t, 1)
-            if not (x > 1 or x < -1 or y > 1 or y < - 1):
-                cp += [np.array([x, y, 1])]
-        return cp
-
-    clipped_points = generate_bezier(points[:4])
+    clipped_points = generate_cubic_spline(points[:4], bezier)
     for i in range((len(points)-4)//2):
         indexes = [2*i+3, 2*i+2, 2*i+4, 2*i+5]
-        clipped_points += generate_bezier([points[idx] for idx in indexes])
-    if clipped_points == []:
-        return None
-    else:
-        return clipped_points
-
-
-clip = {
-    1: clip_point,
-    2: cohen_sutherland,
-    3: sutherland_hodgeman,
-    4: clip_curve,
-}
+        clipped_points += generate_cubic_spline([points[idx] for idx in indexes], bezier)
+    return clipped_points if clipped_points != [] else None
