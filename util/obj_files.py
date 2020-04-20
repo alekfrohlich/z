@@ -47,6 +47,7 @@ class DotObjParser:
 
     def compile_obj_file(self, path: 'str') -> 'list':
         """Returns object described by vertices .obj file."""
+        # FIXME: Not compatible with Wire-frame model.
         with open(path) as obj:
             raw_file = obj.read()
         file_lines = [line.split(" ") for line in raw_file.split("\n")]

@@ -73,7 +73,7 @@ class Viewport:
         ---------
             point : array_like
                 Array_like means all those objects -- lists, tuples, etc. --
-                that can be accessed as an array of three elements
+                that can be accessed as an array of two elements
 
         Notes
         -----
@@ -87,7 +87,6 @@ class Viewport:
             the clip region.
 
         """
-        # TEMP: Should receive 2d points
         x_w, y_w = point
         x_vp = (x_w + 1) / (2) * self._resolution[0] + 10
         y_vp = (1 - (y_w + 1) / (2)) * self._resolution[1] + 10

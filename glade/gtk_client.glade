@@ -335,10 +335,30 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkButton" id="in_button">
+                                    <property name="label" translatable="yes">In</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="on_in_button" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">2</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkButton" id="out_button">
+                                    <property name="label" translatable="yes">Out</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <signal name="clicked" handler="on_out_button" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">0</property>
+                                    <property name="top_attach">2</property>
+                                  </packing>
                                 </child>
                               </object>
                               <packing>
@@ -433,7 +453,7 @@
                                             <property name="max_length">7</property>
                                             <property name="width_chars">7</property>
                                             <property name="max_width_chars">7</property>
-                                            <property name="text" translatable="yes">0,0, 0</property>
+                                            <property name="text" translatable="yes">0,0,0</property>
                                             <property name="input_purpose">digits</property>
                                           </object>
                                           <packing>

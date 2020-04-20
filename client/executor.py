@@ -62,27 +62,24 @@ class Executor:
 
     @Viewport.needs_redraw
     @_warn_undefined_object
-    def translate(self, selected: 'str', dx: 'int', dy: 'int'):
-        """Attempt to add point to ObjectStore."""
-        # obj = self._obj_store[selected]
-        # obj.translate(dx, dy)
-        # self._obj_store.changed(obj)
-        raise NotImplementedError
+    def translate(self, selected: 'str', dx: 'int', dy: 'int', dz: 'int'):
+        """Attempt to translate point."""
+        obj = self._obj_store[selected]
+        obj.translate(dx, dy, dz)
+        self._obj_store.changed(obj)
 
     @Viewport.needs_redraw
     @_warn_undefined_object
     def scale(self, selected: 'str', factor: 'int'):
         """Attempt to scale object by `factor`."""
-        # obj = self._obj_store[selected]
-        # obj.scale(factor, factor)
-        # self._obj_store.changed(obj)
-        raise NotImplementedError
+        obj = self._obj_store[selected]
+        obj.scale(factor, factor, factor)
+        self._obj_store.changed(obj)
 
     @Viewport.needs_redraw
     @_warn_undefined_object
     def rotate(self, selected: 'str', rads: 'float', point: 'np.array'):
         """Attempt to rotate object by `rads` around of `point`."""
-        # obj = self._obj_store[selected]
-        # obj.rotate(rads, point)
-        # self._obj_store.changed(obj)
-        raise NotImplementedError
+        obj = self._obj_store[selected]
+        obj.rotate(rads, point)
+        self._obj_store.changed(obj)

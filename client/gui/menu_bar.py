@@ -112,8 +112,7 @@ class CreateObjectDialog:
     @property
     def object_type(self) -> 'str':
         """Object's type."""
-        # TEMP: Glade specifies face element, bezier and b-spline as possible
-        #       types.
+        # TEMP: Not compatible with Wire-frame model.
         return self._type_field.get_active_text()
 
     @property

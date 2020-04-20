@@ -84,29 +84,31 @@ class Object:
         z_points = list({point[2] for point in self.points})
         return (np.average(x_points), np.average(y_points), np.average(z_points))
 
-    def translate(self, dx: 'int', dy: 'int'):
-        """Translate object by (dx, dy)."""
-        self.transform(translation_matrix(dx, dy))
+    def translate(self, dx: 'int', dy: 'int', dz: 'int'):
+        """Translate object by (`dx`, `dy`, `dz`)."""
+        self.transform(translation_matrix(dx, dy, dz))
 
-    def scale(self, sx: 'int', sy: 'int'):
-        """Scale object by `sx` in the x-axis and `sy` in the y-axis."""
-        x, y = self.center
+    def scale(self, sx: 'int', sy: 'int', sz: 'int'):
+        """Scale object by `sx` in the x-axis, `sy` in the y-axis and `dz` in
+        the z-axis."""
+        x, y, z = self.center
 
-        to_origin_tr = translation_matrix(-x, -y)
-        scale_tr = escalation_matrix(sx, sy)
-        from_origin_tr = translation_matrix(x, y)
+        to_origin_tr = translation_matrix(-x, -y, -z)
+        scale_tr = escalation_matrix(sx, sy, sz)
+        from_origin_tr = translation_matrix(x, y, z)
 
         self.transform(to_origin_tr@scale_tr@from_origin_tr)
 
     def rotate(self, rads: 'float', point=None):
         """Rotate object by `rads` around of `point`."""
+        # TEMP: Only rotating around z-axis.
         if point is None:
             point = self.center
-        x, y = point
+        x, y, z = point
 
-        to_origin_tr = translation_matrix(-x, -y)
+        to_origin_tr = translation_matrix(-x, -y, -z)
         rotate_tr = rotation_matrix(rads)
-        from_origin_tr = translation_matrix(x, y)
+        from_origin_tr = translation_matrix(x, y, z)
 
         self.transform(to_origin_tr@rotate_tr@from_origin_tr)
 

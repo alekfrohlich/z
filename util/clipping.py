@@ -148,7 +148,7 @@ def clip_line(points: 'list') -> 'list':
     def valid_intersection(intersections):
         for i in intersections:
             if i[0] <= 1 and i[0] >= -1 and i[1] <= 1 and i[1] >= -1:
-                return np.array([i[0], i[1], 1])
+                return (i[0], i[1])
         return None
 
     x1, y1, z1, w1 = points[0]
@@ -164,10 +164,10 @@ def clip_line(points: 'list') -> 'list':
         if rc1 == 0 or rc2 == 0:  # one intersection
             if rc1 != 0:
                 i = valid_intersection(intersections(x1, y1, rc1))
-                return (i, np.array([x2, y2, 1]))
+                return (i, (x2, y2))
             else:
                 i = valid_intersection(intersections(x2, y2, rc2))
-                return (i, np.array([x1, y1, 1]))
+                return (i, (x1, y1))
         else:  # possibly two intersections
             i1 = valid_intersection(intersections(x1, y1, rc1))
             i2 = valid_intersection(intersections(x2, y2, rc2))
@@ -176,7 +176,7 @@ def clip_line(points: 'list') -> 'list':
             return (i1, i2)
 
 
-def clip_polygon(points):
+def clip_polygon(points: 'list') -> 'list':
     """Sutherland-Hodgeman polygon clipping algortihm."""
     def intersect(p1, p2, xw, yw):
         x1, y1 = p1
@@ -195,7 +195,7 @@ def clip_polygon(points):
                 xw = x1
             else:
                 pass
-        return np.array([xw, yw, 1])
+        return (xw, yw)
 
     xw = [-1, None, 1, None]
     yw = [None, 1, None, -1]
