@@ -87,7 +87,7 @@ class ClippableObject:
     @property
     def visible(self) -> 'bool':
         """Wether the object is currently visible."""
-        return self.clipped_points is not None
+        return self.clipped_points != []
 
 
 # TODO: Document clipping algorithms
@@ -101,7 +101,7 @@ def clip_point(points: 'list') -> 'list':
     """Clip point by determining wether it lies inside the window."""
     x, y, z, w = points[0]
     if x > 1 or x < -1 or y > 1 or y < -1:
-        return None
+        return []
     else:
         return points
 
@@ -149,7 +149,7 @@ def clip_line(points: 'list') -> 'list':
         for i in intersections:
             if i[0] <= 1 and i[0] >= -1 and i[1] <= 1 and i[1] >= -1:
                 return (i[0], i[1])
-        return None
+        return []
 
     x1, y1, z1, w1 = points[0]
     x2, y2, z2, w2 = points[1]
@@ -158,7 +158,7 @@ def clip_line(points: 'list') -> 'list':
     if rc1 == 0 and rc2 == 0:  # completely inside
         return points
     elif (rc1 & rc2) != 0:  # completely outside
-        return None
+        return []
     else:  # partially inside
         m = (y2-y1) / (x2-x1)
         if rc1 == 0 or rc2 == 0:  # one intersection
@@ -172,12 +172,13 @@ def clip_line(points: 'list') -> 'list':
             i1 = valid_intersection(intersections(x1, y1, rc1))
             i2 = valid_intersection(intersections(x2, y2, rc2))
             if i1 is None or i2 is None:  # outside
-                return None
+                return []
             return (i1, i2)
 
 
 def clip_polygon(points: 'list') -> 'list':
     """Sutherland-Hodgeman polygon clipping algortihm."""
+    # FIXME: Sometimes changes order of points
     def intersect(p1, p2, xw, yw):
         x1, y1 = p1
         x2, y2 = p2
@@ -197,8 +198,8 @@ def clip_polygon(points: 'list') -> 'list':
                 pass
         return (xw, yw)
 
-    xw = [-1, None, 1, None]
-    yw = [None, 1, None, -1]
+    xw = [-1.0, None, 1.0, None]
+    yw = [None, 1.0, None, -1.0]
     border = 0
 
     def out(point):
@@ -232,7 +233,7 @@ def clip_polygon(points: 'list') -> 'list':
         old_points = new_points[:]
         new_points = []
         border += 1
-    return None if old_points is [] else old_points
+    return old_points
 
 
 def out(x, y):
@@ -314,7 +315,7 @@ def clip_bspline(points: 'list') -> 'list':
     clipped_points = []
     for i in range((len(points)-3)):
         clipped_points += generate_segment(100, basis, points[i:i+4])
-    return clipped_points if clipped_points != [] else None
+    return clipped_points
 
 
 def clip_bezier(points: 'list') -> 'list':
@@ -340,4 +341,4 @@ def clip_bezier(points: 'list') -> 'list':
     for i in range((len(points)-4)//2):
         geometry = [points[2*i+3], points[2*i+2], points[2*i+4], points[2*i+5]]
         clipped_points += generate_segment(100, basis, geometry)
-    return clipped_points if clipped_points != [] else None
+    return clipped_points

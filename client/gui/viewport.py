@@ -121,9 +121,6 @@ class Viewport:
                    .format(width, height))
         self.clear()
 
-    # QUESTION: How to change drawing mode based on the type of the element?
-    #           Face/Curve/Surface.
-
     def _on_draw(self, wid: 'Gtk.Widget', cr: 'Cairo.Context'):
         """Handle on_draw signal.
 
@@ -141,6 +138,7 @@ class Viewport:
         cr.set_line_cap(cairo.LineCap.ROUND)
 
         for obj in self._obj_store.display_file:
+            print(obj.clipped_points)
             cr.set_source_rgb(*obj.color)
             first_point = self.viewport_transform(obj.clipped_points[0])
             cr.move_to(*first_point)
