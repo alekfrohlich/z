@@ -29,10 +29,7 @@ from util.linear_algebra import (
 # QUESTION: How to change clipping algorithm at run time? Clipper object
 #           common to each type of object (one clipper for face, other for
 #           curve, and another for surface).
-# NOTE: One does not need to know what specific case of a face element an
-#       object is before clipping as the size of the object gives that info
-#       away.
-
+# NOTE: The size of the object indicates if it is a point, a line, or a polygon.
 
 class ClippableObject:
     def __init__(self, obj: 'Object', window: 'Object'):
@@ -42,7 +39,7 @@ class ClippableObject:
         self.clipping_algorithm = {
             ObjectType.POINT: clip_point,
             ObjectType.LINE: clip_line,
-            ObjectType.WIREFRAME: clip_polygon,
+            ObjectType.POLYGON: clip_polygon,
             ObjectType.BEZIER: clip_bezier,
             ObjectType.BSPLINE: clip_bspline,
         }

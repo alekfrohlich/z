@@ -1,11 +1,11 @@
-"""This module contains geometric objects.
+"""This module contains geometric primitives.
 
 Object types:
 - Point: Defined by point.
 - Line: Defined by pair of points.
-- Sequence: Will be renamed to (parametric) curve, defined by the
-            corresponding parametric generation method: Hermite, Splite, etc.
 - Polygon: defined by list of faces.
+- Bezier: C(1) composed bezier curve.
+- B-spline: Composed b-spline curve.
 
 Notes
 -----
@@ -32,9 +32,7 @@ Notes
 # cases. Drawing would too be equal in cases where the curve does not leave
 # and join back the window.
 # NOTE: Surfaces can be an exception to this.
-# FIXME: Polygons must have their first point repeated as this would solve
-#        the clipping bug and allow one mechanism to draw points, lines,
-#        polygons and cubic splines.
+
 
 from enum import Enum
 
@@ -48,7 +46,7 @@ class ObjectType(Enum):
     """Enum representing possible `Object` types."""
     POINT = 1
     LINE = 2
-    WIREFRAME = 3  # FIXME: Rename to polygon
+    POLYGON = 3  # FIXME: Rename to polygon
     BEZIER = 4
     BSPLINE = 5
 
@@ -56,7 +54,7 @@ class ObjectType(Enum):
         pretty = {
             ObjectType.POINT.value: "Point",
             ObjectType.LINE.value: "Line",
-            ObjectType.WIREFRAME.value: "Wireframe",
+            ObjectType.POLYGON.value: "Wireframe",
             ObjectType.BEZIER.value: "Bezier",
             ObjectType.BSPLINE.value: "B-Spline",
         }

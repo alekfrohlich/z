@@ -44,7 +44,7 @@ class ObjectStore(Gtk.ListStore):
                   [0, 500, 1]]
         map(np.array, points)
         self.window = Object(
-            "window", points, (1.0, 0.7, 0.7), ObjectType.WIREFRAME)
+            "window", points, (1.0, 0.7, 0.7), ObjectType.POLYGON)
         self["window"] = self.window
 
     def __getitem__(self, name: 'str') -> 'Object':
