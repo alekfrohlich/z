@@ -433,7 +433,7 @@
                                             <property name="max_length">7</property>
                                             <property name="width_chars">7</property>
                                             <property name="max_width_chars">7</property>
-                                            <property name="text" translatable="yes">0,0</property>
+                                            <property name="text" translatable="yes">0,0, 0</property>
                                             <property name="input_purpose">digits</property>
                                           </object>
                                           <packing>
@@ -906,11 +906,11 @@ Line example:  10,10;10,100 represents a line from (10,10) to (10,100).
 Curve elements are C(1) composite bezier cubic splines. Such splines can be represented by
 4n+2 control point. 
 
-Composite curve example:  -100,0;0,100;50,-200;100,0;400,0;150,150 represents 2 bezier
+Composite curve example:  -100,0,0;0,100,0;50,-200,0;100,0,0;400,0,0;150,150,0 represents 2 bezier
 cubic splines:
 
-sp(0) = -100,0;0,100;50,-200;100,0
-sp(1) = 50,-200;100,0;400,0;150,150</property>
+sp(0) = -100,0,0;0,100,0;50,-200,0;100,0,0
+sp(1) = 50,-200,0;100,0,0;400,0,0;150,150,0</property>
                   </object>
                 </child>
               </object>
@@ -1023,7 +1023,7 @@ sp(1) = 50,-200;100,0;400,0;150,150</property>
                             <property name="can_focus">True</property>
                             <property name="margin_top">5</property>
                             <property name="margin_bottom">5</property>
-                            <property name="text" translatable="yes">100,200;200,300;250,0;300,200;400,0;150,150</property>
+                            <property name="text" translatable="yes">100,200,0;200,300,0;250,0,0;300,200,0;400,0,0;150,150,0</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>

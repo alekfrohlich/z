@@ -87,7 +87,8 @@ class Viewport:
             the clip region.
 
         """
-        x_w, y_w, _ = point
+        # TEMP: Should receive 2d points
+        x_w, y_w = point
         x_vp = (x_w + 1) / (2) * self._resolution[0] + 10
         y_vp = (1 - (y_w + 1) / (2)) * self._resolution[1] + 10
         return (x_vp, y_vp)

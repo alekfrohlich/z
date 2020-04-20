@@ -46,7 +46,7 @@ class ObjectType(Enum):
     """Enum representing possible `Object` types."""
     POINT = 1
     LINE = 2
-    POLYGON = 3  # FIXME: Rename to polygon
+    POLYGON = 3
     BEZIER = 4
     BSPLINE = 5
 
@@ -72,14 +72,17 @@ class Object:
 
     def __str__(self):
         return "{}({}) with points = {} and color = {}".format(
-            self.name, str(self.type), str([(p[0], p[1]) for p in self.points]), str(self.color))
+            self.name, str(self.type), str([(p[0], p[1], p[2]) for p in self.points]), str(self.color))
 
     @property
     def center(self) -> 'tuple':
         """Geometric center of object."""
+        # TEMP: Conversion from set to list avoids wrong computation of
+        #       polygon center.
         x_points = list({point[0] for point in self.points})
         y_points = list({point[1] for point in self.points})
-        return (np.average(x_points), np.average(y_points))
+        z_points = list({point[2] for point in self.points})
+        return (np.average(x_points), np.average(y_points), np.average(z_points))
 
     def translate(self, dx: 'int', dy: 'int'):
         """Translate object by (dx, dy)."""

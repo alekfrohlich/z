@@ -19,42 +19,47 @@
 import numpy as np
 
 
-def translation_matrix(dx, dy):
-    return np.array([[1, 0, 0],
-                     [0, 1, 0],
-                     [dx, dy, 1]])
+def translation_matrix(dx, dy, dz):
+    return np.array([[1, 0, 0, 0],
+                     [0, 1, 0, 0],
+                     [0, 0, 1, 0],
+                     [dx, dy, dz, 1]])
 
 
-def escalation_matrix(sx, sy):
-    return np.array([[sx, 0, 0],
-                     [0, sy, 0],
-                     [0, 0, 1]])
+def escalation_matrix(sx, sy, sz):
+    return np.array([[sx, 0, 0, 0],
+                     [0, sy, 0, 0],
+                     [0, 0, sz, 0],
+                     [0, 0, 0, 1]])
 
 
 def rotation_matrix(rads):
-    return np.array([[np.cos(rads), np.sin(rads), 0],
-                     [-np.sin(rads), np.cos(rads), 0],
-                     [0, 0, 1]])
+    return np.array([[np.cos(rads), np.sin(rads), 0, 0],
+                     [-np.sin(rads), np.cos(rads), 0, 0],
+                     [0, 0, 1, 0],
+                     [0, 0, 0, 1]])
 
 
 def normalize_matrix(u, v):
-    return escalation_matrix(2/size(u), 2/size(v))
+    # TEMP: z scale fator o 1?
+    return escalation_matrix(2/size(u), 2/size(v), 1)
 
 
-# UTIL
 def normal(p0, p1):
     # clockwise!
     # not unitary
+    # TEMP: not 3d
     return (p0[1] - p1[1], p1[0] - p0[0])
 
 
 def size(u):
+    # TEMP: not 3d
     return ((u[0][0] - u[1][0])**2 +
             (u[0][1] - u[1][1])**2)**0.5
 
 
 def affine_transformed(p, points, matrix_tr):
-    affine_tr = translation_matrix(-p[0], -p[1])@matrix_tr
+    affine_tr = translation_matrix(-p[0], -p[1], -p[2])@matrix_tr
     new_points = []
     for i in range(len(points)):
         new_points.append(points[i]@affine_tr)

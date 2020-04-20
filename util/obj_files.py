@@ -55,5 +55,5 @@ class DotObjParser:
         vertices = []
         for line in file_lines:
             if line[0] == "v":
-                vertices.append(np.array([float(line[1]), float(line[2]), 1]))
+                vertices.append(np.array([float(line[1]), float(line[2]), float(line[3]), 1]))
         self._executor.add(obj_name, vertices, (0.0, 0.0, 0.0))

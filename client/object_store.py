@@ -37,15 +37,18 @@ class ObjectStore(Gtk.ListStore):
                                GObject.TYPE_PYOBJECT,
                                GObject.TYPE_STRING,
                                GObject.TYPE_STRING)
-        points = [[0, 500, 1],
-                  [500, 500, 1],
-                  [500, 0, 1],
-                  [0, 0, 1],
-                  [0, 500, 1]]
+        points = [[0, 500, 0, 1],
+                  [500, 500, 0, 1],
+                  [500, 0, 0, 1],
+                  [0, 0, 0, 1],
+                  [0, 500, 0, 1]]
         map(np.array, points)
-        self.window = Object(
-            "window", points, (1.0, 0.7, 0.7), ObjectType.POLYGON)
+        # FIXME: This sequence is nasty!
+        self.window = Object("window", points, (1.0, 0.7, 0.7), ObjectType.POLYGON)
         self["window"] = self.window
+        self.window = self["window"]
+        # print(type(self.window))
+
 
     def __getitem__(self, name: 'str') -> 'Object':
         """Retrieve object from it's name.

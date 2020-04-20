@@ -111,8 +111,9 @@ class CreateObjectDialog:
 
     @property
     def object_type(self) -> 'str':
-        # NOTE: already in face/curve/surface classification.
         """Object's type."""
+        # TEMP: Glade specifies face element, bezier and b-spline as possible
+        #       types.
         return self._type_field.get_active_text()
 
     @property

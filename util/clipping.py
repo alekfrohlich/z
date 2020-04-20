@@ -72,7 +72,7 @@ class ClippableObject:
         """
         v_up = (window.points[0], window.points[3])
         v_right = (window.points[2], window.points[3])
-        x, y = window.center
+        x, y, z = window.center
 
         xn, yn = normal(window.points[1], window.points[2])
         angle = np.arctan2(yn, xn)
@@ -80,8 +80,9 @@ class ClippableObject:
         normalize_tr = normalize_matrix(v_up, v_right)
 
         window_tr = rotate_tr@normalize_tr
-        self.clipped_points = self.clipping_algorithm[self.type](
-            affine_transformed((x, y), self.points, window_tr))
+        world_coordinates = affine_transformed((x, y, z), self.points, window_tr)
+        projected = project(world_coordinates)
+        self.clipped_points = self.clipping_algorithm[self.type](projected)
 
     @property
     def visible(self) -> 'bool':
@@ -91,10 +92,14 @@ class ClippableObject:
 
 # TODO: Document clipping algorithms
 
+def project(points: 'list') -> 'list':
+    # TEMP: Where sould projection go?
+    return [(p[0], p[1]) for p in points]
+
 
 def clip_point(points: 'list') -> 'list':
     """Clip point by determining wether it lies inside the window."""
-    x, y, _ = points[0]
+    x, y, z, w = points[0]
     if x > 1 or x < -1 or y > 1 or y < -1:
         return None
     else:
@@ -146,8 +151,8 @@ def clip_line(points: 'list') -> 'list':
                 return np.array([i[0], i[1], 1])
         return None
 
-    x1, y1, _ = points[0]
-    x2, y2, _ = points[1]
+    x1, y1, z1, w1 = points[0]
+    x2, y2, z2, w2 = points[1]
     rc1 = region_code(x1, y1)
     rc2 = region_code(x2, y2)
     if rc1 == 0 and rc2 == 0:  # completely inside
@@ -174,8 +179,8 @@ def clip_line(points: 'list') -> 'list':
 def clip_polygon(points):
     """Sutherland-Hodgeman polygon clipping algortihm."""
     def intersect(p1, p2, xw, yw):
-        x1, y1, _ = p1
-        x2, y2, _ = p2
+        x1, y1 = p1
+        x2, y2 = p2
 
         if x1-x2 != 0:
             m = (y1-y2) / (x1-x2)
@@ -288,14 +293,14 @@ def generate_segment(n: 'int', basis: 'np.ndarray',
     fwd_x = init_forward_differences(shifts_spline_x)
     fwd_y = init_forward_differences(shifts_spline_y)
 
-    points = [] if out(fwd_x[0], fwd_y[0]) else [np.array([fwd_x[0], fwd_y[0], 1])]
+    points = [] if out(fwd_x[0], fwd_y[0]) else [(fwd_x[0], fwd_y[0])]
     for i in range(n):
         for j in range(degree):
             fwd_x[j] += fwd_x[j+1]
             fwd_y[j] += fwd_y[j+1]
 
         if not out(fwd_x[0], fwd_y[0]):
-            points.append(np.array([fwd_x[0], fwd_y[0], 1]))
+            points.append((fwd_x[0], fwd_y[0]))
     return points
 
 

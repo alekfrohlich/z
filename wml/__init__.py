@@ -14,7 +14,7 @@ from util import Logger, LogLevel
 
 name = r"[a-zA-Z]+[a-zA-Z0-9_]*"
 floating = r"-?\d+.?\d*"
-points = r"({0},{0};)*{0},{0}".format(floating)
+points = r"({0},{0},{0};)*{0},{0},{0}".format(floating)
 
 NAME_PATTERN = re.compile(r"^{0}$".format(name))
 POINTS_PATTERN = re.compile(r"^{0}$".format(points))
@@ -53,7 +53,7 @@ class Interpreter:
 
     def points_as_list(self, string):
         return [
-            np.array((float(point[0]), float(point[1]), 1))
+            np.array((float(point[0]), float(point[1]), float(point[2]), 1))
             for point in map(lambda p: p.split(","),
                              string.split(";"))]
 
