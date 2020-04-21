@@ -110,9 +110,9 @@ class ObjectStore(Gtk.ListStore):
         if obj.name == self.window.name:
             for row in self:
                 o = row[Column.OBJ.value]
-                o.clip(self.window)
+                o.update(self.window)
         else:
-            obj.clip(self.window)
+            obj.update(self.window)
 
     @property
     def display_file(self) -> 'list':

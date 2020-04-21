@@ -11,12 +11,15 @@ Notes
 -----
 """
 
-# NOTE: Who cares about object structure: ObjStore stores objects, which
-#       currently store vertices themselves. Viewport needs to know how
-#       to draw object and clipper how to clip it.
-# NOTE: The recursive drawing discussion currently does not make much sense,
-#       it's now better to think in terms of face elements (polygons have their
-#       first point repreated) and free-hand elements.
+# NOTE - How object structure is currently being handled
+#
+# Who cares about object structure: ObjStore stores objects, which
+# currently store vertices themselves. Viewport needs to know how to draw object
+# and clipper how to clip it.
+#
+# The recursive drawing discussion currently does not make much sense,
+# it's now better to think in terms of face elements (polygons have their
+# first point repreated) and free-hand elements.
 #
 #           1. Face elements contain a list of points and are drawn line_to'ing
 #              in linear order. Clipping is done by one of: clip_point,
@@ -30,8 +33,7 @@ Notes
 # Both objects cache-triggering conditions (after init and transforms) are
 # equal. Thus ClippableObject can store the same 'clipped_points' in both
 # cases. Drawing would too be equal in cases where the curve does not leave
-# and join back the window.
-# NOTE: Surfaces can be an exception to this.
+# and join back the window. Surfaces can be an exception to this.
 
 
 from enum import Enum

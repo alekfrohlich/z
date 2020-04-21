@@ -24,12 +24,8 @@ from scipy import special
 
 from client.objects import (Object, ObjectType)
 from util.linear_algebra import (
-    normalize_matrix, rotation_matrix, affine_transformed, normal)
+    translation_matrix, escalation_matrix, rotation_matrix, size, transformed)
 
-# QUESTION: How to change clipping algorithm at run time? Clipper object
-#           common to each type of object (one clipper for face, other for
-#           curve, and another for surface).
-# NOTE: The size of the object indicates if it is a point, a line, or a polygon.
 
 class ClippableObject:
     def __init__(self, obj: 'Object', window: 'Object'):
@@ -43,47 +39,53 @@ class ClippableObject:
             ObjectType.BEZIER: clip_bezier,
             ObjectType.BSPLINE: clip_bspline,
         }
-        self.clip(window)
+        self.update(window)
 
     def __getattr__(self, name: 'str'):
         """Provide access to the underlying object's attributes."""
         return self._obj.__getattribute__(name)
 
-    def clip(self, window: 'Object'):
+    def update(self, window: 'Object'):
         """Update the object's `clipped_coordinates`.
 
         Notes
         -----
-            Clipping happens as follows:
+            Projection and clipping happen as follows:
 
-            1. Calculate object's world coordinates.
-            2. Project 3D coordinates onto projection plane.
-            3. Clip 2D coordinates.
+            1. Translate window to center
+            2. Reverse orientation of window
+            3. Translate Center of Projection (COP) to center
+            4. Scale x,y, and z-axis
+            5. Project points to 2D using perspective projection
+            6. Clip 2D points
 
         """
-        v_up = (window.points[0], window.points[3])
-        v_right = (window.points[2], window.points[3])
+        def project(point):
+            """Perspective projection."""
+            return (point[0]*COP_DISTANCE/point[2], point[1]*COP_DISTANCE/point[2])
+
+        # NOTE: Assumes square window
+        window_size = size((window.points[0], window.points[3]))
+
         x, y, z = window.center
+        COP_DISTANCE = 0.5
 
-        normalize_tr = normalize_matrix(v_up, v_right)
+        to_origin_tr = translation_matrix(-x, -y, -z)
+        rotate_tr = window.inv_rotation_matrix
+        cop_to_origin_tr = translation_matrix(0, 0, COP_DISTANCE*window_size/2)
+        scale_tr = escalation_matrix(2/window_size, 2/window_size, 2/window_size)
+        concat_tr = to_origin_tr@rotate_tr@cop_to_origin_tr@scale_tr
 
-        window_tr = window.inv_rotation_matrix@normalize_tr
-        world_coordinates = affine_transformed((x, y, z), self.points, window_tr)
-        projected = project(world_coordinates)
-        self.clipped_points = self.clipping_algorithm[self.type](projected)
+        transformed_points = transformed(self.points, concat_tr)
+        projected_points = list(map(project, transformed_points))
+
+        self.clipped_points = self.clipping_algorithm[self.type](
+            projected_points)
 
     @property
     def visible(self) -> 'bool':
         """Wether the object is currently visible."""
         return self.clipped_points != []
-
-
-# TODO: Document clipping algorithms
-
-def project(points: 'list') -> 'list':
-    """Parallel projection."""
-    # TEMP: Where sould projection go?
-    return [(p[0], p[1]) for p in points]
 
 
 def clip_point(points: 'list') -> 'list':
@@ -167,7 +169,6 @@ def clip_line(points: 'list') -> 'list':
 
 def clip_polygon(points: 'list') -> 'list':
     """Sutherland-Hodgeman polygon clipping algortihm."""
-    # FIXME: Sometimes changes order of points
     def intersect(p1, p2, xw, yw):
         x1, y1 = p1
         x2, y2 = p2
