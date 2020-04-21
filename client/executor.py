@@ -71,15 +71,16 @@ class Executor:
     @Viewport.needs_redraw
     @_warn_undefined_object
     def scale(self, selected: 'str', factor: 'int'):
-        """Attempt to scale object by `factor`."""
+        """Attempt to scale object."""
         obj = self._obj_store[selected]
         obj.scale(factor, factor, factor)
         self._obj_store.changed(obj)
 
     @Viewport.needs_redraw
     @_warn_undefined_object
-    def rotate(self, selected: 'str', rads: 'float', point: 'np.array'):
-        """Attempt to rotate object by `rads` around of `point`."""
+    def rotate(self, selected: 'str', x_angle: 'float', y_angle: 'float',
+               z_angle: 'float', point: 'np.array'):
+        """Attempt to rotate object around of `point`."""
         obj = self._obj_store[selected]
-        obj.rotate(rads, point)
+        obj.rotate(x_angle, y_angle, z_angle, point)
         self._obj_store.changed(obj)

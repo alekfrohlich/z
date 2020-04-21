@@ -86,7 +86,6 @@ class ControlMenu:
 
     def _on_translate(self, direction: 'Direction'):
         """Handle on_{up,left,right,down}_button signals."""
-        # TODO: Add In/Out button
         if self._obj_view.selected_object is not None:
             dx, dy, dz = direction.value
             self._executor.translate(
@@ -103,13 +102,14 @@ class ControlMenu:
 
     def _on_rotate(self, axis: 'Axis'):
         """Handle on_{x,y,z}_button signals."""
-        # TODO: Rotate around any given axis.
         selected = self._obj_view.selected_object
         if selected is not None:
             rads = np.deg2rad(self.degrees)
+            angles = [0, 0, 0]
+            angles[axis.value] = rads
             if self.rotation_strategy == "world":
-                self._executor.rotate(selected, rads, (0, 0, 0))
+                self._executor.rotate(selected, *angles, (0, 0, 0))
             elif self.rotation_strategy == "object":
-                self._executor.rotate(selected, rads, None)
+                self._executor.rotate(selected, *angles, None)
             else:
-                self._executor.rotate(selected, rads, self.point)
+                self._executor.rotate(selected, *angles, self.point)

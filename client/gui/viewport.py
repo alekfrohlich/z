@@ -138,7 +138,6 @@ class Viewport:
         cr.set_line_cap(cairo.LineCap.ROUND)
 
         for obj in self._obj_store.display_file:
-            print(obj.clipped_points)
             cr.set_source_rgb(*obj.color)
             first_point = self.viewport_transform(obj.clipped_points[0])
             cr.move_to(*first_point)

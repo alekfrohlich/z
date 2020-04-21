@@ -69,6 +69,10 @@ class Object:
         self.points = points
         self.color = color
         self.type = t
+        self._rotation_matrix = np.array([[1, 0, 0, 0],
+                                          [0, 1, 0, 0],
+                                          [0, 0, 1, 0],
+                                          [0, 0, 0, 1]])
 
     def __str__(self):
         return "{}({}) with points = {} and color = {}".format(
@@ -84,13 +88,18 @@ class Object:
         z_points = list({point[2] for point in self.points})
         return (np.average(x_points), np.average(y_points), np.average(z_points))
 
+    @property
+    def inv_rotation_matrix(self) -> 'np.array':
+        """Inverse rotation matrix."""
+        return np.linalg.inv(self._rotation_matrix)
+
     def translate(self, dx: 'int', dy: 'int', dz: 'int'):
         """Translate object by (`dx`, `dy`, `dz`)."""
         self.transform(translation_matrix(dx, dy, dz))
 
     def scale(self, sx: 'int', sy: 'int', sz: 'int'):
-        """Scale object by `sx` in the x-axis, `sy` in the y-axis and `dz` in
-        the z-axis."""
+        """Scale object by `sx`, `sy`, `sz` around x,y, and z-axis,
+        respectively."""
         x, y, z = self.center
 
         to_origin_tr = translation_matrix(-x, -y, -z)
@@ -99,18 +108,19 @@ class Object:
 
         self.transform(to_origin_tr@scale_tr@from_origin_tr)
 
-    def rotate(self, rads: 'float', point=None):
-        """Rotate object by `rads` around of `point`."""
-        # TEMP: Only rotating around z-axis.
+    def rotate(self, x_angle: 'float', y_angle: 'float', z_angle: 'float',
+               point=None):
+        """Rotate object around of `point`."""
         if point is None:
             point = self.center
         x, y, z = point
 
         to_origin_tr = translation_matrix(-x, -y, -z)
-        rotate_tr = rotation_matrix(rads)
+        rotate_tr = rotation_matrix(x_angle, y_angle, z_angle)
         from_origin_tr = translation_matrix(x, y, z)
 
         self.transform(to_origin_tr@rotate_tr@from_origin_tr)
+        self._rotation_matrix = self._rotation_matrix@rotate_tr
 
     def transform(self, matrix_tr: 'np.array'):
         """Apply `matrix_tr` to the object's coordinates."""

@@ -5,9 +5,9 @@ from enum import Enum
 class Axis(Enum):
     """Enum representing 3D Axis."""
 
-    X = 1
-    Y = 2
-    Z = 3
+    X = 0
+    Y = 1
+    Z = 2
 
 
 class Direction(Enum):

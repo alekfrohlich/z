@@ -33,9 +33,20 @@ def escalation_matrix(sx, sy, sz):
                      [0, 0, 0, 1]])
 
 
-def rotation_matrix(rads):
-    return np.array([[np.cos(rads), np.sin(rads), 0, 0],
-                     [-np.sin(rads), np.cos(rads), 0, 0],
+def rotation_matrix(x_angle, y_angle, z_angle):
+    return np.array(
+                    [[1, 0, 0, 0],
+                     [0, np.cos(x_angle), -np.sin(x_angle), 0],
+                     [0, np.sin(x_angle), np.cos(x_angle), 0],
+                     [0, 0, 0, 1]]
+         )@np.array(
+                    [[np.cos(y_angle), 0, np.sin(y_angle), 0],
+                     [0, 1, 0, 0],
+                     [-np.sin(y_angle), 0, np.cos(y_angle), 0],
+                     [0, 0, 0, 1]]
+         )@np.array(
+                    [[np.cos(z_angle), -np.sin(z_angle), 0, 0],
+                     [np.sin(z_angle), np.cos(z_angle), 0, 0],
                      [0, 0, 1, 0],
                      [0, 0, 0, 1]])
 

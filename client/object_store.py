@@ -47,8 +47,6 @@ class ObjectStore(Gtk.ListStore):
         self.window = Object("window", points, (1.0, 0.7, 0.7), ObjectType.POLYGON)
         self["window"] = self.window
         self.window = self["window"]
-        # print(type(self.window))
-
 
     def __getitem__(self, name: 'str') -> 'Object':
         """Retrieve object from it's name.

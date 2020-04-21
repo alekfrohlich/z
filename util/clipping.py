@@ -52,34 +52,22 @@ class ClippableObject:
     def clip(self, window: 'Object'):
         """Update the object's `clipped_coordinates`.
 
-        The clipping algorithms work based on the assumption of
-        a normalized coordinate system where the origin lies on the
-        center of the window. Thus, we begin by calculating such
-        coordinates:
+        Notes
+        -----
+            Clipping happens as follows:
 
-            1. Calculate the normal (exiting) of the window's right edge.
-            2. Use atan2 to find the angle theta formed between the normal
-               and the positive x-axis.
-            3. Build the affine transform `window_tr` where coordinates are
-               translated by the window's center, then rotated by -theta, and
-               finnaly normalized.
-
-        See also
-        --------
-            `__init__`
-                Where the object's underlying clipping algorithm is selected.
+            1. Calculate object's world coordinates.
+            2. Project 3D coordinates onto projection plane.
+            3. Clip 2D coordinates.
 
         """
         v_up = (window.points[0], window.points[3])
         v_right = (window.points[2], window.points[3])
         x, y, z = window.center
 
-        xn, yn = normal(window.points[1], window.points[2])
-        angle = np.arctan2(yn, xn)
-        rotate_tr = rotation_matrix(-angle)
         normalize_tr = normalize_matrix(v_up, v_right)
 
-        window_tr = rotate_tr@normalize_tr
+        window_tr = window.inv_rotation_matrix@normalize_tr
         world_coordinates = affine_transformed((x, y, z), self.points, window_tr)
         projected = project(world_coordinates)
         self.clipped_points = self.clipping_algorithm[self.type](projected)
@@ -93,6 +81,7 @@ class ClippableObject:
 # TODO: Document clipping algorithms
 
 def project(points: 'list') -> 'list':
+    """Parallel projection."""
     # TEMP: Where sould projection go?
     return [(p[0], p[1]) for p in points]
 
