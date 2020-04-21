@@ -7,6 +7,7 @@ Classes
 """
 import cairo
 
+from client.objects import ObjectType
 from util import (Logger, LogLevel)
 
 
@@ -72,7 +73,7 @@ class Viewport:
         ---------
             point : array_like
                 Array_like means all those objects -- lists, tuples, etc. --
-                that can be accessed as an array of three elements
+                that can be accessed as an array of two elements
 
         Notes
         -----
@@ -86,7 +87,7 @@ class Viewport:
             the clip region.
 
         """
-        x_w, y_w, _ = point
+        x_w, y_w = point
         x_vp = (x_w + 1) / (2) * self._resolution[0] + 10
         y_vp = (1 - (y_w + 1) / (2)) * self._resolution[1] + 10
         return (x_vp, y_vp)
@@ -133,7 +134,6 @@ class Viewport:
         """
         cr.set_source_surface(self._surface, 0, 0)
         cr.paint()
-        cr.set_line_width(2)
         cr.set_source_rgb(*Viewport.BLACK)
         cr.set_line_cap(cairo.LineCap.ROUND)
 
@@ -143,5 +143,4 @@ class Viewport:
             cr.move_to(*first_point)
             for point in map(self.viewport_transform, obj.clipped_points):
                 cr.line_to(*point)
-            cr.line_to(*first_point)
             cr.stroke()

@@ -7,7 +7,7 @@ from gi.repository import GObject
 from gi.repository import Gtk
 
 from util import (ClippableObject, Logger, LogLevel)
-from .objects import Object
+from .objects import (Object, ObjectType)
 
 
 class Column(Enum):
@@ -33,15 +33,20 @@ class ObjectStore(Gtk.ListStore):
             `Column`
 
         """
-        Gtk.ListStore.__init__(self, GObject.TYPE_PYOBJECT,
-                                     GObject.TYPE_STRING,
-                                     GObject.TYPE_STRING)
-        points = [np.array([0, 500, 1]),
-                  np.array([500, 500, 1]),
-                  np.array([500, 0, 1]),
-                  np.array([0, 0, 1])]
-        self.window = Object("window", points, (1.0, 0.7, 0.7))
+        Gtk.ListStore.__init__(self,
+                               GObject.TYPE_PYOBJECT,
+                               GObject.TYPE_STRING,
+                               GObject.TYPE_STRING)
+        points = [[0, 500, 0, 1],
+                  [500, 500, 0, 1],
+                  [500, 0, 0, 1],
+                  [0, 0, 0, 1],
+                  [0, 500, 0, 1]]
+        map(np.array, points)
+        # FIXME: This sequence is nasty!
+        self.window = Object("window", points, (1.0, 0.7, 0.7), ObjectType.POLYGON)
         self["window"] = self.window
+        self.window = self["window"]
 
     def __getitem__(self, name: 'str') -> 'Object':
         """Retrieve object from it's name.
@@ -105,9 +110,9 @@ class ObjectStore(Gtk.ListStore):
         if obj.name == self.window.name:
             for row in self:
                 o = row[Column.OBJ.value]
-                o.clip(self.window)
+                o.update(self.window)
         else:
-            obj.clip(self.window)
+            obj.update(self.window)
 
     @property
     def display_file(self) -> 'list':

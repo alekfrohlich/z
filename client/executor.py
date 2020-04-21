@@ -22,7 +22,7 @@ Notes
 import numpy as np
 
 from util import (Logger, LogLevel)
-from .objects import Object
+from .objects import (Object, ObjectType)
 
 from .object_store import ObjectStore
 from .gui.viewport import Viewport
@@ -46,9 +46,13 @@ class Executor:
 
     @Viewport.needs_redraw
     @_warn_undefined_object
-    def add(self, name: 'str', points: 'list', color=(0.0, 0.0, 0.0)):
+    def add(self, name: 'str', points: 'list', color=(0.0, 0.0, 0.0), t=None):
         """Attempt to add object to ObjectStore."""
-        self._obj_store[name] = Object(name, points, color)
+        if t is None:
+            t = ObjectType(3 if len(points) > 3 else len(points))
+        if t is ObjectType.POLYGON:
+            points.append(points[0])
+        self._obj_store[name] = Object(name, points, color, t)
 
     @Viewport.needs_redraw
     @_warn_undefined_object
@@ -58,24 +62,25 @@ class Executor:
 
     @Viewport.needs_redraw
     @_warn_undefined_object
-    def translate(self, selected: 'str', dx: 'int', dy: 'int'):
-        """Attempt to add point to ObjectStore."""
+    def translate(self, selected: 'str', dx: 'int', dy: 'int', dz: 'int'):
+        """Attempt to translate point."""
         obj = self._obj_store[selected]
-        obj.translate(dx, dy)
+        obj.translate(dx, dy, dz)
         self._obj_store.changed(obj)
 
     @Viewport.needs_redraw
     @_warn_undefined_object
     def scale(self, selected: 'str', factor: 'int'):
-        """Attempt to scale object by `factor`."""
+        """Attempt to scale object."""
         obj = self._obj_store[selected]
-        obj.scale(factor, factor)
+        obj.scale(factor, factor, factor)
         self._obj_store.changed(obj)
 
     @Viewport.needs_redraw
     @_warn_undefined_object
-    def rotate(self, selected: 'str', rads: 'float', point: 'np.array'):
-        """Attempt to rotate object by `rads` around of `point`."""
+    def rotate(self, selected: 'str', x_angle: 'float', y_angle: 'float',
+               z_angle: 'float', point: 'np.array'):
+        """Attempt to rotate object around of `point`."""
         obj = self._obj_store[selected]
-        obj.rotate(rads, point)
+        obj.rotate(x_angle, y_angle, z_angle, point)
         self._obj_store.changed(obj)

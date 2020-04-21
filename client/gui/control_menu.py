@@ -51,6 +51,8 @@ class ControlMenu:
             "on_left_button": lambda _: self._on_translate(Direction.LEFT),
             "on_right_button": lambda _: self._on_translate(Direction.RIGHT),
             "on_down_button": lambda _: self._on_translate(Direction.DOWN),
+            "on_out_button": lambda _: self._on_translate(Direction.OUT),
+            "on_in_button": lambda _: self._on_translate(Direction.IN),
             "on_plus_button": lambda _: self._on_scale(expand=True),
             "on_minus_button": lambda _: self._on_scale(expand=False),
             "on_x_button": lambda _: self._on_rotate(axis=Axis.X),
@@ -67,7 +69,7 @@ class ControlMenu:
     def point(self) -> 'tuple':
         """Rotation reference point."""
         p = self._point_entry.get_text().split(",")
-        return (float(p[0]), float(p[1]))
+        return (float(p[0]), float(p[1]), float(p[2]))
 
     @property
     def step(self) -> 'int':
@@ -85,9 +87,12 @@ class ControlMenu:
     def _on_translate(self, direction: 'Direction'):
         """Handle on_{up,left,right,down}_button signals."""
         if self._obj_view.selected_object is not None:
-            dx, dy = direction.value
+            dx, dy, dz = direction.value
             self._executor.translate(
-                self._obj_view.selected_object, dx * self.step, dy * self.step)
+                self._obj_view.selected_object,
+                dx * self.step,
+                dy * self.step,
+                dz * self.step)
 
     def _on_scale(self, expand: 'bool'):
         """Handle on_{plus,minus}_button signals."""
@@ -96,19 +101,15 @@ class ControlMenu:
             self._executor.scale(self._obj_view.selected_object, factor)
 
     def _on_rotate(self, axis: 'Axis'):
-        """Handle on_{x,y,z}_button signals.
-
-        Note
-        ----
-            axis will be used once 3D support is implemented.
-
-        """
+        """Handle on_{x,y,z}_button signals."""
         selected = self._obj_view.selected_object
         if selected is not None:
             rads = np.deg2rad(self.degrees)
+            angles = [0, 0, 0]
+            angles[axis.value] = rads
             if self.rotation_strategy == "world":
-                self._executor.rotate(selected, rads, (0, 0))
+                self._executor.rotate(selected, *angles, (0, 0, 0))
             elif self.rotation_strategy == "object":
-                self._executor.rotate(selected, rads, None)
+                self._executor.rotate(selected, *angles, None)
             else:
-                self._executor.rotate(selected, rads, self.point)
+                self._executor.rotate(selected, *angles, self.point)
