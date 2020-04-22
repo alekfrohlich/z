@@ -63,6 +63,8 @@ from util.linear_algebra import (
 #       Curve ranges
 #       Window could return being an object (no other object needs orientation)
 
+# TEST: point rotation
+
 class Object:
     def __init__(self, name: 'str', points: 'list', color: 'tuple'):
         """Construct object."""
@@ -98,13 +100,12 @@ class Object:
         """Translate object by (`dx`, `dy`, `dz`)."""
         self.transform(translation_matrix(dx, dy, dz))
 
-    def scale(self, sx: 'int', sy: 'int', sz: 'int'):
-        """Scale object by `sx`, `sy`, `sz` around x,y, and z-axis,
-        respectively."""
+    def scale(self, factor: 'int'):
+        """Scale object by factor."""
         x, y, z = self.center
 
         to_origin_tr = translation_matrix(-x, -y, -z)
-        scale_tr = escalation_matrix(sx, sy, sz)
+        scale_tr = escalation_matrix(factor, factor, factor)
         from_origin_tr = translation_matrix(x, y, z)
 
         self.transform(to_origin_tr@scale_tr@from_origin_tr)
@@ -128,7 +129,14 @@ class Object:
         for i in range(len(self.points)):
             self.points[i] = self.points[i]@matrix_tr
 
-    def projected(self, window) -> 'list':  # TODO: Move to PaintableObject interface
+
+class PaintableObject:
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def accept(self, painter): raise NotImplementedError
+
+    def projected(self, window) -> 'list':
         def project(point):
             """Perspective projection."""
             return (point[0]*COP_DISTANCE/point[2], point[1]*COP_DISTANCE/point[2])
@@ -137,7 +145,7 @@ class Object:
         window_size = size((window.points[0], window.points[3]))
 
         x, y, z = window.center
-        COP_DISTANCE = 0.5
+        COP_DISTANCE = 1
 
         to_origin_tr = translation_matrix(-x, -y, -z)
         rotate_tr = window.inv_rotation_matrix
@@ -147,13 +155,6 @@ class Object:
 
         transformed_points = transformed(self.points, concat_tr)
         return list(map(project, transformed_points))
-
-
-class PaintableObject:
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def accept(self, painter): raise NotImplementedError
 
     @abstractmethod
     def update(self, window): raise NotImplementedError
@@ -167,7 +168,7 @@ class Point(Object, PaintableObject):
     def __init__(self, name: 'str', points: 'list', color: 'tuple'):
         """Construct point."""
         super().__init__(name, points, color)
-        self._thickness = 1  # TODO: Change to reasonable value
+        self._thickness = 2
         self.cached_points = []
 
     @property
@@ -183,10 +184,15 @@ class Point(Object, PaintableObject):
         """Update cached coordinates."""
         self.cached_points = clip_point(self.projected(window))
 
+    def scale(self, factor: 'int'):
+        """Scale point by increasing thickness."""
+        self._thickness *= factor
+
     def rotate(self, x_angle: 'float', y_angle: 'float', z_angle: 'float',
                point=None):
-        """Ignore rotations."""
-        print("Points do not rotate")
+        """Ignore rotations around center."""
+        if point is not None:
+            super().rotate(x_angle, y_angle, z_angle, point)
 
 
 class Line(Object, PaintableObject):

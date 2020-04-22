@@ -33,7 +33,6 @@ def clip_point(points: 'list') -> 'tuple':
 
 def clip_line(points: 'list') -> 'list':
     """Cohen-Sutherland line clipping algorithm."""
-    # FIXME: Return list only
     # TODO: Refactor commonalities into geometry module
     def region_code(x, y):
         code = 0
@@ -91,16 +90,16 @@ def clip_line(points: 'list') -> 'list':
         if rc1 == 0 or rc2 == 0:  # one intersection
             if rc1 != 0:
                 i = valid_intersection(intersections(x1, y1, rc1))
-                return (i, (x2, y2))
+                return [i, (x2, y2)]
             else:
                 i = valid_intersection(intersections(x2, y2, rc2))
-                return (i, (x1, y1))
+                return [i, (x1, y1)]
         else:  # possibly two intersections
             i1 = valid_intersection(intersections(x1, y1, rc1))
             i2 = valid_intersection(intersections(x2, y2, rc2))
-            if i1 is None or i2 is None:  # outside
+            if i1 == [] or i2 == []:  # outside
                 return []
-            return (i1, i2)
+            return [i1, i2]
 
 
 def clip_wireframe(points: 'list', lines: 'list') -> 'tuple':

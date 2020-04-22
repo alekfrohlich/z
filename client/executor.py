@@ -87,7 +87,7 @@ class Executor:
     def scale(self, selected: 'str', factor: 'int'):
         """Attempt to scale object."""
         obj = self._obj_store[selected]
-        obj.scale(factor, factor, factor)
+        obj.scale(factor)
         self._obj_store.changed(obj)
 
     @Viewport.needs_redraw

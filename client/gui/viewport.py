@@ -32,11 +32,13 @@ class ObjectPainter:
         return (x_vp, y_vp)
 
     def paint_point(self, point: 'Point'):
+        """Draw point according to it's color and thickness."""
         self._cr.set_source_rgb(*point.color)
         p = self.resolution_transform(point.cached_points[0])
+        self._cr.set_line_width(point.thickness)
         self._cr.move_to(*p)
         self._cr.line_to(*p)
-        self._cr.stroke() # QUESTION: Necessary?
+        self._cr.stroke()
 
     def paint_line(self, line: 'Line'):
         self._cr.set_source_rgb(*line.color)
