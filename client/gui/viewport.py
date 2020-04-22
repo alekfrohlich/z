@@ -7,9 +7,59 @@ Classes
 """
 import cairo
 
-from client.objects import ObjectType
 from util import (Logger, LogLevel)
 
+
+# NOTE: Could be moved into it's own file
+class ObjectPainter:
+    """"""
+    def __init__(self, cr: 'Cairo.Context', resolution: 'tuple'):
+        self._cr = cr
+        self._res = resolution
+
+    def resolution_transform(self, point: 'tuple') -> 'tuple':
+        """Rescale points from normalized coordinate system to resolution.
+
+        Notes
+        -----
+            10 is added to both transformed coordinates to account for
+            the clip region.
+
+        """
+        x_w, y_w = point
+        x_vp = (x_w + 1) / (2) * self._res[0] + 10
+        y_vp = (1 - (y_w + 1) / (2)) * self._res[1] + 10
+        return (x_vp, y_vp)
+
+    def paint_point(self, point: 'Point'):
+        self._cr.set_source_rgb(*point.color)
+        p = self.resolution_transform(point.cached_points[0])
+        self._cr.move_to(*p)
+        self._cr.line_to(*p)
+        self._cr.stroke() # QUESTION: Necessary?
+
+    def paint_line(self, line: 'Line'):
+        self._cr.set_source_rgb(*line.color)
+        p0, p1 = list(map(self.resolution_transform, line.cached_points))
+        self._cr.move_to(*p0)
+        self._cr.line_to(*p1)
+        self._cr.stroke()
+
+    def paint_wireframe(self, wireframe: 'Wireframe'):
+        self._cr.set_source_rgb(*wireframe.color)
+        points = list(map(self.resolution_transform, wireframe.cached_points))
+        for i, j in wireframe.cached_lines:
+            self._cr.move_to(*points[i])
+            self._cr.line_to(*points[j])
+            self._cr.stroke()  # QUESTION: Can this be moved outside the loop?
+
+    def paint_curve(self, curve: 'Curve'):
+        self._cr.set_source_rgb(*curve.color)
+        points = list(map(self.resolution_transform, curve.cached_points))
+        self._cr.move_to(*points[0])
+        for p in points:
+            self._cr.line_to(*p)
+        self._cr.stroke()
 
 class Viewport:
     """Viewport class.
@@ -25,6 +75,7 @@ class Viewport:
         - on_configure : Gtk.Widget.signals.configure_event
 
     """
+
 
     BLACK = (0, 0, 0)
     WHITE = (1, 1, 1)
@@ -62,35 +113,6 @@ class Viewport:
             method(cls, *args, **kwargs)
             cls._viewport._drawing_area.queue_draw()
         return wrapper
-
-    def viewport_transform(self, point: 'tuple') -> 'tuple':
-        """Change of basis from NCS to this viewport instance.
-
-        As viewport is aligned with the window, the transform simplifies
-        to a simple scaling.
-
-        Paramters
-        ---------
-            point : array_like
-                Array_like means all those objects -- lists, tuples, etc. --
-                that can be accessed as an array of two elements
-
-        Notes
-        -----
-            NCS stands for Normalized Coordinate System and it's used to
-            simplificate the transform:
-
-        x_vp = (x_w - x_wmin)/(x_wmax - x_wmin) * (x_vpmax - x_vpmin)
-        y_vp = (1 - (y_w - y_wmin)/(y_wmax - y_ymin)) * (y_vpmax - y_vpmin)
-
-            10 is added to both transformed coordinates to account for
-            the clip region.
-
-        """
-        x_w, y_w = point
-        x_vp = (x_w + 1) / (2) * self._resolution[0] + 10
-        y_vp = (1 - (y_w + 1) / (2)) * self._resolution[1] + 10
-        return (x_vp, y_vp)
 
     def clear(self):
         """Clear `_surface`, painting it white."""
@@ -134,13 +156,8 @@ class Viewport:
         """
         cr.set_source_surface(self._surface, 0, 0)
         cr.paint()
-        cr.set_source_rgb(*Viewport.BLACK)
+        cr.set_source_rgb(*Viewport.BLACK)  # QUESTION: needed?
         cr.set_line_cap(cairo.LineCap.ROUND)
-
+        painter = ObjectPainter(cr, self._resolution)
         for obj in self._obj_store.display_file:
-            cr.set_source_rgb(*obj.color)
-            first_point = self.viewport_transform(obj.clipped_points[0])
-            cr.move_to(*first_point)
-            for point in map(self.viewport_transform, obj.clipped_points):
-                cr.line_to(*point)
-            cr.stroke()
+            obj.accept(painter)

@@ -6,8 +6,8 @@ import numpy as np
 from gi.repository import GObject
 from gi.repository import Gtk
 
-from util import (ClippableObject, Logger, LogLevel)
-from .objects import (Object, ObjectType)
+from util import (Logger, LogLevel)
+from .objects import (Wireframe)
 
 
 class Column(Enum):
@@ -40,13 +40,11 @@ class ObjectStore(Gtk.ListStore):
         points = [[0, 500, 0, 1],
                   [500, 500, 0, 1],
                   [500, 0, 0, 1],
-                  [0, 0, 0, 1],
-                  [0, 500, 0, 1]]
+                  [0, 0, 0, 1]]
+        lines = [(0, 1), (1, 2), (2, 3), (3, 0)]
         map(np.array, points)
-        # FIXME: This sequence is nasty!
-        self.window = Object("window", points, (1.0, 0.7, 0.7), ObjectType.POLYGON)
+        self.window = Wireframe("window", points, lines, (1.0, 0.7, 0.7))
         self["window"] = self.window
-        self.window = self["window"]
 
     def __getitem__(self, name: 'str') -> 'Object':
         """Retrieve object from it's name.
@@ -73,8 +71,8 @@ class ObjectStore(Gtk.ListStore):
         """
         if name in [row[Column.NAME.value] for row in self]:
             raise KeyError(name + " already names an object!")
-        self.append(
-            [ClippableObject(obj, self.window), obj.name, str(obj.type)])
+        self.append([obj, obj.name, str(obj)])
+        obj.update(self.window)
         Logger.log(LogLevel.INFO, "new object: " + str(obj))
 
     def __delitem__(self, name: 'str'):

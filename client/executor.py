@@ -22,7 +22,7 @@ Notes
 import numpy as np
 
 from util import (Logger, LogLevel)
-from .objects import (Object, ObjectType)
+from .objects import (Point, Line, Wireframe, Curve)
 
 from .object_store import ObjectStore
 from .gui.viewport import Viewport
@@ -44,15 +44,29 @@ class Executor:
         self._obj_store = obj_store
         self._viewport = viewport
 
+    # TEMP ====================================================================
+
     @Viewport.needs_redraw
     @_warn_undefined_object
-    def add(self, name: 'str', points: 'list', color=(0.0, 0.0, 0.0), t=None):
-        """Attempt to add object to ObjectStore."""
-        if t is None:
-            t = ObjectType(3 if len(points) > 3 else len(points))
-        if t is ObjectType.POLYGON:
-            points.append(points[0])
-        self._obj_store[name] = Object(name, points, color, t)
+    def addp(self, name: 'str', points: 'list', color=(0.0, 0.0, 0.0)):
+        self._obj_store[name] = Point(name, points, color)
+
+    @Viewport.needs_redraw
+    @_warn_undefined_object
+    def addl(self, name: 'str', points: 'list', color=(0.0, 0.0, 0.0)):
+        self._obj_store[name] = Line(name, points, color)
+
+    @Viewport.needs_redraw
+    @_warn_undefined_object
+    def addw(self, name: 'str', points: 'list', lines: 'list', color=(0.0, 0.0, 0.0)):
+        self._obj_store[name] = Line(name, points, lines, color)
+
+    @Viewport.needs_redraw
+    @_warn_undefined_object
+    def addc(self, name: 'str', points: 'list', ctype: 'Curve.CurveType', color=(0.0, 0.0, 0.0)):
+        self._obj_store[name] = Curve(name, points, ctype, color)
+
+    # TEMP ====================================================================
 
     @Viewport.needs_redraw
     @_warn_undefined_object
