@@ -47,7 +47,7 @@ class MenuBar:
             add = {
                 "Point": lambda n, p, c: self._executor.addp(n, p, c),
                 "Line": lambda n, p, c: self._executor.addl(n, p, c),
-                "Wire-frame": lambda n, p, c: self._executor.addw(n, p, c),  # FIXME: Missing lines parameter
+                "Wire-frame": lambda n, p, c: self._executor.addw(n, p, c),  # FIXME: Missing faces parameter
                 "Bezier": lambda n, p, c: self._executor.addc(n, p, Curve.CurveType.BEZIER, c),
                 "B-Spline": lambda n, p, c: self._executor.addc(n, p, Curve.CurveType.BSPLINE, c)
             }

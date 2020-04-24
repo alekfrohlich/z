@@ -41,15 +41,18 @@ class DotObjParser:
         self._executor = executor
 
     def compile_obj_file(self, path: 'str') -> 'list':
-        """Returns object described by vertices .obj file."""
-        # FIXME: Not compatible with Wire-frame model.
+        """Returns object described by .obj file."""
         with open(path) as obj:
             raw_file = obj.read()
-        file_lines = [line.split(" ") for line in raw_file.split("\n")]
-        # Name of the file containing object.
+        file_lines = [list(filter(lambda x: x != "", line.split(" "))) for line in raw_file.split("\n")]
         obj_name = path.split("/")[-1].split(".")[0]
         vertices = []
+        faces = []
         for line in file_lines:
+            if line == []:
+                continue
             if line[0] == "v":
                 vertices.append(np.array([float(line[1]), float(line[2]), float(line[3]), 1]))
-        self._executor.add(obj_name, vertices, (0.0, 0.0, 0.0))
+            elif line[0] == "f":
+                faces.append([int(v_vt_vn.split("/")[0])-1 for v_vt_vn in line[1:]]) # obj indexes start at 1
+        self._executor.addw(obj_name, vertices, faces, (0.0, 0.0, 0.0))

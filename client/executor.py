@@ -58,8 +58,8 @@ class Executor:
 
     @Viewport.needs_redraw
     @_warn_undefined_object
-    def addw(self, name: 'str', points: 'list', lines: 'list', color=(0.0, 0.0, 0.0)):
-        self._obj_store[name] = Line(name, points, lines, color)
+    def addw(self, name: 'str', points: 'list', faces: 'list', color=(0.0, 0.0, 0.0)):
+        self._obj_store[name] = Wireframe(name, points, faces, color)
 
     @Viewport.needs_redraw
     @_warn_undefined_object

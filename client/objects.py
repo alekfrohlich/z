@@ -37,7 +37,7 @@ Notes
 #
 #   2. Line: Nothing new
 #
-#   3. Wireframe: lines (list of pairs); fill (bool, not yet); renderizable
+#   3. Wireframe: faces (list of pairs); fill (bool, not yet); renderizable
 #                 (bool, not yet)
 #
 #   4. Curve: type (BEZIER or SPLINE); ranges (list of pairs)
@@ -55,26 +55,16 @@ from util.clipping import *
 from util.linear_algebra import (
     translation_matrix, escalation_matrix, rotation_matrix, size, transformed)
 
-
-# NOTE: Clipping is currently disabled for Wire-frame objects
 # TODO: Private attributes with public getters
-#       Thickness of points
-#       Fill polygons
 #       Curve ranges
-#       Window could return being an object (no other object needs orientation)
-
-# TEST: point rotation
 
 class Object:
-    def __init__(self, name: 'str', points: 'list', color: 'tuple'):
+    def __init__(self, name: 'str', points: 'list', color: 'tuple', thickness: 'float'):
         """Construct object."""
         self.name = name
         self.points = points
         self.color = color
-        self._orientation = np.array([[1, 0, 0, 0],
-                                      [0, 1, 0, 0],
-                                      [0, 0, 1, 0],
-                                      [0, 0, 0, 1]])
+        self.thickness = thickness
 
     def __str__(self):
         return "{} with points = {} and color = {}".format(
@@ -90,11 +80,6 @@ class Object:
         z_points = [point[2] for point in self.points]
         return (
             np.average(x_points), np.average(y_points), np.average(z_points))
-
-    @property
-    def inv_rotation_matrix(self) -> 'np.array':
-        """Lin. Transformation that reverses _orientation."""
-        return np.linalg.inv(self._orientation)
 
     def translate(self, dx: 'int', dy: 'int', dz: 'int'):
         """Translate object by (`dx`, `dy`, `dz`)."""
@@ -122,7 +107,6 @@ class Object:
         from_origin_tr = translation_matrix(x, y, z)
 
         self.transform(to_origin_tr@rotate_tr@from_origin_tr)
-        self._orientation = self._orientation@rotate_tr
 
     def transform(self, matrix_tr: 'np.array'):
         """Apply `matrix_tr` to the object's coordinates."""
@@ -130,11 +114,12 @@ class Object:
             self.points[i] = self.points[i]@matrix_tr
 
 
-class PaintableObject:
-    __metaclass__ = ABCMeta
+class PaintableObject(Object):
+    def __init__(self, name: 'str', points: 'list', color: 'tuple', thickness: 'float'):
+        super().__init__(name, points, color, thickness)
 
     @abstractmethod
-    def accept(self, painter): raise NotImplementedError
+    def accept(self, painter: 'ObjectPainter'): raise NotImplementedError
 
     def projected(self, window) -> 'list':
         def project(point):
@@ -157,45 +142,40 @@ class PaintableObject:
         return list(map(project, transformed_points))
 
     @abstractmethod
-    def update(self, window): raise NotImplementedError
+    def update(self, window: 'Window'): raise NotImplementedError
 
     @property
     def visible(self):
         return self.cached_points != []
 
 
-class Point(Object, PaintableObject):
+class Point(PaintableObject):
     def __init__(self, name: 'str', points: 'list', color: 'tuple'):
         """Construct point."""
-        super().__init__(name, points, color)
-        self._thickness = 2
+        super().__init__(name, points, color, 2)
         self.cached_points = []
-
-    @property
-    def thickness(self):
-        """Drawing thickness."""
-        return self._thickness
 
     def accept(self, painter: 'ObjectPainter'):
         """Accept paint request."""
         painter.paint_point(self)
 
-    def update(self, window: 'Object'):
+    def update(self, window: 'Window'):
         """Update cached coordinates."""
         self.cached_points = clip_point(self.projected(window))
 
     def scale(self, factor: 'int'):
-        """Scale point by increasing thickness."""
-        self._thickness *= factor
+        """A point doesn't have size, thus ignore escalations."""
+        pass
 
     def rotate(self, x_angle: 'float', y_angle: 'float', z_angle: 'float',
                point=None):
-        """Ignore rotations around center."""
+        """A point rotate around it's center remains the same, thus ignore
+        rotations around center."""
         if point is not None:
             super().rotate(x_angle, y_angle, z_angle, point)
 
 
-class Line(Object, PaintableObject):
+class Line(PaintableObject):
     def __init__(self, name: 'str', points: 'list', color: 'tuple'):
         """Construct line."""
         super().__init__(name, points, color)
@@ -204,27 +184,26 @@ class Line(Object, PaintableObject):
         """Accept paint request."""
         painter.paint_line(self)
 
-    def update(self, window: 'Object'):
+    def update(self, window: 'Window'):
         """Update cached coordinates."""
         self.cached_points = clip_line(self.projected(window))
 
 
-class Wireframe(Object, PaintableObject):
-    def __init__(self, name: 'str', points: 'list', lines: 'list',
-                 color: 'tuple'):
+class Wireframe(PaintableObject):
+    def __init__(self, name: 'str', points: 'list', faces: 'list',
+                 color: 'tuple', render=True):
         """Construct wire-frame."""
-        super().__init__(name, points, color)
-        self._lines = lines
+        super().__init__(name, points, color, 0.1)
+        self._faces = faces
         self.cached_points = []
-        self.cached_lines = []
-        # TODO: Make use of:
-        self._fill = False
-        self._renderable = True
+        self.cached_faces = []
+        self._renderable = render
 
-    @property
-    def fill(self) -> 'bool':
-        """Fill object with `color`?"""
-        return self._fill
+    def __str__(self):
+        return "{}(Wire-fame) with color = {}".format(
+            self.name,
+            str(self.color))
+
 
     @property
     def renderable(self) -> 'bool':
@@ -232,22 +211,20 @@ class Wireframe(Object, PaintableObject):
         return self._renderable
 
     @property
-    def lines(self) -> 'list':
-        """Connected lines."""
-        return self._lines
+    def faces(self) -> 'list':
+        """Connected faces."""
+        return self._faces
 
     def accept(self, painter: 'ObjectPainter'):
         """Accept paint request."""
-        painter.paint_wireframe(self)
+        painter.paint_polymesh(self)
 
-    def update(self, window: 'Object'):
+    def update(self, window: 'Window'):
         """Update cached coordinates."""
-        # self.cached_points, self.cached_lines = clip_wireframe(self.projected(window), self.lines)
-        self.cached_points = self.projected(window)
-        self.cached_lines = self._lines
+        self.cached_points, self.cached_faces = clip_wireframe(self.projected(window), self.faces)
 
 
-class Curve(Object, PaintableObject):
+class Curve(PaintableObject):
     class CurveType:
         BEZIER = np.array([[-1,  3, -3,  1],
                            [ 3, -6,  3,  0],
@@ -261,7 +238,7 @@ class Curve(Object, PaintableObject):
     def __init__(self, name: 'str', points: 'list', ctype: 'CurveType',
                  color: 'tuple'):
         """Construct curve."""
-        super().__init__(name, points, color)
+        super().__init__(name, points, color, 1)
         self._ctype = ctype
         self.cached_points = []
         self._ranges = []
@@ -280,10 +257,58 @@ class Curve(Object, PaintableObject):
         """Accept paint request."""
         painter.paint_curve(self)
 
-    def update(self, window: 'Object'):
+    def update(self, window: 'Window'):
         """Generate visible parts of curve."""
         projected_points = self.projected(window)
         if self.ctype is Curve.CurveType.BEZIER:
             self.cached_points = clip_bezier(projected_points)
         else:
             self.cached_points = clip_bspline(projected_points)
+
+
+class Window(PaintableObject):
+    def __init__(self):
+        """Construct window."""
+        points = [[0, 500, 0, 1],
+                  [500, 500, 0, 1],
+                  [500, 0, 0, 1],
+                  [0, 0, 0, 1]]
+        faces = [[0, 1, 2, 3]]
+        map(np.array, points)
+        super().__init__("window", points, (0. ,0., 0.), 2)
+        self.cached_faces = [[0, 1, 2, 3]]
+        self.cached_points = [(-1, 1), (1, 1), (1, -1), (-1, -1)]
+        self._orientation = np.array([[1, 0, 0, 0],
+                                      [0, 1, 0, 0],
+                                      [0, 0, 1, 0],
+                                      [0, 0, 0, 1]])
+
+    def __str__(self):
+        return "Window with boundary: {}".format(self.points)
+
+    @property
+    def inv_rotation_matrix(self) -> 'np.array':
+        """Linear transformation that reverses orientation."""
+        return np.linalg.inv(self._orientation)
+
+    def accept(self, painter: 'ObjectPainter'):
+        """Accept paint request."""
+        painter.paint_polymesh(self)
+
+    def update(self, window: 'Window'):
+        """Window does not need to be updated."""
+        pass
+
+    def rotate(self, x_angle: 'float', y_angle: 'float', z_angle: 'float',
+               point=None):
+        """Rotate window around of `point` and update orientation."""
+        if point is None:
+            point = self.center
+        x, y, z = point
+
+        to_origin_tr = translation_matrix(-x, -y, -z)
+        rotate_tr = rotation_matrix(x_angle, y_angle, z_angle)
+        from_origin_tr = translation_matrix(x, y, z)
+
+        self.transform(to_origin_tr@rotate_tr@from_origin_tr)
+        self._orientation = self._orientation@rotate_tr

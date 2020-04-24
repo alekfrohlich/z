@@ -1,4 +1,11 @@
-"""Module responsible for storing objects."""
+"""Module responsible for storing objects.
+
+Classes
+-------
+    Column
+    ÓbjectStore
+
+"""
 from enum import Enum
 
 import numpy as np
@@ -7,7 +14,7 @@ from gi.repository import GObject
 from gi.repository import Gtk
 
 from util import (Logger, LogLevel)
-from .objects import (Wireframe)
+from .objects import (Window)
 
 
 class Column(Enum):
@@ -37,13 +44,7 @@ class ObjectStore(Gtk.ListStore):
                                GObject.TYPE_PYOBJECT,
                                GObject.TYPE_STRING,
                                GObject.TYPE_STRING)
-        points = [[0, 500, 0, 1],
-                  [500, 500, 0, 1],
-                  [500, 0, 0, 1],
-                  [0, 0, 0, 1]]
-        lines = [(0, 1), (1, 2), (2, 3), (3, 0)]
-        map(np.array, points)
-        self.window = Wireframe("window", points, lines, (1.0, 0.7, 0.7))
+        self.window = Window()
         self["window"] = self.window
 
     def __getitem__(self, name: 'str') -> 'Object':

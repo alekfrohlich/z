@@ -1,21 +1,16 @@
-"""This module provides 2D clipping algorithms and ClippableObject.
+"""This module provides 2D clipping algorithms.
 
 Implemented algorithms:
-- Point clipping: No name.
-- Line clipping: Cohen-Sutherland.
-- Polygon clipping: Sutherland-Hodgeman.
-
-ClippableObject is an adapter of Object that extends it to perfom
-clipping of it's own coordinates against a given window.
+- Point clipping
+- Line clipping (Cohen-Sutherland)
+- Polygon clipping (Sutherland-Hodgeman_
+- Wireframe clipping
+- Curve clipping
 
 Notes
 -----
     All algorithms are based on a normalized coordinate system where
-    the extremes of the window are at [(-1,1), (1,1), (1,-1), (-1,-1)].
-
-See Also
---------
-    `Object`
+    the borders of the window are at [(-1,1), (1,1), (1,-1), (-1,-1)].
 
 """
 import numpy as np
@@ -102,11 +97,10 @@ def clip_line(points: 'list') -> 'list':
             return [i1, i2]
 
 
-def clip_wireframe(points: 'list', lines: 'list') -> 'tuple':
+def clip_polygon(points: 'list') -> 'list':
     """Sutherland-Hodgeman polygon clipping algortihm."""
-    # NOTE: list.index is O(n), thus, this algortihm could be improved
-    #       with an ordered dict/set.
     def intersect(p1, p2, xw, yw):
+        """Intersection between line and window border."""
         x1, y1 = p1
         x2, y2 = p2
 
@@ -126,7 +120,7 @@ def clip_wireframe(points: 'list', lines: 'list') -> 'tuple':
         return (xw, yw)
 
     def out(point):
-        # TEMP
+        """Test if point is outside current border."""
         if border == 0:
             return point[0] < -1
         elif border == 1:
@@ -141,64 +135,54 @@ def clip_wireframe(points: 'list', lines: 'list') -> 'tuple':
 
     old_points = points
     new_points = []
-    old_lines = lines
-    new_lines = []
 
     for border in range(4):
-        # for i in range(len(old_points)):
-        #     j = (i + 1) % len(old_points)
-        #     if out(old_points[i]) and out(old_points[j]):
-        #         continue
-        #     elif (not out(old_points[i])) and out(old_points[j]):
-        #         new_points.append(intersect(
-        #             old_points[i], old_points[j], xw[border], yw[border]))
-        #     elif out(old_points[i]) and (not out(old_points[j])):
-        #         new_points.append(intersect(
-        #             old_points[i], old_points[j], xw[border], yw[border]))
-        #         new_points.append(old_points[j])
-        #     else:
-        #         new_points.append(old_points[j])
-        # if len(new_points) != 0:
-        #     new_points.append(new_points[0])
-        # old_points = new_points[:]
-        # new_points = []
-        for i, j in old_lines:
+        for i in range(len(old_points)):
+            j = (i + 1) % len(old_points)
             pi = old_points[i]
             pj = old_points[j]
             if out(pi) and out(pj):
                 continue
-            elif not out(pi) and not out(pj):
-                try:
-                    index_i = new_points.index(pi)
-                except ValueError:
-                    new_points.append(pi)
-                    index_i = len(new_points) - 1
-                try:
-                    index_j = new_points.index(pj)
-                except ValueError:
-                    new_points.append(pj)
-                    index_j = len(new_points) - 1
-                new_lines.append((index_i, index_j))
-            else:
-                old = pj if out(pi) else pi
+            elif not out(pi) and out(pj):
                 new_points.append(intersect(pi, pj, xw[border], yw[border]))
-                index_new = len(new_points) - 1
-                try:
-                    index_old = new_points.index(old)
-                except ValueError:
-                    new_points.append(old)
-                    index_old = len(new_points) - 1
-                new_lines.append((index_old, index_new))  # NOTE: Can change point order in line
+            elif out(pi) and not out(pj):
+                new_points.append(intersect(pi, pj, xw[border], yw[border]))
+                new_points.append(pj)
+            else:
+                new_points.append(pj)
+        if len(new_points) != 0:
+            new_points.append(new_points[0])
         old_points = new_points[:]
         new_points = []
-        old_lines = new_lines[:]
-        new_lines = []
-    return (old_points, old_lines)
+    return old_points
 
 
-def out(x, y):
-    """Test if given point is outside the window."""
-    return x > 1 or x < -1 or y > 1 or y < - 1
+def clip_wireframe(points: 'list', faces: 'list') -> 'tuple':
+    """Clip wireframe by polygon clipping each of it's faces.
+
+    Notes
+    -----
+        The method `index` of `list` runs in O(n) time. `clip_wireframe` could
+        be optimized if an ordered set was used instead of list.
+
+    """
+    def try_add(point: 'tuple') -> 'int':
+        """Add point to `new_points` if it does not already exist and return
+        index to it."""
+        try:
+            index = new_points.index(point)
+        except ValueError:
+            new_points.append(point)
+            index = len(new_points) - 1
+        return index
+
+    new_points = []
+    new_faces = []
+    for face in faces:
+        clipped_points = clip_polygon([points[i] for i in face])
+        if clipped_points:
+            new_faces.append([try_add(p) for p in clipped_points])
+    return (new_points, new_faces)
 
 
 def init_forward_differences(shifts: 'list') -> 'list':
@@ -242,6 +226,10 @@ def generate_segment(n: 'int', basis: 'np.ndarray',
             D^(k)[fn+1] = D^(k)[fn] + D^(k+1)[fn]
 
     """
+    def out(x, y):
+        """Test if given point is outside the window."""
+        return x > 1 or x < -1 or y > 1 or y < - 1
+
     delta = 1 / n
     spline_x = basis@np.array([p[0] for p in geometry])
     spline_y = basis@np.array([p[1] for p in geometry])
