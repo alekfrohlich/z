@@ -971,10 +971,12 @@ sp(1) = 50,-200,0;100,0,0;400,0,0;150,150,0</property>
                     <property name="margin_right">5</property>
                     <property name="margin_top">5</property>
                     <property name="margin_bottom">5</property>
-                    <property name="active">1</property>
+                    <property name="active">3</property>
                     <items>
-                      <item id="0" translatable="yes">Face element</item>
-                      <item id="1" translatable="yes">Bezier</item>
+                      <item id="0" translatable="yes">Point</item>
+                      <item translatable="yes">Line</item>
+                      <item translatable="yes">Wire-frame</item>
+                      <item translatable="yes">Bezier</item>
                       <item translatable="yes">B-Spline</item>
                     </items>
                   </object>

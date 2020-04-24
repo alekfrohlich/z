@@ -8,8 +8,8 @@ Classes
 """
 from gi.repository import Gtk
 
+from client.objects import Curve
 from util import (Logger, LogLevel)
-from client.objects import ObjectType
 
 
 class MenuBar:
@@ -44,15 +44,17 @@ class MenuBar:
         response = self._create_obj_dialog.run()
 
         if response == Gtk.ResponseType.OK:
-            str2type = {
-                "Face element": None,
-                "Bezier": ObjectType.BEZIER,
-                "B-Spline": ObjectType.BSPLINE,
+            add = {
+                "Point": lambda n, p, c: self._executor.addp(n, p, c),
+                "Line": lambda n, p, c: self._executor.addl(n, p, c),
+                "Wire-frame": lambda n, p, c: self._executor.addw(n, p, c),  # FIXME: Missing faces parameter
+                "Bezier": lambda n, p, c: self._executor.addc(n, p, Curve.CurveType.BEZIER, c),
+                "B-Spline": lambda n, p, c: self._executor.addc(n, p, Curve.CurveType.BSPLINE, c)
             }
-            self._executor.add(self._create_obj_dialog.name,
-                                self._create_obj_dialog.points,
-                                self._create_obj_dialog.color,
-                                str2type[self._create_obj_dialog.object_type])
+            add[self._create_obj_dialog.object_type](
+                self._create_obj_dialog.name,
+                self._create_obj_dialog.points,
+                self._create_obj_dialog.color)
         self._create_obj_dialog.hide()
 
     def _on_load_object(self, _):
@@ -86,7 +88,6 @@ class CreateObjectDialog:
         - on_create_object_cancel : Gtk.Button.signals.clicked
 
     """
-
     def __init__(self, dialog: 'Gtk.Dialog', name_field: 'Gtk.Entry',
                  type_field: 'Gtk.ComboBoxText', points_field: 'Gtk.Entry',
                  color_field: 'Gtk.Entry', obj_view: 'ObjectView',

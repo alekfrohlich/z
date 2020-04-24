@@ -1,96 +1,25 @@
-"""This module provides 2D clipping algorithms and ClippableObject.
+"""This module provides 2D clipping algorithms.
 
-Implemented algorithms (by `ObjectType`):
-- Point clipping: No name.
-- Line clipping: Cohen-Sutherland.
-- Polygon clipping: Sutherland-Hodgeman.
-
-ClippableObject is an adapter of Object that extends it to perfom
-clipping of it's own coordinates against a given window.
+Implemented algorithms:
+- Point clipping
+- Line clipping (Cohen-Sutherland)
+- Polygon clipping (Sutherland-Hodgeman_
+- Wireframe clipping
+- Curve clipping
 
 Notes
 -----
     All algorithms are based on a normalized coordinate system where
-    the extremes of the window are at [(-1,1), (1,1), (1,-1), (-1,-1)].
-
-See Also
---------
-    `Object`
-    `ObjectType`
+    the borders of the window are at [(-1,1), (1,1), (1,-1), (-1,-1)].
 
 """
 import numpy as np
 from scipy import special
 
-from client.objects import (Object, ObjectType)
-from util.linear_algebra import (
-    translation_matrix, escalation_matrix, rotation_matrix, size, transformed)
 
-
-class ClippableObject:
-    def __init__(self, obj: 'Object', window: 'Object'):
-        """Construct ClippableObject and store it's clipped coordinates."""
-        self._obj = obj
-        self.clipped_points = None
-        self.clipping_algorithm = {
-            ObjectType.POINT: clip_point,
-            ObjectType.LINE: clip_line,
-            ObjectType.POLYGON: clip_polygon,
-            ObjectType.BEZIER: clip_bezier,
-            ObjectType.BSPLINE: clip_bspline,
-        }
-        self.update(window)
-
-    def __getattr__(self, name: 'str'):
-        """Provide access to the underlying object's attributes."""
-        return self._obj.__getattribute__(name)
-
-    def update(self, window: 'Object'):
-        """Update the object's `clipped_coordinates`.
-
-        Notes
-        -----
-            Projection and clipping happen as follows:
-
-            1. Translate window to center
-            2. Reverse orientation of window
-            3. Translate Center of Projection (COP) to center
-            4. Scale x,y, and z-axis
-            5. Project points to 2D using perspective projection
-            6. Clip 2D points
-
-        """
-        def project(point):
-            """Perspective projection."""
-            return (point[0]*COP_DISTANCE/point[2], point[1]*COP_DISTANCE/point[2])
-
-        # NOTE: Assumes square window
-        window_size = size((window.points[0], window.points[3]))
-
-        x, y, z = window.center
-        COP_DISTANCE = 0.5
-
-        to_origin_tr = translation_matrix(-x, -y, -z)
-        rotate_tr = window.inv_rotation_matrix
-        cop_to_origin_tr = translation_matrix(0, 0, COP_DISTANCE*window_size/2)
-        scale_tr = escalation_matrix(2/window_size, 2/window_size, 2/window_size)
-        concat_tr = to_origin_tr@rotate_tr@cop_to_origin_tr@scale_tr
-
-        transformed_points = transformed(self.points, concat_tr)
-        projected_points = list(map(project, transformed_points))
-
-        self.clipped_points = self.clipping_algorithm[self.type](
-            projected_points)
-
-    @property
-    def visible(self) -> 'bool':
-        """Wether the object is currently visible."""
-        return self.clipped_points != []
-
-
-def clip_point(points: 'list') -> 'list':
-    """Clip point by determining wether it lies inside the window."""
-    x, y, z, w = points[0]
+def clip_point(points: 'list') -> 'tuple':
+    """Point clipping algorithm."""
+    x, y = points[0]
     if x > 1 or x < -1 or y > 1 or y < -1:
         return []
     else:
@@ -99,6 +28,7 @@ def clip_point(points: 'list') -> 'list':
 
 def clip_line(points: 'list') -> 'list':
     """Cohen-Sutherland line clipping algorithm."""
+    # TODO: Refactor commonalities into geometry module
     def region_code(x, y):
         code = 0
         if x < -1:
@@ -142,8 +72,8 @@ def clip_line(points: 'list') -> 'list':
                 return (i[0], i[1])
         return []
 
-    x1, y1, z1, w1 = points[0]
-    x2, y2, z2, w2 = points[1]
+    x1, y1 = points[0]
+    x2, y2 = points[1]
     rc1 = region_code(x1, y1)
     rc2 = region_code(x2, y2)
     if rc1 == 0 and rc2 == 0:  # completely inside
@@ -155,21 +85,22 @@ def clip_line(points: 'list') -> 'list':
         if rc1 == 0 or rc2 == 0:  # one intersection
             if rc1 != 0:
                 i = valid_intersection(intersections(x1, y1, rc1))
-                return (i, (x2, y2))
+                return [i, (x2, y2)]
             else:
                 i = valid_intersection(intersections(x2, y2, rc2))
-                return (i, (x1, y1))
+                return [i, (x1, y1)]
         else:  # possibly two intersections
             i1 = valid_intersection(intersections(x1, y1, rc1))
             i2 = valid_intersection(intersections(x2, y2, rc2))
-            if i1 is None or i2 is None:  # outside
+            if i1 == [] or i2 == []:  # outside
                 return []
-            return (i1, i2)
+            return [i1, i2]
 
 
 def clip_polygon(points: 'list') -> 'list':
     """Sutherland-Hodgeman polygon clipping algortihm."""
     def intersect(p1, p2, xw, yw):
+        """Intersection between line and window border."""
         x1, y1 = p1
         x2, y2 = p2
 
@@ -188,11 +119,8 @@ def clip_polygon(points: 'list') -> 'list':
                 pass
         return (xw, yw)
 
-    xw = [-1.0, None, 1.0, None]
-    yw = [None, 1.0, None, -1.0]
-    border = 0
-
     def out(point):
+        """Test if point is outside current border."""
         if border == 0:
             return point[0] < -1
         elif border == 1:
@@ -202,33 +130,59 @@ def clip_polygon(points: 'list') -> 'list':
         else:
             return point[1] < -1
 
+    xw = [-1.0, None, 1.0, None]
+    yw = [None, 1.0, None, -1.0]
+
     old_points = points
     new_points = []
 
-    for _ in range(border, 4):
-        for i in range(len(old_points) - 1):
-            if out(old_points[i]) and out(old_points[i+1]):
-                pass
-            elif (not out(old_points[i])) and out(old_points[i+1]):
-                new_points.append(intersect(
-                    old_points[i], old_points[i+1], xw[border], yw[border]))
-            elif out(old_points[i]) and (not out(old_points[i+1])):
-                new_points.append(intersect(
-                    old_points[i], old_points[i+1], xw[border], yw[border]))
-                new_points.append(old_points[i+1])
+    for border in range(4):
+        for i in range(len(old_points)):
+            j = (i + 1) % len(old_points)
+            pi = old_points[i]
+            pj = old_points[j]
+            if out(pi) and out(pj):
+                continue
+            elif not out(pi) and out(pj):
+                new_points.append(intersect(pi, pj, xw[border], yw[border]))
+            elif out(pi) and not out(pj):
+                new_points.append(intersect(pi, pj, xw[border], yw[border]))
+                new_points.append(pj)
             else:
-                new_points.append(old_points[i+1])
+                new_points.append(pj)
         if len(new_points) != 0:
             new_points.append(new_points[0])
         old_points = new_points[:]
         new_points = []
-        border += 1
     return old_points
 
 
-def out(x, y):
-    """Test if given point is outside the window."""
-    return x > 1 or x < -1 or y > 1 or y < - 1
+def clip_wireframe(points: 'list', faces: 'list') -> 'tuple':
+    """Clip wireframe by polygon clipping each of it's faces.
+
+    Notes
+    -----
+        The method `index` of `list` runs in O(n) time. `clip_wireframe` could
+        be optimized if an ordered set was used instead of list.
+
+    """
+    def try_add(point: 'tuple') -> 'int':
+        """Add point to `new_points` if it does not already exist and return
+        index to it."""
+        try:
+            index = new_points.index(point)
+        except ValueError:
+            new_points.append(point)
+            index = len(new_points) - 1
+        return index
+
+    new_points = []
+    new_faces = []
+    for face in faces:
+        clipped_points = clip_polygon([points[i] for i in face])
+        if clipped_points:
+            new_faces.append([try_add(p) for p in clipped_points])
+    return (new_points, new_faces)
 
 
 def init_forward_differences(shifts: 'list') -> 'list':
@@ -272,6 +226,10 @@ def generate_segment(n: 'int', basis: 'np.ndarray',
             D^(k)[fn+1] = D^(k)[fn] + D^(k+1)[fn]
 
     """
+    def out(x, y):
+        """Test if given point is outside the window."""
+        return x > 1 or x < -1 or y > 1 or y < - 1
+
     delta = 1 / n
     spline_x = basis@np.array([p[0] for p in geometry])
     spline_y = basis@np.array([p[1] for p in geometry])
@@ -302,10 +260,10 @@ def clip_bspline(points: 'list') -> 'list':
                       [-3/6, 0, 3/6, 0],
                       [1/6, 4/6, 1/6, 0]])
 
-    clipped_points = []
+    cached_points = []
     for i in range((len(points)-3)):
-        clipped_points += generate_segment(100, basis, points[i:i+4])
-    return clipped_points
+        cached_points += generate_segment(100, basis, points[i:i+4])
+    return cached_points
 
 
 def clip_bezier(points: 'list') -> 'list':
@@ -327,8 +285,8 @@ def clip_bezier(points: 'list') -> 'list':
                       [-3,  3,  0,  0],
                       [ 1,  0,  0,  0]])
 
-    clipped_points = generate_segment(100, basis, points[:4])
+    cached_points = generate_segment(100, basis, points[:4])
     for i in range((len(points)-4)//2):
         geometry = [points[2*i+3], points[2*i+2], points[2*i+4], points[2*i+5]]
-        clipped_points += generate_segment(100, basis, geometry)
-    return clipped_points
+        cached_points += generate_segment(100, basis, geometry)
+    return cached_points

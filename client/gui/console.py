@@ -13,7 +13,6 @@ See also
     `wml.interpreter`
 
 """
-
 from gi.repository import Gdk
 from gi.repository import Gtk
 

@@ -13,27 +13,14 @@ from client.objects import Object
 #          have to be made
 
 #       2. Manipulation/drawing would impy on visiting each object as a
-#          tree and applying transformations/drawing to the primitives
+#          tree and applying transformations/drawing to it's primitives.
+#          Manipulation of single sub-groups would be possible.
 #
-#       3. The renderizable primitive type would only store references to
-#          vertices. Such vertices would be stored in a shared set (*).
-#          Non-renderizable types such as points and lines would have their
-#          vertices stored inside them; Curves and surfaces would store their
-#          parameters and be drawn only for visualization (**)
+#       3. Each compound object would have it's set of vertices and members.
+#          This would allow for repeated vertices while comparing different
+#          objects, but not when comparing sub-groups of an object.
 #
-#       4. Applicable to renderizable objects: Repeated vertices could be
-#          detected during the creation of object, automatically changing the
-#          reference of the repeated vertex to the old one.
-#
-#       5. Namespacing would be needed to avoid clashes between different
-#          files, objects, and groups.
-#
-#
-# (*) This design decision relies on the BIG assumption that renderizable
-#     primivites are more heavily used than other types: point, line, curves,
-#     and surfaces
-#
-# (**) As is already done
+# (*) As is already done
 #
 
 class DotObjParser:
@@ -54,15 +41,18 @@ class DotObjParser:
         self._executor = executor
 
     def compile_obj_file(self, path: 'str') -> 'list':
-        """Returns object described by vertices .obj file."""
-        # FIXME: Not compatible with Wire-frame model.
+        """Returns object described by .obj file."""
         with open(path) as obj:
             raw_file = obj.read()
-        file_lines = [line.split(" ") for line in raw_file.split("\n")]
-        # Name of the file containing object.
+        file_lines = [list(filter(lambda x: x != "", line.split(" "))) for line in raw_file.split("\n")]
         obj_name = path.split("/")[-1].split(".")[0]
         vertices = []
+        faces = []
         for line in file_lines:
+            if line == []:
+                continue
             if line[0] == "v":
                 vertices.append(np.array([float(line[1]), float(line[2]), float(line[3]), 1]))
-        self._executor.add(obj_name, vertices, (0.0, 0.0, 0.0))
+            elif line[0] == "f":
+                faces.append([int(v_vt_vn.split("/")[0])-1 for v_vt_vn in line[1:]]) # obj indexes start at 1
+        self._executor.addw(obj_name, vertices, faces, (0.0, 0.0, 0.0))
