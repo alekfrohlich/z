@@ -2,24 +2,6 @@
 
 import numpy as np
 
-# NOTE - Dealing with hierarchical objects (compatibility with .obj format)
-#
-# Allowing multiple objects to share the same vertex would imply in drastic
-# changes to the software architecture:
-#
-#       1. Distinction between a primitive object and a compound object would
-#          have to be made
-
-#       2. Manipulation/drawing would impy on visiting each object as a
-#          tree and applying transformations/drawing to it's primitives.
-#          Manipulation of single sub-groups would be possible.
-#
-#       3. Each compound object would have it's set of vertices and members.
-#          This would allow for repeated vertices while comparing different
-#          objects, but not when comparing sub-groups of an object.
-#
-# (*) As is already done
-#
 
 class DotObjParser:
     """Parser for Wavefront .obj files.
