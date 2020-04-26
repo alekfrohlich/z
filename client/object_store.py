@@ -14,7 +14,7 @@ from gi.repository import GObject
 from gi.repository import Gtk
 
 from util import (Logger, LogLevel)
-from .objects import (Window)
+from .models import Window
 
 
 class Column(Enum):
@@ -72,7 +72,7 @@ class ObjectStore(Gtk.ListStore):
         """
         if name in [row[Column.NAME.value] for row in self]:
             raise KeyError(name + " already names an object!")
-        self.append([obj, obj.name, str(obj)])
+        self.append([obj, obj.name, str(type(obj).__name__)])
         obj.update(self.window)
         Logger.log(LogLevel.INFO, "new object: " + str(obj))
 

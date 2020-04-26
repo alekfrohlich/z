@@ -2,8 +2,6 @@
 
 import numpy as np
 
-from client.objects import Object
-
 # NOTE - Dealing with hierarchical objects (compatibility with .obj format)
 #
 # Allowing multiple objects to share the same vertex would imply in drastic

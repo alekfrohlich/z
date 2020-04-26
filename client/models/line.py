@@ -1,0 +1,23 @@
+""""""
+from .paintable_object import PaintableObject
+from util.clipping import clip_line
+
+
+class Line(PaintableObject):
+    def __init__(self, name: 'str', points: 'list', color: 'tuple'):
+        """Construct line."""
+        super().__init__(name, points, color)
+
+    def __str__(self):
+        return "{}(Line) at {}, with color = {}".format(
+            self.name,
+            str([(p[0], p[1], p[2]) for p in self._points]),
+            str(self.color))
+
+    def accept(self, painter: 'ObjectPainter'):
+        """Accept paint request."""
+        painter.paint_line(self)
+
+    def update(self, window: 'Window'):
+        """Update cached coordinates."""
+        self._cached_points = clip_line(self.projected(window))

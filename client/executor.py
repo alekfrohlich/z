@@ -22,7 +22,7 @@ Notes
 import numpy as np
 
 from util import (Logger, LogLevel)
-from .objects import (Point, Line, Wireframe, Curve)
+from .models import (Point, Line, Wireframe, Curve)
 
 from .object_store import ObjectStore
 from .gui.viewport import Viewport
@@ -63,7 +63,7 @@ class Executor:
 
     @Viewport.needs_redraw
     @_warn_undefined_object
-    def addc(self, name: 'str', points: 'list', ctype: 'Curve.CurveType', color=(0.0, 0.0, 0.0)):
+    def addc(self, name: 'str', points: 'list', ctype: 'CurveType', color=(0.0, 0.0, 0.0)):
         self._obj_store[name] = Curve(name, points, ctype, color)
 
     # TEMP ====================================================================

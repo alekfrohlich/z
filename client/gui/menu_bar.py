@@ -8,7 +8,7 @@ Classes
 """
 from gi.repository import Gtk
 
-from client.objects import Curve
+from client.models.curve import CurveType
 from util import (Logger, LogLevel)
 
 
@@ -48,8 +48,8 @@ class MenuBar:
                 "Point": lambda n, p, c: self._executor.addp(n, p, c),
                 "Line": lambda n, p, c: self._executor.addl(n, p, c),
                 "Wire-frame": lambda n, p, c: self._executor.addw(n, p, c),  # FIXME: Missing faces parameter
-                "Bezier": lambda n, p, c: self._executor.addc(n, p, Curve.CurveType.BEZIER, c),
-                "B-Spline": lambda n, p, c: self._executor.addc(n, p, Curve.CurveType.BSPLINE, c)
+                "Bezier": lambda n, p, c: self._executor.addc(n, p, CurveType.BEZIER, c),
+                "B-Spline": lambda n, p, c: self._executor.addc(n, p, CurveType.BSPLINE, c)
             }
             add[self._create_obj_dialog.object_type](
                 self._create_obj_dialog.name,
