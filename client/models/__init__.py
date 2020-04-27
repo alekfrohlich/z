@@ -12,6 +12,7 @@ Notes
 """
 from .point import Point
 from .line import Line
-from .curve import Curve
+from .curve import Curve, Interpolator
+from .surface import Surface
 from .wireframe import Wireframe
 from .window import Window

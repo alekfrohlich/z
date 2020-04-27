@@ -1,5 +1,6 @@
 """"""
 import numpy as np
+
 from .paintable_object import PaintableObject
 from util.linear_algebra import (translation_matrix, rotation_matrix)
 
@@ -22,7 +23,7 @@ class Window(PaintableObject):
                                       [0, 0, 0, 1]])
 
     def __str__(self):
-        return "Window with boundary: {}".format(self.points)
+        return "Window with boundaries at {}".format(self.points)
 
     @property
     def cached_faces(self) -> 'list':

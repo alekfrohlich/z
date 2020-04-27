@@ -74,7 +74,7 @@ class ObjectStore(Gtk.ListStore):
             raise KeyError(name + " already names an object!")
         self.append([obj, obj.name, str(type(obj).__name__)])
         obj.update(self.window)
-        Logger.log(LogLevel.INFO, "new object: " + str(obj))
+        Logger.log(LogLevel.INFO, str(obj))
 
     def __delitem__(self, name: 'str'):
         """Delete object.

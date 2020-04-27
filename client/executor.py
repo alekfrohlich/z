@@ -22,7 +22,7 @@ Notes
 import numpy as np
 
 from util import (Logger, LogLevel)
-from .models import (Point, Line, Wireframe, Curve)
+from .models import (Point, Line, Wireframe, Curve, Surface, Interpolator)
 
 from .object_store import ObjectStore
 from .gui.viewport import Viewport
@@ -43,6 +43,13 @@ class Executor:
         """Constructs Executor."""
         self._obj_store = obj_store
         self._viewport = viewport
+        # TEMP: Until GUI option is created
+        control_matrix = [[100, 200, 0, 1], [200, 300, 0, 1], [250, 0, 0, 1], [300, 200, 0, 1],
+                          [100, 342, 100, 1], [200, 300, 100, 1], [250, 0, 100, 1], [300, 200, 100, 1],
+                          [100, 200, 221, 1], [200, 282, 200, 1], [250, 0, 200, 1], [300, 200, 200, 1],
+                          [100, 200, 300, 1], [200, 300, 300, 1], [250, 0, 300, 1], [300, 200, 300, 1]]
+        control_matrix = list(map(np.array, control_matrix))
+        self.adds("Surface Patch", control_matrix, Interpolator.BEZIER, Interpolator.BEZIER)
 
     # TEMP ====================================================================
 
@@ -63,8 +70,13 @@ class Executor:
 
     @Viewport.needs_redraw
     @_warn_undefined_object
-    def addc(self, name: 'str', points: 'list', ctype: 'CurveType', color=(0.0, 0.0, 0.0)):
-        self._obj_store[name] = Curve(name, points, ctype, color)
+    def addc(self, name: 'str', points: 'list', bmat: 'Interpolator', color=(0.0, 0.0, 0.0)):
+        self._obj_store[name] = Curve(name, points, bmat, color)
+
+    @Viewport.needs_redraw
+    @_warn_undefined_object
+    def adds(self, name, points, bmatu: 'Interpolator', bmatv: 'Interpolator', color=(0., 0., 0.)):
+        self._obj_store[name] = Surface(name, points, bmatu, bmatv, color)
 
     # TEMP ====================================================================
 

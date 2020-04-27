@@ -1,25 +1,33 @@
-""""""
+"""This module provides C(1) composite curves.
+
+Classes
+-------
+    Interpolator
+    Curve
+
+"""
 import numpy as np
 
 from .paintable_object import PaintableObject
 
 
-class CurveType:
+class Interpolator:
     BEZIER = np.array([[-1,  3, -3,  1],
-                        [ 3, -6,  3,  0],
-                        [-3,  3,  0,  0],
-                        [ 1,  0,  0,  0]])
+                       [ 3, -6,  3,  0],
+                       [-3,  3,  0,  0],
+                       [ 1,  0,  0,  0]])
     BSPLINE = np.array([[-1/6, 3/6, -3/6, 1/6],
                         [3/6, -6/6, 3/6, 0],
                         [-3/6, 0, 3/6, 0],
                         [1/6, 4/6, 1/6, 0]])
 
+
 class Curve(PaintableObject):
-    def __init__(self, name: 'str', points: 'list', ctype: 'CurveType',
+    def __init__(self, name: 'str', points: 'list', bmat: 'Interpolator',
                  color: 'tuple'):
         """Construct curve."""
         super().__init__(name, points, color, 1)
-        self._ctype = ctype
+        self._bmat = bmat
 
     def __str__(self):
         return "{}(Curve) with control points = {} and color = {}".format(
@@ -28,9 +36,9 @@ class Curve(PaintableObject):
             str(self.color))
 
     @property
-    def ctype(self) -> 'CurveType':
-        """Curve type."""
-        return self._ctype
+    def bmat(self) -> 'Interpolator':
+        """Polynomial basis used for interpolating the curve."""
+        return self._bmat
 
     def accept(self, painter: 'ObjectPainter'):
         """Accept paint request."""
