@@ -49,36 +49,40 @@ class Executor:
                           [100, 200, 221, 1], [200, 282, 200, 1], [250, 0, 200, 1], [300, 200, 200, 1],
                           [100, 200, 300, 1], [200, 300, 300, 1], [250, 0, 300, 1], [300, 200, 300, 1]]
         control_matrix = list(map(np.array, control_matrix))
-        self.adds("Surface Patch", control_matrix, Interpolator.BEZIER, Interpolator.BEZIER)
-
-    # TEMP ====================================================================
-
-    @Viewport.needs_redraw
-    @_warn_undefined_object
-    def addp(self, name: 'str', points: 'list', color=(0.0, 0.0, 0.0)):
-        self._obj_store[name] = Point(name, points, color)
+        self.add(name="Patch", points=control_matrix, color=(0., 0., 0.),
+                 obj_type="Surface", bmatu=Interpolator.BEZIER, bmatv=Interpolator.BEZIER)
 
     @Viewport.needs_redraw
     @_warn_undefined_object
-    def addl(self, name: 'str', points: 'list', color=(0.0, 0.0, 0.0)):
-        self._obj_store[name] = Line(name, points, color)
+    def add(self, **kwargs):
+        """Attempt to add object to ObjectStore."""
+        params = {
+            "Wireframe": ['faces'],
+            "Curve": ['bmat'],
+            "Surface": ['bmatu', 'bmatv'],
+        }
 
-    @Viewport.needs_redraw
-    @_warn_undefined_object
-    def addw(self, name: 'str', points: 'list', faces: 'list', color=(0.0, 0.0, 0.0)):
-        self._obj_store[name] = Wireframe(name, points, faces, color)
+        try:
+            name = kwargs['name']
+            points = kwargs['points']
+            color = kwargs['color']
+            obj_type = kwargs['obj_type']
 
-    @Viewport.needs_redraw
-    @_warn_undefined_object
-    def addc(self, name: 'str', points: 'list', bmat: 'Interpolator', color=(0.0, 0.0, 0.0)):
-        self._obj_store[name] = Curve(name, points, bmat, color)
+            for param in params[obj_type]:
+                if param not in kwargs:
+                    raise ValueError
+        except ValueError:
+            Logger.log(LogLevel.ERRO, "Attempting to create object without proper parameters")
 
-    @Viewport.needs_redraw
-    @_warn_undefined_object
-    def adds(self, name, points, bmatu: 'Interpolator', bmatv: 'Interpolator', color=(0., 0., 0.)):
-        self._obj_store[name] = Surface(name, points, bmatu, bmatv, color)
+        call_constructor = {
+            "Point": lambda: Point(name, points, color),
+            "Line": lambda: Line(name, points, color),
+            "Wireframe": lambda: Wireframe(name, points, kwargs['faces'], color),
+            "Curve": lambda: Curve(name, points, kwargs['bmat'], color),
+            "Surface": lambda: Surface(name, points, kwargs['bmatu'], kwargs['bmatv'], color),
+        }
 
-    # TEMP ====================================================================
+        self._obj_store[name] = call_constructor[obj_type]()
 
     @Viewport.needs_redraw
     @_warn_undefined_object

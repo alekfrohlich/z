@@ -44,17 +44,27 @@ class MenuBar:
         response = self._create_obj_dialog.run()
 
         if response == Gtk.ResponseType.OK:
-            add = {
-                "Point": lambda n, p, c: self._executor.addp(n, p, c),
-                "Line": lambda n, p, c: self._executor.addl(n, p, c),
-                "Wire-frame": lambda n, p, c: self._executor.addw(n, p, c),  # FIXME: Missing faces parameter
-                "Bezier": lambda n, p, c: self._executor.addc(n, p, Interpolator.BEZIER, c),
-                "B-Spline": lambda n, p, c: self._executor.addc(n, p, Interpolator.BSPLINE, c)
+            obj_type = self._create_obj_dialog.object_type
+            params = {
+                'name': self._create_obj_dialog.name,
+                'points': self._create_obj_dialog.points,
+                'color': self._create_obj_dialog.color,
+                'obj_type': obj_type,
             }
-            add[self._create_obj_dialog.object_type](
-                self._create_obj_dialog.name,
-                self._create_obj_dialog.points,
-                self._create_obj_dialog.color)
+
+            if obj_type == "Wireframe":
+                # TODO: Add faces
+                pass
+            elif obj_type == "Curve":
+                # TODO: Add bmatu
+                params['bmat'] = Interpolator.BEZIER
+            elif obj_type == "Surface":
+                # TODO: Add bmatv
+                params['bmatu'] = Interpolator.BEZIER
+                params['bmatv'] = Interpolator.BEZIER
+
+            self._executor.add(**params)
+
         self._create_obj_dialog.hide()
 
     def _on_load_object(self, _):

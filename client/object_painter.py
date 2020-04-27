@@ -98,7 +98,7 @@ class ObjectPainter:
     def paint_surface(self, surface: 'Surface'):
         """Draw bicubic bezier surface."""
         def setup(curves: 'list', u: 'bool') -> 'tuple':
-            """Initialize algorithm for drawing the family of curves in t or s."""
+            """Initialize algorithm for drawing the family of curves in u or v."""
             interpolator = surface.bmatu if u else surface.bmatv
             dim = dimu if u else dimv
             fwd_x = []; fwd_y = []; prev_out = [True] * dim; prev_point = [None] * dim
