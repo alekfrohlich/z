@@ -1,5 +1,4 @@
-"""This modules provides a realization of the write-only interface to
-ObjectStore.
+"""This modules provides a write-only interface to ObjectStore.
 
 The interface is the following:
 
@@ -29,7 +28,7 @@ from .gui.viewport import Viewport
 
 
 def _warn_undefined_object(method: 'function'):
-    """Logs the attempt of accessing an object that does not exist."""
+    """Log the attempt of accessing an object that does not exist."""
     def wrapper(*args, **kwargs):
         try:
             method(*args, **kwargs)
@@ -39,8 +38,10 @@ def _warn_undefined_object(method: 'function'):
 
 
 class Executor:
+    """Realization of write-only interface to ObjectStore."""
+
     def __init__(self, obj_store: 'ObjectStore', viewport: 'Viewport'):
-        """Constructs Executor."""
+        """Construct Executor."""
         self._obj_store = obj_store
         self._viewport = viewport
 

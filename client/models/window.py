@@ -1,4 +1,4 @@
-""""""
+"""This module provides a window class."""
 import numpy as np
 
 from .paintable_object import PaintableObject
@@ -6,6 +6,14 @@ from util.linear_algebra import (translation_matrix, rotation_matrix)
 
 
 class Window(PaintableObject):
+    """Square upon which other objects are projected.
+
+    The cached points and faces are stored for compatibility
+    with the method used for drawing the window, they'll never
+    change.
+
+    """
+
     def __init__(self):
         """Construct window."""
         points = [[0, 500, 0, 1],
@@ -22,11 +30,12 @@ class Window(PaintableObject):
                                       [0, 0, 0, 1]])
 
     def __str__(self):
+        """Cohersion to string."""
         return "Window with boundaries at {}".format(self.points)
 
     @property
     def cached_faces(self) -> 'list':
-        """Window's faces."""
+        """Faces."""
         return self._cached_faces
 
     @property

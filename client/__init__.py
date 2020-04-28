@@ -34,12 +34,10 @@ from util import DotObjParser, DotOmlParser
 
 
 class GtkClient:
+    """Build user interface from glade file and inject dependencies."""
+
     def __init__(self):
-        """Initialize gtk client.
-
-        Constructs GUI from glade file and realizes dependency injections.
-
-        """
+        """Initialize gtk client."""
         self._has_quit = False
         self._builder = Gtk.Builder()
         self._builder.add_from_file("glade/gtk_client.glade")

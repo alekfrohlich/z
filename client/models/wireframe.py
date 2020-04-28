@@ -1,9 +1,11 @@
-""""""
+"""This module provides a wireframe class."""
 from .paintable_object import PaintableObject
 from util.clipping import clip_wireframe
 
 
 class Wireframe(PaintableObject):
+    """Wire-frame model using face-vertex meshes."""
+
     def __init__(self, name: 'str', points: 'list', faces: 'list',
                  color: 'tuple'):
         """Construct wire-frame."""
@@ -12,13 +14,14 @@ class Wireframe(PaintableObject):
         self._cached_faces = []
 
     def __str__(self):
+        """Cohersion to string."""
         return "{}(Wire-fame) with color = {}".format(
             self.name,
             str(self.color))
 
     @property
     def cached_faces(self) -> 'list':
-        """Faces of clipped polygon mesh."""
+        """The Faces of clipped polygon mesh."""
         return self._cached_faces
 
     @property

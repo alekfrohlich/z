@@ -17,12 +17,13 @@ class DotObjParser:
             color = BLACK
 
     """
+
     def __init__(self, executor: 'Executor'):
         """Construct DotObjParser."""
         self._executor = executor
 
     def compile_obj_file(self, path: 'str') -> 'list':
-        """Returns object described by .obj file."""
+        """Return object described by .obj file."""
         with open(path) as obj:
             raw_file = obj.read()
         file_lines = [list(filter(lambda x:x != "", line.split(" ")))

@@ -1,14 +1,17 @@
-""""""
+"""This module provides a line class."""
 from .paintable_object import PaintableObject
 from util.clipping import clip_line
 
 
 class Line(PaintableObject):
+    """Line given by two points in homogeneous coordinates."""
+
     def __init__(self, name: 'str', points: 'list', color: 'tuple'):
         """Construct line."""
         super().__init__(name, points, color, 2)
 
     def __str__(self):
+        """Cohersion to string."""
         return "{}(Line) at {}, with color = {}".format(
             self.name,
             str([(p[0], p[1], p[2]) for p in self._points]),

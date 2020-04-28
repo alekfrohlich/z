@@ -165,8 +165,13 @@ def clip_wireframe(points: 'list', faces: 'list') -> 'tuple':
 
     """
     def try_add(point: 'tuple') -> 'int':
-        """Add point to `new_points` if it does not already exist and return
-        index to it."""
+        """Add point to `new_points` and return index to it.
+
+        Notes
+        -----
+            If `point` is already on `new_points`, don't repeat point. Instead,
+            return index to existing point.
+        """
         try:
             index = new_points.index(point)
         except ValueError:

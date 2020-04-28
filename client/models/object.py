@@ -1,4 +1,4 @@
-""""""
+"""Base class for deriving graphical objects."""
 import numpy as np
 
 from util.linear_algebra import (
@@ -6,6 +6,16 @@ from util.linear_algebra import (
 
 
 class Object:
+    """"Object base class.
+
+    Each object is composed by:
+    - Name
+    - List of points in 4D homogeneous coordinates.
+    - RGB color tuple.
+    - Thickness used for drawing.
+
+    """
+
     def __init__(self, name: 'str', points: 'list', color: 'tuple',
                  thickness: 'float'):
         """Construct object."""
@@ -35,7 +45,7 @@ class Object:
 
     @property
     def points(self) -> 'list':
-        """Points of object."""
+        """List of Points of object."""
         return self._points
 
     @property

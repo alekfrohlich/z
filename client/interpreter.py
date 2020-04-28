@@ -1,5 +1,8 @@
-"""This module provides an interpreter for a toy object manipulation language.
-It isn't efficient, but is easier (and faster) to use than the GUI.
+"""This module provides an interpreter for a toy language.
+
+The interpreter parses object manipulation language (.oml) files.
+It isn't efficient, but is easier (and faster) to manipulate objects
+through the console, than it is to use the graphical user interface.
 
 The implemented commands are:
     add(name, points, color, faces?, bmatu?, bmatv?) (*)
@@ -60,7 +63,9 @@ ROTATE_PATTERN = re.compile(
 
 class Interpreter:
     """Simple interpreter for faster object manipulation."""
+
     def __init__(self, executor):
+        """Construct interpreter."""
         self._executor = executor
         self._handler = {
             ADD_PATTERN: self._add,
@@ -76,8 +81,7 @@ class Interpreter:
             [int(i) for i in face.split("-")] for face in string.split(";")]
 
     def points_as_list(self, string: 'str') -> 'list':
-        """Convert raw string into list of homogeneous coordinates (each point
-        is a ndarray)."""
+        """Convert raw string of points into list of list of ndarray."""
         return [np.array([float(x), float(y), float(z), 1]) for x, y, z in map(
                 lambda p: p.split(","), string.split(";"))]
 
@@ -159,7 +163,7 @@ class Interpreter:
         self._executor.translate(name, dx, dy, dz)
 
     def _scale(self, match):
-        """Execute `scale`"""
+        """Execute `scale`."""
         name = match.group("name")
         factor = float(match.group("factor"))
         self._executor.scale(name, factor)

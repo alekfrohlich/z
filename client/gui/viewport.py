@@ -1,5 +1,4 @@
-"""This modules provides a resizeable drawing area on which objects can be
-    drawn.
+"""This modules provides a resizeable drawing area for drawing objects.
 
 Classes
 -------

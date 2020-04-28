@@ -1,5 +1,4 @@
-"""This module provides a class to draw objects given a Cairo.Context and the
-viewport's resolution.
+"""This module provides a way to draw the objects in the `models` package.
 
 Classes
 -------
@@ -14,11 +13,12 @@ from util.clipping import clip_line
 
 
 def init_forward_differences(shifts: 'list') -> 'list':
-    """Initialize the first n forward differences where n is the number of
-    shifts provided as input.
+    """Initialize the first N forward differences.
 
     Notes
     -----
+        N is the number of shifts provided as input.
+
         The initial forward differences are calculated using the reccurence
         relation:
 
@@ -39,8 +39,10 @@ def init_forward_differences(shifts: 'list') -> 'list':
 
 
 class ObjectPainter:
-    """"""
+    """Draw objects given a graphical context and the viewport's resolution."""
+
     def __init__(self, cr: 'Cairo.Context', resolution: 'tuple'):
+        """Construct ObjectPainter."""
         self._cr = cr
         self._res = resolution
 
@@ -98,8 +100,15 @@ class ObjectPainter:
     def paint_surface(self, surface: 'Surface'):
         """Draw bicubic bezier surface."""
         def setup(curves: 'list', u: 'bool') -> 'tuple':
-            """Initialize algorithm for drawing the family of
-            curves in u or v."""
+            """Initialize algorithm for drawing one family of curves.
+
+            Parameteres
+            -----------
+                u: bool
+                    Family of curves in the `u` direction? False represents the
+                    `v` direction.
+
+            """
             interpolator = surface.bmatu if u else surface.bmatv
             dim = dimu if u else dimv
             fwd_x = []
@@ -116,7 +125,15 @@ class ObjectPainter:
             return (fwd_x, fwd_y, prev_out, prev_point)
 
         def draw(u: 'bool'):
-            """Draw family of curves."""
+            """Draw family of curves.
+
+            Parameteres
+            -----------
+                u: bool
+                    Family of curves in the `u` direction? False represents the
+                    `v` direction.
+
+            """
             interpolator = surface.bmatu if u else surface.bmatv
             dim1 = dimu if u else dimv
             dim2 = dimv if u else dimu
@@ -174,8 +191,7 @@ class ObjectPainter:
 
     def _generate_segment(self, n: 'int', basis: 'ndarray',
                           geometry: 'ndarray'):
-        """Generate cubic spline segment from geometry matrix and
-        polynomial basis using forward differences.
+        """Generate cubic spline segment using forward differences.
 
         Notes
         -----

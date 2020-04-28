@@ -1,14 +1,17 @@
-""""""
+"""This module provides a point class."""
 from .paintable_object import PaintableObject
 from util.clipping import clip_point
 
 
 class Point(PaintableObject):
+    """Point in homogeneous coordinates."""
+
     def __init__(self, name: 'str', points: 'list', color: 'tuple'):
         """Construct point."""
         super().__init__(name, points, color, 2)
 
     def __str__(self):
+        """Cohersion to string."""
         return "{}(Point) at {}, with color = {}".format(
             self.name,
             str((self._points[0][0], self._points[0][1], self._points[0][2])),
@@ -28,7 +31,6 @@ class Point(PaintableObject):
 
     def rotate(self, x_angle: 'float', y_angle: 'float', z_angle: 'float',
                point=None):
-        """A point rotate around it's center remains the same, thus ignore
-        rotations around center."""
+        """Ignore rotations about center.."""
         if point is not None:
             super().rotate(x_angle, y_angle, z_angle, point)

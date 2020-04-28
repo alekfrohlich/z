@@ -114,6 +114,7 @@ class CreateObjectDialog:
         - on_create_object_cancel : Gtk.Button.signals.clicked
 
     """
+
     def __init__(self, dialog: 'Gtk.Dialog', name_field: 'Gtk.Entry',
                  type_field: 'Gtk.ComboBoxText', points_field: 'Gtk.Entry',
                  color_field: 'Gtk.Entry', obj_view: 'ObjectView',
@@ -133,23 +134,23 @@ class CreateObjectDialog:
 
     @property
     def name(self) -> 'str':
-        """Object's name."""
+        """Name of the object."""
         return self._name_field.get_text()
 
     @property
     def object_type(self) -> 'str':
-        """Object's type."""
+        """Type of the object."""
         return self._type_field.get_active_text()
 
     @property
     def points(self) -> 'list':
-        """Object's points."""
+        """List of points of the object."""
         return self._wml_interpreter.points_as_list(
             self._points_field.get_text())
 
     @property
     def color(self) -> 'tuple':
-        """Object's color."""
+        """Color of the object."""
         return self._wml_interpreter.color_as_tuple(
             self._color_field.get_text())
 

@@ -4,11 +4,13 @@ Object types:
 - Point: Defined by point.
 - Line: Defined by pair of points.
 - Polygon: defined by list of faces.
-- Bezier: C(1) composed bezier curve.
-- B-spline: Composed b-spline curve.
+- Curve: C(1) composite cubic spline.
+- Surface: Bicubic splines.
 
-Notes
------
+The possible interpolators for curves and surfaces are:
+- Bezier
+- B-Spline
+
 """
 from .point import Point
 from .line import Line

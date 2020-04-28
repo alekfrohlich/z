@@ -24,6 +24,7 @@ class ObjectView:
         treeview.set_model(store)
 
     def __len__(self):
+        """Length of object store."""
         return len(self._treeview.get_model())
 
     @property

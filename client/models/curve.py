@@ -1,4 +1,4 @@
-"""This module provides C(1) composite curves.
+"""This module provides a curve class.
 
 Classes
 -------
@@ -12,6 +12,8 @@ from .paintable_object import PaintableObject
 
 
 class Interpolator:
+    """Interpolators for curves and surfaces."""
+
     BEZIER = np.array([[-1,  3, -3,  1],
                        [ 3, -6,  3,  0],
                        [-3,  3,  0,  0],
@@ -23,6 +25,8 @@ class Interpolator:
 
 
 class Curve(PaintableObject):
+    """Curve given by control points in homogeneous coordinates."""
+
     def __init__(self, name: 'str', points: 'list', bmatu: 'Interpolator',
                  color: 'tuple'):
         """Construct curve."""
@@ -30,6 +34,7 @@ class Curve(PaintableObject):
         self._bmat = bmatu
 
     def __str__(self):
+        """Cohersion to string."""
         return "{}(Curve) with control points = {} and color = {}".format(
             self.name,
             str([(p[0], p[1], p[2]) for p in self._points]),

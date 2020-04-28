@@ -1,16 +1,19 @@
-"""This module provides Surface patches."""
+"""This module provides a Surface class."""
 from .paintable_object import PaintableObject
 
 
 class Surface(PaintableObject):
-    """"""
+    """Surface given by control points in homogeneous coordinates."""
+
     def __init__(self, name: 'str', points: 'list', bmatu: 'ndarray',
                  bmatv: 'ndarray', color: 'tuple'):
+        """Construct Surface."""
         super().__init__(name, points, color, 0.5)
         self._bmatu = bmatu
         self._bmatv = bmatv
 
     def __str__(self):
+        """Cohersion to string."""
         return "{}(Surface) with control points = {} and color = {}".format(
             self.name,
             str([(p[0], p[1], p[2]) for p in self._points]),
@@ -18,14 +21,12 @@ class Surface(PaintableObject):
 
     @property
     def bmatu(self) -> 'Interpolator':
-        """Polynomial basis used for interpolating the family of
-        curves in u."""
+        """interpolator for the family of curves in u."""
         return self._bmatu
 
     @property
     def bmatv(self) -> 'Interpolator':
-        """Polynomial basis used for interpolating the family of
-        curves in v."""
+        """interpolator for the family of curves in v."""
         return self._bmatv
 
     @property

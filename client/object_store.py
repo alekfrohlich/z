@@ -3,7 +3,7 @@
 Classes
 -------
     Column
-    ÓbjectStore
+    ObjectStore
 
 """
 from enum import Enum
@@ -16,13 +16,35 @@ from .models import Window
 
 
 class Column(Enum):
-    """Enum representing the columns of the underlying Gtk.ListStore."""
+    """Enum representing the columns of underlying Gtk.ListStore."""
+
     OBJ = 0
     NAME = 1
     TYPE = 2
 
 
 class ObjectStore(Gtk.ListStore):
+    """Container for storing PaintableObjects.
+
+    Implemented using Gtk.ListStore for providing a graphical representation
+    of the stored objects.
+
+    Operations:
+    - add
+    - get
+    - set
+    - remove
+
+    The ObjectStore also provides a list of visible objects through it's
+    `display_file` property.
+
+
+    See Also
+    --------
+        `ObjectView`
+
+    """
+
     def __init__(self):
         """Construct ObjectStore.
 
