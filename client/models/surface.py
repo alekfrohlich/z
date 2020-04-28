@@ -13,18 +13,30 @@ class Surface(PaintableObject):
     def __str__(self):
         return "{}(Surface) with control points = {} and color = {}".format(
             self.name,
-            str([[(p[0], p[1], p[2]) for p in self._points[4*i:4*i+4]] for i in range(4)]),
+            str([(p[0], p[1], p[2]) for p in self._points]),
             str(self.color))
 
     @property
     def bmatu(self) -> 'Interpolator':
-        """Polynomial basis used for interpolating the family of curves in u."""
+        """Polynomial basis used for interpolating the family of
+        curves in u."""
         return self._bmatu
 
     @property
     def bmatv(self) -> 'Interpolator':
-        """Polynomial basis used for interpolating the family of curves in v."""
+        """Polynomial basis used for interpolating the family of
+        curves in v."""
         return self._bmatv
+
+    @property
+    def degu(self) -> 'int':
+        """Degree of interpolator of family of curves in u."""
+        return self._bmatu.shape[0] - 1
+
+    @property
+    def degv(self) -> 'int':
+        """Degree of interpolator of family of curves in v."""
+        return self._bmatv.shape[0] - 1
 
     def accept(self, painter: 'ObjectPainter'):
         """Accept paint request."""

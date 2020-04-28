@@ -40,6 +40,11 @@ class Curve(PaintableObject):
         """Polynomial basis used for interpolating the curve."""
         return self._bmat
 
+    @property
+    def deg(self) -> 'int':
+        """Degree of interpolator."""
+        return self._bmat.shape[0] - 1
+
     def accept(self, painter: 'ObjectPainter'):
         """Accept paint request."""
         painter.paint_curve(self)

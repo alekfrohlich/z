@@ -98,12 +98,18 @@ class ObjectPainter:
     def paint_surface(self, surface: 'Surface'):
         """Draw bicubic bezier surface."""
         def setup(curves: 'list', u: 'bool') -> 'tuple':
-            """Initialize algorithm for drawing the family of curves in u or v."""
+            """Initialize algorithm for drawing the family of
+            curves in u or v."""
             interpolator = surface.bmatu if u else surface.bmatv
             dim = dimu if u else dimv
-            fwd_x = []; fwd_y = []; prev_out = [True] * dim; prev_point = [None] * dim
+            fwd_x = []
+            fwd_y = []
+            prev_out = [True] * dim
+            prev_point = [None] * dim
+
             for i in range(dim):
-                fx, fy = self._init_curve_algorithm(interpolator, curves[i], delta)
+                fx, fy = self._init_curve_algorithm(
+                    interpolator, curves[i], delta)
                 fwd_x.append(fx)
                 fwd_y.append(fy)
 
@@ -112,9 +118,13 @@ class ObjectPainter:
         def draw(u: 'bool'):
             """Draw family of curves."""
             interpolator = surface.bmatu if u else surface.bmatv
-            dim1 = dimu if u else dimv; dim2 = dimv if u else dimu
+            dim1 = dimu if u else dimv
+            dim2 = dimv if u else dimu
             for _ in range(n+1):
-                self._generate_segment(n, interpolator, [(fwd_x[i][0], fwd_y[i][0]) for i in range(dim1)])
+                self._generate_segment(
+                    n,
+                    interpolator,
+                    [(fwd_x[i][0], fwd_y[i][0]) for i in range(dim1)])
                 for i in range(dim2):
                     for j in range(dim2 - 1):
                         fwd_x[i][j] += fwd_x[i][j+1]
@@ -123,14 +133,16 @@ class ObjectPainter:
 
         n = 20
         delta = 1 / n
-        dimu = surface.bmatu.shape[0]
-        dimv = surface.bmatv.shape[0]
+        dimu = surface.dimu
+        dimv = surface.dimv
 
         cp = surface.cached_points
-        curves_in_u = [cp[dimu*i : dimu*i + dimu] for i in range(dimu)]
-        curves_in_v = [[cp[i], cp[dimv+i], cp[2*dimv+i], cp[3*dimv+i]] for i in range(dimv)]
+        curves_in_u = [cp[dimu*i: dimu*i + dimu] for i in range(dimu)]
+        curves_in_v = [[cp[i], cp[dimv+i], cp[2*dimv+i], cp[3*dimv+i]] for i
+                       in range(dimv)]
 
-        U = True; V = False
+        U = True
+        V = False
         fwd_x, fwd_y, prev_out, prev_point = setup(curves_in_u, U)
         draw(U)
         fwd_x, fwd_y, prev_out, prev_point = setup(curves_in_v, V)
@@ -144,24 +156,24 @@ class ObjectPainter:
             tuple : Forward differences in x and y
 
         """
-        n = 1 / delta
         dim = basis.shape[0]
         degree = dim - 1
 
         spline_x = basis@np.array([p[0] for p in geometry])
         spline_y = basis@np.array([p[1] for p in geometry])
 
-        shifts_spline_x = [spline_x.dot(np.array(
-            [(i*delta)**n for n in range(degree, -1, -1)])) for i in range(dim)]
-        shifts_spline_y = [spline_y.dot(np.array(
-            [(i*delta)**n for n in range(degree, -1, -1)])) for i in range(dim)]
+        shifts_spline_x = [spline_x.dot(np.array([(i*delta)**n for n in range(
+            degree, -1, -1)])) for i in range(dim)]
+        shifts_spline_y = [spline_y.dot(np.array([(i*delta)**n for n in range(
+            degree, -1, -1)])) for i in range(dim)]
 
         fwd_x = init_forward_differences(shifts_spline_x)
         fwd_y = init_forward_differences(shifts_spline_y)
 
         return (fwd_x, fwd_y)
 
-    def _generate_segment(self, n: 'int', basis: 'ndarray', geometry: 'ndarray'):
+    def _generate_segment(self, n: 'int', basis: 'ndarray',
+                          geometry: 'ndarray'):
         """Generate cubic spline segment from geometry matrix and
         polynomial basis using forward differences.
 
@@ -203,14 +215,19 @@ class ObjectPainter:
             else:
                 if prev_out:  # Entering the window
                     if prev_point is None:
-                        self._cr.move_to(*self.resolution_transform((fwd_x[0], fwd_y[0])))
+                        self._cr.move_to(
+                            *self.resolution_transform((fwd_x[0], fwd_y[0])))
                     else:
-                        point_at_window = clip_line([(fwd_x[0], fwd_y[0]), prev_point])[0]
-                        self._cr.move_to(*self.resolution_transform(point_at_window))
-                        self._cr.line_to(*self.resolution_transform((fwd_x[0], fwd_y[0])))
+                        point_at_window = clip_line(
+                            [(fwd_x[0], fwd_y[0]), prev_point])[0]
+                        self._cr.move_to(
+                            *self.resolution_transform(point_at_window))
+                        self._cr.line_to(
+                            *self.resolution_transform((fwd_x[0], fwd_y[0])))
                     prev_out = False
                 else:  # Already inside window
-                    self._cr.line_to(*self.resolution_transform((fwd_x[0], fwd_y[0])))
+                    self._cr.line_to(
+                        *self.resolution_transform((fwd_x[0], fwd_y[0])))
 
             prev_point = (fwd_x[0], fwd_y[0])
 

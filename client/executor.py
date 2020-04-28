@@ -22,7 +22,7 @@ Notes
 import numpy as np
 
 from util import (Logger, LogLevel)
-from .models import (Point, Line, Wireframe, Curve, Surface, Interpolator)
+from .models import (Point, Line, Wireframe, Curve, Surface)
 
 from .object_store import ObjectStore
 from .gui.viewport import Viewport
@@ -66,14 +66,17 @@ class Executor:
                 if param not in kwargs:
                     raise ValueError
         except ValueError:
-            Logger.log(LogLevel.ERRO, "Attempting to create object without proper parameters")
+            Logger.log(LogLevel.ERRO,
+                       "Attempting to create object without proper parameters")
 
         call_constructor = {
             "Point": lambda: Point(name, points, color),
             "Line": lambda: Line(name, points, color),
-            "Wireframe": lambda: Wireframe(name, points, kwargs['faces'], color),
+            "Wireframe": lambda:
+                Wireframe(name, points, kwargs['faces'], color),
             "Curve": lambda: Curve(name, points, kwargs['bmatu'], color),
-            "Surface": lambda: Surface(name, points, kwargs['bmatu'], kwargs['bmatv'], color),
+            "Surface": lambda:
+                Surface(name, points, kwargs['bmatu'], kwargs['bmatv'], color),
         }
 
         self._obj_store[name] = call_constructor[obj_type]()

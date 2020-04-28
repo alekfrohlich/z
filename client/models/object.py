@@ -6,7 +6,8 @@ from util.linear_algebra import (
 
 
 class Object:
-    def __init__(self, name: 'str', points: 'list', color: 'tuple', thickness: 'float'):
+    def __init__(self, name: 'str', points: 'list', color: 'tuple',
+                 thickness: 'float'):
         """Construct object."""
         self._name = name
         self._points = points

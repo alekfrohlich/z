@@ -39,18 +39,23 @@ NAME_PATTERN = re.compile(r"^{0}$".format(name))
 POINTS_PATTERN = re.compile(r"^{0}$".format(points))
 
 ADD_PATTERN = re.compile(
-    r"^add(?P<type>[clpsw])\((?P<name>{0}),(?P<points>{1})(,(?P<bmatu>{2}))?(,(?P<bmatv>{2}))?(,(?P<faces>{3}))?\)$".format(
-        name, points, interpolator, faces))
+    r"^add(?P<type>[clpsw])\((?P<name>{0}),(?P<points>{1})(,(?P<bmatu>{2}))?\
+        (,(?P<bmatv>{2}))?(,(?P<faces>{3}))?\)$".format(
+            name, points, interpolator, faces))
+
 REMOVE_PATTERN = re.compile(
     r"^remove\((?P<name>{0})\)$".format(name))
+
 TRANSLATE_PATTERN = re.compile(
     r"^translate\((?P<name>{0}),(?P<dx>{1}),(?P<dy>{1}),(?P<dz>{1})\)$".format(
         name, floating, floating))
+
 SCALE_PATTERN = re.compile(
     r"^scale\((?P<name>{0}),(?P<factor>{1})\)$".format(name, floating))
+
 ROTATE_PATTERN = re.compile(
-    r"^rotate\((?P<name>{0}),(?P<x_angle>{1}),(?P<y_angle>{1}),(?P<z_angle>{1})\)$".format(
-        name, floating))
+    r"^rotate\((?P<name>{0}),(?P<x_angle>{1}),(?P<y_angle>{1}),\
+        (?P<z_angle>{1})\)$".format(name, floating))
 
 
 class Interpreter:
@@ -117,7 +122,8 @@ class Interpreter:
         except RuntimeError as error:
             Logger.log(LogLevel.ERRO, error)
             return None
-        params = {'name': name, 'points': self.points_as_list(points), 'color': color}
+        params = {'name': name, 'points': self.points_as_list(points),
+                  'color': color}
 
         if obj_type == "p":
             params['obj_type'] = "Point"
@@ -125,11 +131,14 @@ class Interpreter:
             params['obj_type'] = "Line"
         elif obj_type == "c":
             params['obj_type'] = "Curve"
-            params['bmatu'] = Interpolator.BEZIER if match.group("bmatu") == "bezier" else Interpolator.BSPLINE
+            params['bmatu'] = Interpolator.BEZIER if \
+                match.group("bmatu") == "bezier" else Interpolator.BSPLINE
         elif obj_type == "s":
             params['obj_type'] = "Surface"
-            params['bmatu'] = Interpolator.BEZIER if match.group("bmatu") == "bezier" else Interpolator.BSPLINE
-            params['bmatv'] = Interpolator.BEZIER if match.group("bmatv") == "bezier" else Interpolator.BSPLINE
+            params['bmatu'] = Interpolator.BEZIER if \
+                match.group("bmatu") == "bezier" else Interpolator.BSPLINE
+            params['bmatv'] = Interpolator.BEZIER if  \
+                match.group("bmatv") == "bezier" else Interpolator.BSPLINE
         elif obj_type == "w":
             params['obj_type'] = "Wireframe"
             params['faces'] = self.faces_as_list(match.group("faces"))

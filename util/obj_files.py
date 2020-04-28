@@ -25,7 +25,8 @@ class DotObjParser:
         """Returns object described by .obj file."""
         with open(path) as obj:
             raw_file = obj.read()
-        file_lines = [list(filter(lambda x: x != "", line.split(" "))) for line in raw_file.split("\n")]
+        file_lines = [list(filter(lambda x:x != "", line.split(" ")))
+                      for line in raw_file.split("\n")]
         obj_name = path.split("/")[-1].split(".")[0]
         vertices = []
         faces = []
@@ -33,7 +34,15 @@ class DotObjParser:
             if line == []:
                 continue
             if line[0] == "v":
-                vertices.append(np.array([float(line[1]), float(line[2]), float(line[3]), 1]))
+                vertices.append(np.array(
+                    [float(line[1]), float(line[2]), float(line[3]), 1]))
             elif line[0] == "f":
-                faces.append([int(v_vt_vn.split("/")[0])-1 for v_vt_vn in line[1:]]) # obj indexes start at 1
-        self._executor.add(name=obj_name, points=vertices, faces=faces, color=(0.0, 0.0, 0.0), obj_type="Wireframe")
+                # .obj indexes start at 1
+                faces.append(
+                    [int(v_vt_vn.split("/")[0])-1 for v_vt_vn in line[1:]])
+        self._executor.add(
+            name=obj_name,
+            points=vertices,
+            faces=faces,
+            color=(0.0, 0.0, 0.0),
+            obj_type="Wireframe")

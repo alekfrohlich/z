@@ -14,8 +14,6 @@ Notes
     Curves are clipped whilst been drawn for optimization purposes.
 
 """
-import numpy as np
-from scipy import special
 
 
 def clip_point(points: 'list') -> 'tuple':

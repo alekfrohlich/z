@@ -12,9 +12,8 @@ class Window(PaintableObject):
                   [500, 500, 0, 1],
                   [500, 0, 0, 1],
                   [0, 0, 0, 1]]
-        faces = [[0, 1, 2, 3]]
         map(np.array, points)
-        super().__init__("window", points, (0. ,0., 0.), 2)
+        super().__init__("window", points, (0., 0., 0.), 2)
         self._cached_faces = [[0, 1, 2, 3]]
         self._cached_points = [(-1, 1), (1, 1), (1, -1), (-1, -1)]
         self._orientation = np.array([[1, 0, 0, 0],

@@ -75,7 +75,11 @@ class GtkClient:
              Gtk.ResponseType.CANCEL,
              Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         menu_bar = MenuBar(
-            create_obj_dialog, file_chooser_dialog, executor, dot_obj_parser, dot_oml_parser)
+            create_obj_dialog,
+            file_chooser_dialog,
+            executor,
+            dot_obj_parser,
+            dot_oml_parser)
 
         control_menu = ControlMenu(executor,
                                    obj_view,

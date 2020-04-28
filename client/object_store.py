@@ -8,8 +8,6 @@ Classes
 """
 from enum import Enum
 
-import numpy as np
-
 from gi.repository import GObject
 from gi.repository import Gtk
 
