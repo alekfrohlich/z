@@ -11,7 +11,7 @@ class Point(PaintableObject):
     def __str__(self):
         return "{}(Point) at {}, with color = {}".format(
             self.name,
-            str((self._points[0], self._points[1], self._points[2])),
+            str((self._points[0][0], self._points[0][1], self._points[0][2])),
             str(self.color))
 
     def accept(self, painter: 'ObjectPainter'):

@@ -2,11 +2,6 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkImage" id="list-add">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-add</property>
-  </object>
   <object class="GtkListStore" id="object_list_store">
     <columns>
       <!-- column-name Name -->
@@ -43,14 +38,21 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem">
-                        <property name="label">Load .obj</property>
+                      <object class="GtkMenuItem">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Load .obj file</property>
                         <property name="use_underline">True</property>
-                        <property name="image">list-add</property>
-                        <property name="use_stock">False</property>
                         <signal name="activate" handler="on_load_object" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Run .oml file</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="on_run_script" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -976,8 +978,8 @@ sp(1) = 50,-200,0;100,0,0;400,0,0;150,150,0</property>
                       <item id="0" translatable="yes">Point</item>
                       <item translatable="yes">Line</item>
                       <item translatable="yes">Wire-frame</item>
-                      <item translatable="yes">Bezier</item>
-                      <item translatable="yes">B-Spline</item>
+                      <item translatable="yes">Curve</item>
+                      <item translatable="yes">Surface</item>
                     </items>
                   </object>
                 </child>

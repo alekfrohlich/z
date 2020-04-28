@@ -25,12 +25,12 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 from .executor import Executor
+from .interpreter import Interpreter
 from .object_store import ObjectStore
 
 from .gui import *
 
-from util import DotObjParser
-from wml import Interpreter
+from util import DotObjParser, DotOmlParser
 
 
 class GtkClient:
@@ -55,6 +55,7 @@ class GtkClient:
         dot_obj_parser = DotObjParser(executor)
 
         interpreter = Interpreter(executor)
+        dot_oml_parser = DotOmlParser(interpreter)
 
         Console(self._builder.get_object("console_text_view"), interpreter)
 
@@ -66,15 +67,15 @@ class GtkClient:
             self._builder.get_object("create_object_dialog_color_field"),
             obj_view,
             interpreter)
-        load_obj_dialog = Gtk.FileChooserDialog(
-            "Please choose a .obj file",
+        file_chooser_dialog = Gtk.FileChooserDialog(
+            "Please choose file",
             self._builder.get_object("main_window"),  # Modal for
             Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL,
              Gtk.ResponseType.CANCEL,
              Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         menu_bar = MenuBar(
-            create_obj_dialog, load_obj_dialog, executor, dot_obj_parser)
+            create_obj_dialog, file_chooser_dialog, executor, dot_obj_parser, dot_oml_parser)
 
         control_menu = ControlMenu(executor,
                                    obj_view,

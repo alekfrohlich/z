@@ -16,7 +16,7 @@ See also
 from gi.repository import Gdk
 from gi.repository import Gtk
 
-from wml import Interpreter
+from ..interpreter import Interpreter
 
 
 class Console:

@@ -23,11 +23,11 @@ class Interpolator:
 
 
 class Curve(PaintableObject):
-    def __init__(self, name: 'str', points: 'list', bmat: 'Interpolator',
+    def __init__(self, name: 'str', points: 'list', bmatu: 'Interpolator',
                  color: 'tuple'):
         """Construct curve."""
         super().__init__(name, points, color, 1)
-        self._bmat = bmat
+        self._bmat = bmatu
 
     def __str__(self):
         return "{}(Curve) with control points = {} and color = {}".format(
@@ -36,7 +36,7 @@ class Curve(PaintableObject):
             str(self.color))
 
     @property
-    def bmat(self) -> 'Interpolator':
+    def bmatu(self) -> 'Interpolator':
         """Polynomial basis used for interpolating the curve."""
         return self._bmat
 

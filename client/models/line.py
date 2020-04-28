@@ -6,7 +6,7 @@ from util.clipping import clip_line
 class Line(PaintableObject):
     def __init__(self, name: 'str', points: 'list', color: 'tuple'):
         """Construct line."""
-        super().__init__(name, points, color)
+        super().__init__(name, points, color, 2)
 
     def __str__(self):
         return "{}(Line) at {}, with color = {}".format(

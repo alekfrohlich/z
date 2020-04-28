@@ -22,16 +22,19 @@ class MenuBar:
     """
 
     def __init__(self, create_obj_dialog: 'CreateObjectDialog',
-                 load_obj_dialog: 'Gtk.FileChooserDialog',
-                 executor: 'Executor', dot_obj_parser: 'DotObjParser'):
+                 file_chooser_dialog: 'Gtk.FileChooserDialog',
+                 executor: 'Executor', dot_obj_parser: 'DotObjParser',
+                 dot_oml_parser: 'DotOmlParser'):
         """MenuBar constructor."""
         self._create_obj_dialog = create_obj_dialog
-        self._load_obj_dialog = load_obj_dialog
+        self._file_chooser_dialog = file_chooser_dialog
         self._executor = executor
         self._dot_obj_parser = dot_obj_parser
+        self._dot_oml_parser = dot_oml_parser
         self.handlers = {
             "on_create_object": self._on_create_object,
             "on_load_object": self._on_load_object,
+            "on_run_script": self._on_run_script,
         }
 
     def _on_create_object(self, _):
@@ -57,7 +60,7 @@ class MenuBar:
                 pass
             elif obj_type == "Curve":
                 # TODO: Add bmatu
-                params['bmat'] = Interpolator.BEZIER
+                params['bmatu'] = Interpolator.BEZIER
             elif obj_type == "Surface":
                 # TODO: Add bmatv
                 params['bmatu'] = Interpolator.BEZIER
@@ -70,15 +73,28 @@ class MenuBar:
     def _on_load_object(self, _):
         """Handle on_load_object signal.
 
-        Run load_obj_dialog. Create object and hide dialog if it
+        Run file_chooser_dialog. Create object and hide dialog if dialog
         ran successfully.
 
         """
-        response = self._load_obj_dialog.run()
+        response = self._file_chooser_dialog.run()
         if response == Gtk.ResponseType.OK:
             self._dot_obj_parser.compile_obj_file(
-                self._load_obj_dialog.get_filename())
-        self._load_obj_dialog.hide()
+                self._file_chooser_dialog.get_filename())
+        self._file_chooser_dialog.hide()
+
+    def _on_run_script(self, _):
+        """Handle on_run_script signal.
+
+        Run file_chooser_dialog. Interpret selected file as an oml file if
+        dialog ran successfully.
+
+        """
+        response = self._file_chooser_dialog.run()
+        if response == Gtk.ResponseType.OK:
+            self._dot_oml_parser.interpret_oml_file(
+                self._file_chooser_dialog.get_filename())
+        self._file_chooser_dialog.hide()
 
 
 class CreateObjectDialog:
@@ -123,7 +139,6 @@ class CreateObjectDialog:
     @property
     def object_type(self) -> 'str':
         """Object's type."""
-        # TEMP: Not compatible with Wire-frame model.
         return self._type_field.get_active_text()
 
     @property

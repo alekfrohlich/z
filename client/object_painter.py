@@ -85,15 +85,15 @@ class ObjectPainter:
     def paint_curve(self, curve: 'Curve'):
         """Draw curve."""
         cp = curve.cached_points
-        if curve.bmat is Interpolator.BEZIER:
-            self._generate_segment(100, curve.bmat, cp[:4])
+        if curve.bmatu is Interpolator.BEZIER:
+            self._generate_segment(100, curve.bmatu, cp[:4])
             for i in range((len(cp) - 4) // 2):
                 geometry = [cp[2*i+3], cp[2*i+2],
                             cp[2*i+4], cp[2*i+5]]
-                self._generate_segment(100, curve.bmat, geometry)
+                self._generate_segment(100, curve.bmatu, geometry)
         else:
             for i in range(len(cp) - 3):
-                self._generate_segment(100, curve.bmat, cp[i:i+4])
+                self._generate_segment(100, curve.bmatu, cp[i:i+4])
 
     def paint_surface(self, surface: 'Surface'):
         """Draw bicubic bezier surface."""

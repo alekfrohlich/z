@@ -43,22 +43,16 @@ class Executor:
         """Constructs Executor."""
         self._obj_store = obj_store
         self._viewport = viewport
-        # TEMP: Until GUI option is created
-        control_matrix = [[100, 200, 0, 1], [200, 300, 0, 1], [250, 0, 0, 1], [300, 200, 0, 1],
-                          [100, 342, 100, 1], [200, 300, 100, 1], [250, 0, 100, 1], [300, 200, 100, 1],
-                          [100, 200, 221, 1], [200, 282, 200, 1], [250, 0, 200, 1], [300, 200, 200, 1],
-                          [100, 200, 300, 1], [200, 300, 300, 1], [250, 0, 300, 1], [300, 200, 300, 1]]
-        control_matrix = list(map(np.array, control_matrix))
-        self.add(name="Patch", points=control_matrix, color=(0., 0., 0.),
-                 obj_type="Surface", bmatu=Interpolator.BEZIER, bmatv=Interpolator.BEZIER)
 
     @Viewport.needs_redraw
     @_warn_undefined_object
     def add(self, **kwargs):
         """Attempt to add object to ObjectStore."""
         params = {
+            "Point": [],
+            "Line": [],
             "Wireframe": ['faces'],
-            "Curve": ['bmat'],
+            "Curve": ['bmatu'],
             "Surface": ['bmatu', 'bmatv'],
         }
 
@@ -78,7 +72,7 @@ class Executor:
             "Point": lambda: Point(name, points, color),
             "Line": lambda: Line(name, points, color),
             "Wireframe": lambda: Wireframe(name, points, kwargs['faces'], color),
-            "Curve": lambda: Curve(name, points, kwargs['bmat'], color),
+            "Curve": lambda: Curve(name, points, kwargs['bmatu'], color),
             "Surface": lambda: Surface(name, points, kwargs['bmatu'], kwargs['bmatv'], color),
         }
 

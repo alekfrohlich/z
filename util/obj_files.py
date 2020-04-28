@@ -1,4 +1,4 @@
-"""This module contains a parser to Wavefront .obj files."""
+"""This module provides a parser to Wavefront .obj files."""
 
 import numpy as np
 
@@ -11,8 +11,9 @@ class DotObjParser:
         Constructs only one object for each .obj file. The object is a
         face element constructed with:
 
-            name = name of the file containing the vertices.
-            points = 'v' statements in the file.
+            name = name of the file containing the vertices
+            points = 'v' statements in the file
+            faces = 'f' statements in the file
             color = BLACK
 
     """
@@ -35,4 +36,4 @@ class DotObjParser:
                 vertices.append(np.array([float(line[1]), float(line[2]), float(line[3]), 1]))
             elif line[0] == "f":
                 faces.append([int(v_vt_vn.split("/")[0])-1 for v_vt_vn in line[1:]]) # obj indexes start at 1
-        self._executor.addw(obj_name, vertices, faces, (0.0, 0.0, 0.0))
+        self._executor.add(name=obj_name, points=vertices, faces=faces, color=(0.0, 0.0, 0.0), obj_type="Wireframe")
