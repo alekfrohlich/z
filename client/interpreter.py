@@ -41,9 +41,8 @@ interpolator = r"(bezier|bspline)"
 NAME_PATTERN = re.compile(r"^{0}$".format(name))
 POINTS_PATTERN = re.compile(r"^{0}$".format(points))
 
-ADD_PATTERN = re.compile(
-    r"^add(?P<type>[clpsw])\((?P<name>{0}),(?P<points>{1})(,(?P<bmatu>{2}))?\
-        (,(?P<bmatv>{2}))?(,(?P<faces>{3}))?\)$".format(
+ADD_PATTERN = re.compile(  # TEMP: Do not break line earlier
+    r"^add(?P<type>[clpsw])\((?P<name>{0}),(?P<points>{1})(,(?P<bmatu>{2}))?(,(?P<bmatv>{2}))?(,(?P<faces>{3}))?\)$".format(
             name, points, interpolator, faces))
 
 REMOVE_PATTERN = re.compile(
@@ -57,8 +56,7 @@ SCALE_PATTERN = re.compile(
     r"^scale\((?P<name>{0}),(?P<factor>{1})\)$".format(name, floating))
 
 ROTATE_PATTERN = re.compile(
-    r"^rotate\((?P<name>{0}),(?P<x_angle>{1}),(?P<y_angle>{1}),\
-        (?P<z_angle>{1})\)$".format(name, floating))
+    r"^rotate\((?P<name>{0}),(?P<x_angle>{1}),(?P<y_angle>{1}),(?P<z_angle>{1})\)$".format(name, floating))
 
 
 class Interpreter:
@@ -95,8 +93,7 @@ class Interpreter:
         for pattern in self._handler.keys():
             match = pattern.match(string)
             if match:
-                self._handler[pattern](match)
-                return
+                return self._handler[pattern](match)
         Logger.log(LogLevel.WARN, "Invalid command!")
 
     def validate_object(self, name, points):
@@ -128,7 +125,6 @@ class Interpreter:
             return None
         params = {'name': name, 'points': self.points_as_list(points),
                   'color': color}
-
         if obj_type == "p":
             params['obj_type'] = "Point"
         elif obj_type == "l":

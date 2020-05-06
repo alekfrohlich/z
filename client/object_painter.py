@@ -150,8 +150,8 @@ class ObjectPainter:
 
         n = 20
         delta = 1 / n
-        dimu = surface.dimu
-        dimv = surface.dimv
+        dimu = surface.degu + 1
+        dimv = surface.degv + 1
 
         cp = surface.cached_points
         curves_in_u = [cp[dimu*i: dimu*i + dimu] for i in range(dimu)]
