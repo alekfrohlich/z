@@ -15,7 +15,7 @@ class Viewport:
     """Viewport class.
 
     The actual Gtk.DrawingArea is 20 pixels larger in both width and height
-    so that the clipping algorithms implemented in this project are visible.
+    so that the clipping algorithms implemented in this project can be tested.
 
     Notes
     -----
@@ -53,7 +53,7 @@ class Viewport:
         Notes
         -----
             The decorated class must have a _viewport attribute for
-            introspection to work.
+            the introspection to work.
 
             `method` can have any number of args and kwargs.
 
@@ -64,7 +64,7 @@ class Viewport:
         return wrapper
 
     def clear(self):
-        """Clear `_surface`, painting it white."""
+        """Clear `_surface`; paints it white."""
         cr = cairo.Context(self._surface)
         cr.set_source_rgb(*Viewport.WHITE)
         cr.paint()
@@ -95,8 +95,8 @@ class Viewport:
     def _on_draw(self, wid: 'Gtk.Widget', cr: 'Cairo.Context'):
         """Handle on_draw signal.
 
-        Draw all objects as follows: Start from first point and draw faces
-        from every subsequent point; Connect extremes.
+        Instantiate an ObjectPainter based on the drawing area's current
+        resolution, and use it to paint all visible objects.
 
         Notes
         -----

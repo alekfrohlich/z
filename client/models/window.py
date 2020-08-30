@@ -9,8 +9,7 @@ class Window(PaintableObject):
     """Square upon which other objects are projected.
 
     The cached points and faces are stored for compatibility
-    with the method used for drawing the window, they'll never
-    change.
+    with the PaintableObject interface; they'll never change.
 
     """
 

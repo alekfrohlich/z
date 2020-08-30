@@ -11,8 +11,8 @@ The GTK client's layout is composed of
 - viewport: A viewport for visualizing a part of the 2D world.
 
 Components that need to create/remove/manipulate objects do so by
-interacting with the executor interface. Viewport is an exception
-as it performs read only access to the list of objects (it draws them).
+interacting with the executor interface. The only exception being the viewport,
+which performs read accesses exclusively.
 
 Notes
 -----

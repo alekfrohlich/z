@@ -10,10 +10,11 @@ The interface is the following:
 
 Notes
 -----
-    All of the procedures realizing this interface can fail if the addressed
-    object does not exist or if adding an object with a name already in use.
+    All of the procedures offered by this interface can fail if the addressed
+    object does not exist, or if an attempt is made at adding an object whose
+    name is already in use.
 
-    Also, all procedures realizing this interface will force the viewport to
+    Also, all procedures in this interface will force the viewport to
     be redrawn.
 
 """
@@ -49,7 +50,7 @@ class Executor:
     @_warn_undefined_object
     def add(self, **kwargs):
         """Attempt to add object to ObjectStore."""
-        params = {
+        REQUIRED_PARAMS = {
             "Point": [],
             "Line": [],
             "Wireframe": ['faces'],
@@ -63,12 +64,13 @@ class Executor:
             color = kwargs['color']
             obj_type = kwargs['obj_type']
 
-            for param in params[obj_type]:
+            for param in REQUIRED_PARAMS[obj_type]:
                 if param not in kwargs:
                     raise ValueError
         except ValueError:
             Logger.log(LogLevel.ERRO,
                        "Attempting to create object without proper parameters")
+            return
 
         call_constructor = {
             "Point": lambda: Point(name, points, color),

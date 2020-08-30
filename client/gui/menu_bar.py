@@ -15,9 +15,20 @@ from util import (Logger, LogLevel)
 class MenuBar:
     """Menu bar class.
 
-    Responsible for running and hiding dialogs. Successful dialog runs
-    carry some action for the Executor to execute, e.g., creating a
-    new object after CreateObjectDialogs returns 'OK'.
+    Responsible for running dialogs from the GUI.
+
+    Structure:
+
+    - File
+      - Load .obj file
+      - Load .oml file
+    -------------------
+      - Quit (CTRL+Q)
+
+    - Create
+      - New Object (SHIFT+4)
+
+    - Help (Not implemented)
 
     """
 
@@ -40,8 +51,8 @@ class MenuBar:
     def _on_create_object(self, _):
         """Handle on_create_object signal.
 
-        Run create_obj_dialog. Create object and hide dialog if it
-        ran successfully.
+        Run create_obj_dialog, and create object if the dialog ran
+        successfully.
 
         """
         response = self._create_obj_dialog.run()
@@ -56,8 +67,8 @@ class MenuBar:
             }
 
             if obj_type == "Wireframe":
-                # TODO: Add faces
-                pass
+                # NOTE: Interpreting all points as a single face
+                params['faces'] = [list(range(len(params['points'])))]
             elif obj_type == "Curve":
                 # TODO: Add bmatu
                 params['bmatu'] = Interpolator.BEZIER
@@ -73,8 +84,8 @@ class MenuBar:
     def _on_load_object(self, _):
         """Handle on_load_object signal.
 
-        Run file_chooser_dialog. Create object and hide dialog if dialog
-        ran successfully.
+        Run file_chooser_dialog, and interpret selected file as .obj if
+        the dialog ran successfully.
 
         """
         response = self._file_chooser_dialog.run()
@@ -86,8 +97,8 @@ class MenuBar:
     def _on_run_script(self, _):
         """Handle on_run_script signal.
 
-        Run file_chooser_dialog. Interpret selected file as an oml file if
-        dialog ran successfully.
+        Run file_chooser_dialog, and interpret selected file as .oml if
+        the dialog ran successfully.
 
         """
         response = self._file_chooser_dialog.run()

@@ -9,21 +9,27 @@ from util.linear_algebra import (
 class PaintableObject(Object):
     """"Object wrapper for painting.
 
-    Provides a screen-ready view of the Object's points: cached_points.
-    The points go through two steps before being screen-ready:
+    A PaintableObject is capable of putting its shape in the perspective
+    of any given window. The object's points go through two steps before
+    being viewport-ready:
 
-        1. They are projected into the 2D window using perspective projection,
-        2. The flattened object is then clipped against the window.
+        1. They are first projected into the 2D window using perspective
+           projection, and, then,
+        2. The 2D object is clipped against the window.
 
-    The interface does not attempt to auto-detect changes, e.g., automatically
-    updating the cached_points each time the object is transformed or created,
-    because the most common cause of change is external: The movement of the
-    window. Therefore, an `update` method is provided.
+    It may be the case that the object is not visible through the window's
+    perspective; the `visible` method is used to determine in which situation
+    the object is currently in.
 
-    The PaintableObject does not paint itself, indeed, PaintableObject is
-    responsible for this task. The interface merely implements the visitor
-    pattern, allowing ObjectPainter to identify which type of object it's
-    dealling with.
+    The interface does not attempt to auto-detect changes to `cached_points`
+    since they may be caused by the movement of another object, namely the
+    window. Instead, the interface provides an update method, and relies on the
+    ObjectStore to maintain the objects updated.
+
+    The interface implements the visitor pattern, which means every
+    PaintableObject may be visited by an ObjectPainter that doesn't know
+    its type. Hence, the PaintableObject is responsible for calling the
+    appropriate method out of the painter.
 
     """
 

@@ -26,8 +26,8 @@ class Column(Enum):
 class ObjectStore(Gtk.ListStore):
     """Container for storing PaintableObjects.
 
-    Implemented using Gtk.ListStore for providing a graphical representation
-    of the stored objects.
+    Implemented using Gtk.ListStore; provides a graphical representation of
+    stored objects.
 
     Operations:
     - add
@@ -49,7 +49,7 @@ class ObjectStore(Gtk.ListStore):
         """Construct ObjectStore.
 
         Specify ListStore with 3 columns: one for storing the object, another
-        for storing it's name, and a third for storing it's type.
+        for storing its name, and a third for storing its type.
 
         Notes
         -----
@@ -68,7 +68,7 @@ class ObjectStore(Gtk.ListStore):
         self["window"] = self.window
 
     def __getitem__(self, name: 'str') -> 'Object':
-        """Retrieve object from it's name.
+        """Retrieve object from its name.
 
         Raises
         ------
@@ -116,10 +116,9 @@ class ObjectStore(Gtk.ListStore):
         raise KeyError(name + " does not name an object!")
 
     def changed(self, obj: 'Object'):
-        """Notify that an object has been changed from the outside.
+        """Notify that the visibility of an object has changed.
 
-        Update clipped coordinates of `obj`. If `obj` is the window,
-        update all stored objects instead.
+        If the window is moved, all objects are updated.
 
         See also
         --------

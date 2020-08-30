@@ -31,6 +31,6 @@ class Point(PaintableObject):
 
     def rotate(self, x_angle: 'float', y_angle: 'float', z_angle: 'float',
                point=None):
-        """Ignore rotations about center.."""
+        """Ignore rotations about center."""
         if point is not None:
             super().rotate(x_angle, y_angle, z_angle, point)

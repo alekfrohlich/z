@@ -5,10 +5,10 @@
 
 Z is an interactive graphics system that renders scenes described in .obj format.
 It does not implement the whole thing, but should ignore features that it does not
-support. The system also supports the creation of objects: points, lines, wire-frames
+support. The system also supports the creation of objects: points, lines, wireframes
 (*), curves, and surfaces. Every object may be translated, scaled, and rotated.
 
-(*) Loaded .obj scenes are treated as wire-frame models.
+(*) Loaded .obj scenes are treated as wireframe models.
 
 ## Dependencies
 

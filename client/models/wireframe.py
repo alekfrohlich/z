@@ -4,11 +4,11 @@ from util.clipping import clip_wireframe
 
 
 class Wireframe(PaintableObject):
-    """Wire-frame model using face-vertex meshes."""
+    """Wireframe model using face-vertex meshes."""
 
     def __init__(self, name: 'str', points: 'list', faces: 'list',
                  color: 'tuple'):
-        """Construct wire-frame."""
+        """Construct wireframe."""
         super().__init__(name, points, color, 0.1)
         self._faces = faces
         self._cached_faces = []

@@ -926,7 +926,7 @@ Face elements comprise points, lines and polygons and are expressed through a li
 Line example:  10,10;10,100 represents a line from (10,10) to (10,100).
 
 Curve elements are C(1) composite bezier cubic splines. Such splines can be represented by
-4n+2 control point. 
+4n+2 control point.
 
 Composite curve example:  -100,0,0;0,100,0;50,-200,0;100,0,0;400,0,0;150,150,0 represents 2 bezier
 cubic splines:
@@ -977,7 +977,7 @@ sp(1) = 50,-200,0;100,0,0;400,0,0;150,150,0</property>
                     <items>
                       <item id="0" translatable="yes">Point</item>
                       <item translatable="yes">Line</item>
-                      <item translatable="yes">Wire-frame</item>
+                      <item translatable="yes">Wireframe</item>
                       <item translatable="yes">Curve</item>
                       <item translatable="yes">Surface</item>
                     </items>
