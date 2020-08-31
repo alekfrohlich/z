@@ -919,14 +919,14 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_bottom">5</property>
-                    <property name="label" translatable="yes">Z supports two graphical types of graphical elements: Face elements and Curve elements.
+                    <property name="label" translatable="yes">Z supports two types of graphical elements: Face elements and Curve elements.
 
-Face elements comprise points, lines and polygons and are expressed through a list of points.
+Face elements comprise points, lines and polygons, and are expressed using a list of points.
 
-Line example:  10,10;10,100 represents a line from (10,10) to (10,100).
+Line example:  10,10,0;10,100,0 represents a line from (10,10,0) to (10,100,0).
 
-Curve elements are C(1) composite bezier cubic splines. Such splines can be represented by
-4n+2 control point.
+Curve elements are C(1)-composite bezier cubic splines. Such splines can be represented by
+4n+2 control points.
 
 Composite curve example:  -100,0,0;0,100,0;50,-200,0;100,0,0;400,0,0;150,150,0 represents 2 bezier
 cubic splines:
