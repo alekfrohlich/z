@@ -38,6 +38,15 @@ def rotation_matrix(x_angle, y_angle, z_angle):
                      [0, 0, 0, 1]])
 
 
+def projection_matrix(cop_distance):
+    """Parameterized projection matrix."""
+    return np.array([[1, 0, 0, 0],
+                     [0, 1, 0, 0],
+                     [0, 0, 1, 1/cop_distance],
+                     [0, 0, 0, 0]])
+
+
+
 def size(u):
     """Size of 3D vector."""
     return ((u[0][0] - u[1][0])**2 +
