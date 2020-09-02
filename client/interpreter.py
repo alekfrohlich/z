@@ -37,13 +37,14 @@ natural = r"[0-9]+"
 face = r"(({0}-)*{0})".format(natural)
 faces = r"({0};)*{0}".format(face)
 interpolator = r"(bezier|bspline)"
+color= r"{0},{0},{0}".format(floating) # NOTE: could be restricted
 
 NAME_PATTERN = re.compile(r"^{0}$".format(name))
 POINTS_PATTERN = re.compile(r"^{0}$".format(points))
 
 ADD_PATTERN = re.compile(  # TEMP: Do not break line earlier
-    r"^add(?P<type>[clpsw])\((?P<name>{0}),(?P<points>{1})(,(?P<bmatu>{2}))?(,(?P<bmatv>{2}))?(,(?P<faces>{3}))?\)$".format(
-            name, points, interpolator, faces))
+    r"^add(?P<type>[clpsw])\((?P<name>{0}),(?P<points>{1})(,(?P<bmatu>{2}))?(,(?P<bmatv>{2}))?(,(?P<faces>{3}))?(,\((?P<color>{4})\))?\)$".format(
+            name, points, interpolator, faces, color))
 
 REMOVE_PATTERN = re.compile(
     r"^remove\((?P<name>{0})\)$".format(name))
@@ -116,7 +117,12 @@ class Interpreter:
         pass
         name = match.group("name")
         points = match.group("points")
-        color = (0., 0., 0.)
+        color = match.group("color")
+        if color is None:
+            color = (0., 0., 0.)
+        else:
+            color = self.color_as_tuple(color)
+
         obj_type = match.group("type")
         try:
             self.validate_object(name, points)  # NOTE: could be improved

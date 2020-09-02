@@ -1,0 +1,4 @@
+# Test whether points land on the viewport where they should
+
+addl(a,0,0,0;500,500,0)
+addl(b,0,500,0;500,0,0)

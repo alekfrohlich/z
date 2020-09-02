@@ -1,0 +1,9 @@
+addl(x,-1000,0,0;1000,0,0,(1,0,0))
+addl(y,0,-1000,0;0,1000,0,(0,1,0))
+addl(z,0,0,-1000;0,0,1000,(0,0,1))
+
+# Should see x-axis (red)
+# move window right => rotate window by its center by 90 in X
+
+# Should see the other axis (green = y, blue = z)
+# rotate window by its center by 90 in Z
