@@ -86,7 +86,7 @@ class ObjectPainter:
 
     def paint_curve(self, curve: 'Curve'):
         """Draw curve."""
-        cp = curve.cached_points
+        cp = list(map(self.resolution_transform, curve.cached_points))
         if curve.bmatu is Interpolator.BEZIER:
             self._generate_segment(100, curve.bmatu, cp[:4])
             for i in range((len(cp) - 4) // 2):
@@ -213,37 +213,33 @@ class ObjectPainter:
         """
         def out(x, y):
             """Test if given point is outside the window."""
-            return x > 1 or x < -1 or y > 1 or y < - 1
+            return x > self._res[0] + 10 or x < 10 or y > self._res[1] + 10 or y < 10
 
         delta = 1 / n
         fwd_x, fwd_y = self._init_curve_algorithm(basis, geometry, delta)
         dim = basis.shape[0]
 
+        res = (self._res[0]+10,10,self._res[1]+10,10)
         prev_out = True
         prev_point = None
         for _ in range(n+1):
             if out(fwd_x[0], fwd_y[0]):
                 if not prev_out:  # Leaving the window
-                    self._cr.line_to(*self.resolution_transform(clip_line(
-                        [prev_point, (fwd_x[0], fwd_y[0])])[0]))
+                    cl = clip_line([prev_point, (fwd_x[0], fwd_y[0])], *res)
+                    self._cr.line_to(*cl[0])
                     self._cr.stroke()
                     prev_out = True
             else:
                 if prev_out:  # Entering the window
                     if prev_point is None:
-                        self._cr.move_to(
-                            *self.resolution_transform((fwd_x[0], fwd_y[0])))
+                        self._cr.move_to(fwd_x[0], fwd_y[0])
                     else:
-                        point_at_window = clip_line(
-                            [(fwd_x[0], fwd_y[0]), prev_point])[0]
-                        self._cr.move_to(
-                            *self.resolution_transform(point_at_window))
-                        self._cr.line_to(
-                            *self.resolution_transform((fwd_x[0], fwd_y[0])))
+                        point_at_window = clip_line([(fwd_x[0], fwd_y[0]), prev_point], *res)[0]
+                        self._cr.move_to(*point_at_window)
+                        self._cr.line_to(fwd_x[0], fwd_y[0])
                     prev_out = False
                 else:  # Already inside window
-                    self._cr.line_to(
-                        *self.resolution_transform((fwd_x[0], fwd_y[0])))
+                    self._cr.line_to(fwd_x[0], fwd_y[0])
 
             prev_point = (fwd_x[0], fwd_y[0])
 

@@ -32,7 +32,7 @@ from util import Logger, LogLevel
 
 name = r"[a-zA-Z]+[a-zA-Z0-9_]*"
 floating = r"-?\d+.?\d*"
-points = r"({0},{0},{0};)*{0},{0},{0}".format(floating)
+points = r"({0},{0},{0};)*{0},{0},{0}".format(floating) # FIXME: This regex accepts more than it should
 natural = r"[0-9]+"
 face = r"(({0}-)*{0})".format(natural)
 faces = r"({0};)*{0}".format(face)
@@ -125,7 +125,7 @@ class Interpreter:
 
         obj_type = match.group("type")
         try:
-            self.validate_object(name, points)  # NOTE: could be improved
+            self.validate_object(name, points)  # NOTE: Could be improved
         except RuntimeError as error:
             Logger.log(LogLevel.ERRO, error)
             return None

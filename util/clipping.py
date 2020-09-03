@@ -25,31 +25,31 @@ def clip_point(points: 'list') -> 'tuple':
         return points
 
 
-def clip_line(points: 'list') -> 'list':
+def clip_line(points: 'list', xmax=1, xmin=-1, ymax=1, ymin=-1) -> 'list':
     """Cohen-Sutherland line clipping algorithm."""
     def region_code(x, y):
         code = 0
-        if x < -1:
+        if x < xmin:
             code += 1
-        elif x > 1:
+        elif x > xmax:
             code += 2
-        if y < -1:
+        if y < ymin:
             code += 4
-        elif y > 1:
+        elif y > ymax:
             code += 8
         return code
 
     def left_intersect(x, y):
-        return (-1, m * (-1 - x) + y)
+        return (xmin, m * (xmin - x) + y)
 
     def up_intersect(x, y):
-        return (x + 1/m * (1 - y), 1)
+        return (x + 1/m * (ymax - y), ymax)
 
     def right_intersect(x, y):
-        return (1, m * (1 - x) + y)
+        return (xmax, m * (xmax - x) + y)
 
     def down_intersect(x, y):
-        return (x + 1/m * (-1 - y), -1)
+        return (x + 1/m * (ymin - y), ymin)
 
     def intersections(x, y, code):
         rc2int = {
@@ -66,7 +66,7 @@ def clip_line(points: 'list') -> 'list':
 
     def valid_intersection(intersections):
         for i in intersections:
-            if i[0] <= 1 and i[0] >= -1 and i[1] <= 1 and i[1] >= -1:
+            if i[0] <= xmax and i[0] >= xmin and i[1] <= ymax and i[1] >= ymin:
                 return (i[0], i[1])
         return []
 
