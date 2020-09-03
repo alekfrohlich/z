@@ -29,11 +29,14 @@ The user may choose to interact with the system by the graphical user interface 
 through a console prompt. The console implements a simple, regular language called
 Object Manipulation Langue (.oml). The commands are:
 
-- add(name, points, color, faces?, bmatu?, bmatv?) (**)
+- add(name, points, faces?, bmatu?, bmatv?, color?) (**)
 - translate(name, sx, sy, sz)
 - scale(name, factor)
 - rotate(name, x_angle, y_angle, z_angle)
-- info(name)
-- paint(name, r, g, b)
 
-(**) Parameters followed by ? are considered optional.
+To specify the object type you're adding, add the suffix (p|l|w|c|s) for point,
+line, wireframe, curve, and surface; e.g., addp(p1,250,250,0).
+
+(**) Parameters followed by ? are optional. Also, some are dependent on the object
+    being created: faces is required for wireframe, bmatu for curves and surfaces,
+    and bmatv for surfaces.

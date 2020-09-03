@@ -5,14 +5,14 @@ It isn't efficient, but is easier (and faster) to manipulate objects
 through the console, than it is to use the graphical user interface.
 
 The implemented commands are:
-    add(name, points, color, faces?, bmatu?, bmatv?) (*)
+    add(name, points, faces?, bmatu?, bmatv?, color?) (*)
     translate(name, sx, sy, sz)
     scale(name, factor)
     rotate(name, x_angle, y_angle, z_angle)
-    info(name)
-    paint(name, r, g, b)
 
-(*) Parameters followed by ? are considered optional.
+(*) Parameters followed by ? are optional. Also, some are dependent on the object
+    being created: faces is required for wireframes, bmatu for curves and surfaces,
+    and bmatv for surfaces.
 
 The language is regular and is parsed by pattern matching.
 

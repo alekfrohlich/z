@@ -1,0 +1,24 @@
+remark: objects behind the window get projected back to it; for, removing these points may break 2D clipping.
+For example, how could one clip a cube aggainst the window if some of it's points were removed? There would be no
+way of extending the points to the window. This points could be ignored, but that's just another ugly solution.
+
+Point: both interfaces ok, clipping ok.
+addp(point,10,10,0)
+
+Line: both interfaces ok, clipping ok, known bug: sometimes divide by zero happens, but that doesn't crash the app.
+addl(line,10,10,0;10,100,0)
+
+Polygon: both interfaces ok, clipping ok.
+addw(square,0,0,0;100,0,0;100,100,0;0,100,0,0-1-2-3)
+
+remark: the thickness is very thin to allow for larger .obj files. It's the last parameter to super in the Wireframe
+constructor (change from 0.1 to, say, 0.5).
+
+Wireframe (using .obj): file chooser ok; clipping and rotation around (250,250,0) work ok.
+teapot.obj is the lightest in terms of lag.
+
+remark: to test mk4 and other large .objs, disable clipping (see Wireframe's update method).
+
+Curve: clipping ok; use test_curves.oml to get a bunch of curves.
+
+Surface: clipping ok; use test_surface.

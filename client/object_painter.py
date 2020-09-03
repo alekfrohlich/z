@@ -153,7 +153,7 @@ class ObjectPainter:
         dimu = surface.degu + 1
         dimv = surface.degv + 1
 
-        cp = surface.cached_points
+        cp = list(map(self.resolution_transform, surface.cached_points))
         curves_in_u = [cp[dimu*i: dimu*i + dimu] for i in range(dimu)]
         curves_in_v = [[cp[i], cp[dimv+i], cp[2*dimv+i], cp[3*dimv+i]] for i
                        in range(dimv)]
