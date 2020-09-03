@@ -35,8 +35,5 @@ class Wireframe(PaintableObject):
 
     def update(self, window: 'Window'):
         """Update cached coordinates."""
-        # TEMP: Clipping is disabled due to performance issues
-        # self._cached_points, self.cached_faces = clip_wireframe(
-        #     self.projected(window), self.faces)
-        self._cached_points = self.projected(window)
-        self._cached_faces = self._faces
+        self._cached_points, self._cached_faces = clip_wireframe(
+            self.projected(window), self.faces)
