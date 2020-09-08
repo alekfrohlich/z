@@ -21,6 +21,7 @@ class MenuBar:
 
     - File
       - Load .obj file
+      - Export selection as .obj file
       - Load .oml file
     -------------------
       - Quit (CTRL+Q)
@@ -34,16 +35,20 @@ class MenuBar:
 
     def __init__(self, create_obj_dialog: 'CreateObjectDialog',
                  file_chooser_dialog: 'Gtk.FileChooserDialog',
+                 file_saver_dialog: 'Gtk.FileChooserDialog',
                  executor: 'Executor', dot_obj_parser: 'DotObjParser',
-                 dot_oml_parser: 'DotOmlParser'):
+                 dot_oml_parser: 'DotOmlParser', obj_view: 'ObjectView'):
         """MenuBar constructor."""
         self._create_obj_dialog = create_obj_dialog
         self._file_chooser_dialog = file_chooser_dialog
+        self._file_saver_dialog = file_saver_dialog
         self._executor = executor
         self._dot_obj_parser = dot_obj_parser
         self._dot_oml_parser = dot_oml_parser
+        self._obj_view = obj_view
         self.handlers = {
             "on_create_object": self._on_create_object,
+            "on_export_object" : self._on_export_object,
             "on_load_object": self._on_load_object,
             "on_run_script": self._on_run_script,
         }
@@ -80,6 +85,20 @@ class MenuBar:
             self._executor.add(**params)
 
         self._create_obj_dialog.hide()
+
+    def _on_export_object(self, _):
+        """Handle on_export_object signal.
+
+        # Run file_saver_dialog, and save selected object as .obj if
+        # the dialog ran successfully.
+
+        """
+        response = self._file_saver_dialog.run()
+        if response == Gtk.ResponseType.OK:
+            self._dot_obj_parser.export_obj_file(
+                self._file_saver_dialog.get_filename(),
+                self._obj_view.selected_object_ugly)
+        self._file_saver_dialog.hide()
 
     def _on_load_object(self, _):
         """Handle on_load_object signal.

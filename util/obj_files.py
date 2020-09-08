@@ -47,3 +47,11 @@ class DotObjParser:
             faces=faces,
             color=(0.0, 0.0, 0.0),
             obj_type="Wireframe")
+
+    def export_obj_file(self, path: 'str', obj: 'Object'):
+        # NOTE: only works for wireframes
+        with open(path, 'w') as obj_file:
+            for v in obj.points:
+                obj_file.write('v {} {} {}\n'.format(v[0], v[1], v[2]))
+            for f in obj.faces:
+                obj_file.write('f {}/0/0 {}/0/0 {}/0/0'.format(f[0]+1, f[1]+1, f[2]+1))

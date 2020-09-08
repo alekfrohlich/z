@@ -4,8 +4,7 @@ The GTK client's layout is composed of
 
 - console: A console with an embedded interpreter.
 - control_menu: A control menu for manipulating the selected object.
-- menu_bar: A menu bar with the following options:
-    * Create Object (Shift+4)
+- menu_bar: A menu bar.
 - object_view: A scrolling window for displaying information about
   existing objects and for selecting one them.
 - viewport: A viewport for visualizing a part of the 2D world.
@@ -72,12 +71,21 @@ class GtkClient:
             (Gtk.STOCK_CANCEL,
              Gtk.ResponseType.CANCEL,
              Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        file_saver_dialog = Gtk.FileChooserDialog(
+            "Save file",
+            self._builder.get_object("main_window"),  # Modal for
+            Gtk.FileChooserAction.SAVE,
+            (Gtk.STOCK_CANCEL,
+             Gtk.ResponseType.CANCEL,
+             Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
         menu_bar = MenuBar(
             create_obj_dialog,
-            file_chooser_dialog,
+            file_chooser_dialog, # NOTE: Could be templated
+            file_saver_dialog,
             executor,
             dot_obj_parser,
-            dot_oml_parser)
+            dot_oml_parser,
+            obj_view)
 
         control_menu = ControlMenu(executor,
                                    obj_view,
