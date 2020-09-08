@@ -53,5 +53,6 @@ class DotObjParser:
         with open(path, 'w') as obj_file:
             for v in obj.points:
                 obj_file.write('v {} {} {}\n'.format(v[0], v[1], v[2]))
-            for f in obj.faces:
-                obj_file.write('f {}/0/0 {}/0/0 {}/0/0\n'.format(f[0]+1, f[1]+1, f[2]+1))
+            if 'faces' in dir(obj):
+                for f in obj.faces:
+                    obj_file.write('f {}/0/0 {}/0/0 {}/0/0\n'.format(f[0]+1, f[1]+1, f[2]+1))
