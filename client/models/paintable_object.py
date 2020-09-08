@@ -60,9 +60,6 @@ class PaintableObject(Object):
         window_size = size((window.points[0], window.points[3]))
 
         x, y, z = window.center
-
-        # FIXME: Objects in between the COP and the window shouldn't be
-        # projected. Also, a point with same z as the COP will crash the system
         d = window_size
 
         to_origin_tr = translation_matrix(-x, -y, -z)
@@ -70,8 +67,15 @@ class PaintableObject(Object):
 
         cop_to_origin_tr = translation_matrix(0, 0, d)
         project_tr = projection_matrix(d)
-        concat_tr = to_origin_tr@rotate_tr@cop_to_origin_tr@project_tr
-        return list(map(normalize, transformed(self.points, concat_tr)))
+        # concat_tr = to_origin_tr@rotate_tr@cop_to_origin_tr@project_tr
+        concat_tr = to_origin_tr@rotate_tr@cop_to_origin_tr
+        tr_points = transformed(self.points, concat_tr)
+
+        for p in tr_points:
+            if p[2] < d:
+                return []
+
+        return list(map(normalize, transformed(tr_points, project_tr)))
 
     @abstractmethod
     def update(self, window: 'Window'):

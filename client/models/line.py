@@ -23,4 +23,7 @@ class Line(PaintableObject):
 
     def update(self, window: 'Window'):
         """Update cached coordinates."""
-        self._cached_points = clip_line(self.projected(window))
+        # self._cached_points = clip_line(self.projected(window))
+        self._cached_points = self.projected(window)
+        if self._cached_points:
+            self._cached_points = clip_line(self._cached_points)

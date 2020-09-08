@@ -23,7 +23,10 @@ class Point(PaintableObject):
 
     def update(self, window: 'Window'):
         """Update cached coordinates."""
-        self._cached_points = clip_point(self.projected(window))
+        # self._cached_points = clip_point(self.projected(window))
+        self._cached_points = self.projected(window)
+        if self._cached_points:
+            self._cached_points = clip_point(self._cached_points)
 
     def scale(self, factor: 'int'):
         """A point doesn't have size, thus ignore escalations."""
