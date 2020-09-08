@@ -97,7 +97,7 @@ class MenuBar:
         if response == Gtk.ResponseType.OK:
             self._dot_obj_parser.export_obj_file(
                 self._file_saver_dialog.get_filename(),
-                self._obj_view.selected_object_ugly)
+                self._executor.get(self._obj_view.selected_object))
         self._file_saver_dialog.hide()
 
     def _on_load_object(self, _):

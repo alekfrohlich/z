@@ -1,8 +1,9 @@
-"""This modules provides a write-only interface to ObjectStore.
+"""This modules provides a common interface to ObjectStore.
 
 The interface is the following:
 
 - add: Add new object to ObjectStorage.
+- get: Retrieve object from ObjectStorage.
 - remove: Remove object from ObjectStorage.
 - translate: Translate object.
 - scale: Scale object.
@@ -39,7 +40,7 @@ def _warn_undefined_object(method: 'function'):
 
 
 class Executor:
-    """Realization of write-only interface to ObjectStore."""
+    """Realization of common interface to ObjectStore."""
 
     def __init__(self, obj_store: 'ObjectStore', viewport: 'Viewport'):
         """Construct Executor."""
@@ -83,6 +84,10 @@ class Executor:
         }
 
         self._obj_store[name] = call_constructor[obj_type]()
+
+    def get(self, name: 'str') -> 'Object':
+        """Retrieve object by name."""
+        return self._obj_store[name]
 
     @Viewport.needs_redraw
     @_warn_undefined_object

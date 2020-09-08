@@ -54,4 +54,4 @@ class DotObjParser:
             for v in obj.points:
                 obj_file.write('v {} {} {}\n'.format(v[0], v[1], v[2]))
             for f in obj.faces:
-                obj_file.write('f {}/0/0 {}/0/0 {}/0/0'.format(f[0]+1, f[1]+1, f[2]+1))
+                obj_file.write('f {}/0/0 {}/0/0 {}/0/0\n'.format(f[0]+1, f[1]+1, f[2]+1))
