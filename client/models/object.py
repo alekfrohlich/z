@@ -23,6 +23,10 @@ class Object:
         self._points = points
         self._color = color
         self._thickness = thickness
+        self._orientation = np.array([[1, 0, 0, 0],
+                                      [0, 1, 0, 0],
+                                      [0, 0, 1, 0],
+                                      [0, 0, 0, 1]])
 
     @property
     def center(self) -> 'tuple':
@@ -53,6 +57,11 @@ class Object:
         """Thickness of object's points."""
         return self._thickness
 
+    @property
+    def inv_rotation_matrix(self) -> 'np.array':
+        """Linear transformation that reverses orientation."""
+        return np.linalg.inv(self._orientation)
+
     def translate(self, dx: 'int', dy: 'int', dz: 'int'):
         """Translate object by (`dx`, `dy`, `dz`)."""
         self.transform(translation_matrix(dx, dy, dz))
@@ -79,8 +88,21 @@ class Object:
         from_origin_tr = translation_matrix(x, y, z)
 
         self.transform(to_origin_tr@rotate_tr@from_origin_tr)
+        self._orientation = self._orientation@rotate_tr
 
     def transform(self, matrix_tr: 'np.array'):
         """Apply `matrix_tr` to the object's coordinates."""
         for i in range(len(self.points)):
             self.points[i] = self.points[i]@matrix_tr
+
+    def rotate_obj_axis(self, angle: 'float'):
+        """Rotate object around its axis."""
+        x, y, z = self.center
+
+        to_origin_tr = translation_matrix(-x, -y, -z)
+        rotate_inv_orientation = self.inv_rotation_matrix
+        rotate_angle = rotation_matrix(0, angle, 0)
+        rotate_orientation = self._orientation
+        from_origin_tr = translation_matrix(x, y, z)
+
+        self.transform(to_origin_tr@rotate_inv_orientation@rotate_angle@rotate_orientation@from_origin_tr)

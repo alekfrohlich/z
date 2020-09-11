@@ -23,10 +23,7 @@ class Window(PaintableObject):
         super().__init__("window", points, (0., 0., 0.), 2)
         self._cached_faces = [[0, 1, 2, 3]]
         self._cached_points = [(-1, 1), (1, 1), (1, -1), (-1, -1)]
-        self._orientation = np.array([[1, 0, 0, 0],
-                                      [0, 1, 0, 0],
-                                      [0, 0, 1, 0],
-                                      [0, 0, 0, 1]])
+
 
     def __str__(self):
         """Cohersion to string."""
@@ -37,11 +34,6 @@ class Window(PaintableObject):
         """Faces."""
         return self._cached_faces
 
-    @property
-    def inv_rotation_matrix(self) -> 'np.array':
-        """Linear transformation that reverses orientation."""
-        return np.linalg.inv(self._orientation)
-
     def accept(self, painter: 'ObjectPainter'):
         """Accept paint request."""
         painter.paint_polymesh(self)
@@ -50,16 +42,8 @@ class Window(PaintableObject):
         """Window does not need to be updated."""
         pass
 
-    def rotate(self, x_angle: 'float', y_angle: 'float', z_angle: 'float',
-               point=None):
-        """Rotate window around of `point` and update orientation."""
-        if point is None:
-            point = self.center
-        x, y, z = point
+    def rotate_obj_axis(self, angle: 'float'):
+        """Window does not need to rotated around its axis."""
+        pass
 
-        to_origin_tr = translation_matrix(-x, -y, -z)
-        rotate_tr = rotation_matrix(x_angle, y_angle, z_angle)
-        from_origin_tr = translation_matrix(x, y, z)
 
-        self.transform(to_origin_tr@rotate_tr@from_origin_tr)
-        self._orientation = self._orientation@rotate_tr

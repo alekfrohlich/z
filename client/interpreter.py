@@ -9,10 +9,14 @@ The implemented commands are:
     translate(name, sx, sy, sz)
     scale(name, factor)
     rotate(name, x_angle, y_angle, z_angle)
+    rotate_obj_axis(name, angle) (**)
 
 (*) Parameters followed by ? are optional. Also, some are dependent on the object
     being created: faces is required for wireframes, bmatu for curves and surfaces,
     and bmatv for surfaces.
+
+(**)
+angle in degrees
 
 The language is regular and is parsed by pattern matching.
 
@@ -59,6 +63,9 @@ SCALE_PATTERN = re.compile(
 ROTATE_PATTERN = re.compile(
     r"^rotate\((?P<name>{0}),(?P<x_angle>{1}),(?P<y_angle>{1}),(?P<z_angle>{1})\)$".format(name, floating))
 
+ROTATEOBJAXIS_PATTERN = re.compile(
+    r"^rotate_obj_axis\((?P<name>{0}),(?P<factor>{1})\)$".format(name, floating))
+
 
 class Interpreter:
     """Simple interpreter for faster object manipulation."""
@@ -72,6 +79,7 @@ class Interpreter:
             SCALE_PATTERN: self._scale,
             ROTATE_PATTERN: self._rotate,
             REMOVE_PATTERN: self._remove,
+            ROTATEOBJAXIS_PATTERN: self._rotate_obj_axis,
         }
 
     def faces_as_list(self, string: 'str') -> 'list':
@@ -177,3 +185,9 @@ class Interpreter:
         y_angle = np.deg2rad(float(match.group("y_angle")))
         z_angle = np.deg2rad(float(match.group("z_angle")))
         self._executor.rotate(name, x_angle, y_angle, z_angle, None)
+
+    def _rotate_obj_axis(self, match):
+        """Execute `rotate_obj_axis`."""
+        name = match.group("name")
+        angle = np.deg2rad(float(match.group("factor")))
+        self._executor.rotate_obj_axis(name, angle)

@@ -8,6 +8,7 @@ The interface is the following:
 - translate: Translate object.
 - scale: Scale object.
 - rotate: Rotate Object.
+- rotate_obj_axis: Rotate object around its orientation axis
 
 Notes
 -----
@@ -118,4 +119,12 @@ class Executor:
         """Attempt to rotate object around of `point`."""
         obj = self._obj_store[selected]
         obj.rotate(x_angle, y_angle, z_angle, point)
+        self._obj_store.changed(obj)
+
+    @Viewport.needs_redraw
+    @_warn_undefined_object
+    def rotate_obj_axis(self, selected: 'str', angle: 'float'):
+        """Attempt to rotate object around its axis."""
+        obj = self._obj_store[selected]
+        obj.rotate_obj_axis(angle)
         self._obj_store.changed(obj)
