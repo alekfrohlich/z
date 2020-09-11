@@ -128,3 +128,10 @@ class Executor:
         obj = self._obj_store[selected]
         obj.rotate_obj_axis(angle)
         self._obj_store.changed(obj)
+
+    @Viewport.needs_redraw
+    def toggle_projection(self):
+        """Change projection type."""
+        window = self._obj_store['window']
+        window.toggle_projection()
+        self._obj_store.changed(window)

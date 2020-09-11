@@ -1,3 +1,5 @@
+from enum import Enum
+
 """Augmented interface for objects that may be painted."""
 from abc import abstractmethod
 
@@ -5,6 +7,10 @@ from .object import Object
 from util.linear_algebra import (
     translation_matrix, escalation_matrix, projection_matrix, size,
     transformed)
+
+class ProjectionType(Enum):
+    PARALLEL = 0
+    PERSPECTIVE = 1
 
 class PaintableObject(Object):
     """"Object wrapper for painting.
@@ -51,31 +57,46 @@ class PaintableObject(Object):
 
     def projected(self, window) -> 'list':
         """Give the object's coordinates in respect to a given window."""
-        def normalize(point) -> 'tuple':
+        def normalize_perspective(point) -> 'tuple':
             """Normalize point's coordinates in respect to the window's."""
             return (
                 2*point[0]/(window_size*point[3]), 2*point[1]/(window_size*point[3]))
+
+        def normalize_parallel(point) -> 'tuple':
+            """Remove z and w coordinates for parallel projection."""
+            return (2*point[0]/window_size, 2*point[1]/window_size)
 
         # NOTE: Assumes square window
         window_size = size((window.points[0], window.points[3]))
 
         x, y, z = window.center
-        d = window_size
 
         to_origin_tr = translation_matrix(-x, -y, -z)
         rotate_tr = window.inv_rotation_matrix
 
-        cop_to_origin_tr = translation_matrix(0, 0, d)
-        project_tr = projection_matrix(d)
-        # concat_tr = to_origin_tr@rotate_tr@cop_to_origin_tr@project_tr
-        concat_tr = to_origin_tr@rotate_tr@cop_to_origin_tr
-        tr_points = transformed(self.points, concat_tr)
+        if window.projection.value == ProjectionType.PARALLEL.value:
+            tr_points = transformed(self.points, to_origin_tr@rotate_tr)
 
-        for p in tr_points:
-            if p[2] < d:
-                return []
+            for p in tr_points:
+                if p[2] < 0:
+                    return []
 
-        return list(map(normalize, transformed(tr_points, project_tr)))
+            return list(map(normalize_parallel, tr_points))
+        else:
+            d = window_size
+
+            cop_to_origin_tr = translation_matrix(0, 0, d)
+            project_tr = projection_matrix(d)
+
+
+            concat_tr = to_origin_tr@rotate_tr@cop_to_origin_tr
+            tr_points = transformed(self.points, concat_tr)
+
+            for p in tr_points:
+                if p[2] < d:
+                    return []
+
+            return list(map(normalize_perspective, transformed(tr_points, project_tr)))
 
     @abstractmethod
     def update(self, window: 'Window'):

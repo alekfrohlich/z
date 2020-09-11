@@ -49,6 +49,7 @@ class ControlMenu:
         - on_x_button : Gtk.Button.signals.clicked
         - on_y_button : Gtk.Button.signals.clicked
         - on_z_button : Gtk.Button.signals.clicked
+        - on_projection_button: Gtk.RadioButton.signals.group-changed
 
     """
 
@@ -76,6 +77,7 @@ class ControlMenu:
             "on_x_button": lambda _: self._on_rotate(axis=Axis.X),
             "on_y_button": lambda _: self._on_rotate(axis=Axis.Y),
             "on_z_button": lambda _: self._on_rotate(axis=Axis.Z),
+            "on_projection_button": lambda _: self._on_toggle_projection()
         }
 
     @property
@@ -131,3 +133,6 @@ class ControlMenu:
                 self._executor.rotate(selected, *angles, None)
             else:
                 self._executor.rotate(selected, *angles, self.point)
+
+    def _on_toggle_projection(self):
+        self._executor.toggle_projection()
