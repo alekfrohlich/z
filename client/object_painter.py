@@ -99,69 +99,25 @@ class ObjectPainter:
 
     def paint_surface(self, surface: 'Surface'):
         """Draw bicubic bezier surface."""
-        def setup(curves: 'list', u: 'bool') -> 'tuple':
-            """Initialize algorithm for drawing one family of curves.
-
-            Parameteres
-            -----------
-                u: bool
-                    Family of curves in the `u` direction? False represents the
-                    `v` direction.
-
-            """
-            interpolator = surface.bmatu if u else surface.bmatv
-            dim = dimu if u else dimv
-            fwd_x = []
-            fwd_y = []
-
-            for i in range(dim):
-                fx, fy = self._init_curve_algorithm(
-                    interpolator, curves[i], delta)
-                fwd_x.append(fx)
-                fwd_y.append(fy)
-
-            return (fwd_x, fwd_y)
-
-        def draw(u: 'bool'):
-            """Draw family of curves.
-
-            Parameteres
-            -----------
-                u: bool
-                    Family of curves in the `u` direction? False represents the
-                    `v` direction.
-
-            """
-            interpolator = surface.bmatu if u else surface.bmatv
-            dim1 = dimu if u else dimv
-            dim2 = dimv if u else dimu
-            for _ in range(n+1):
-                self._generate_segment(
-                    n,
-                    interpolator,
-                    [(fwd_x[i][0], fwd_y[i][0]) for i in range(dim1)])
-                for i in range(dim2):
-                    for j in range(dim2 - 1):
-                        fwd_x[i][j] += fwd_x[i][j+1]
-                        fwd_y[i][j] += fwd_y[i][j+1]
-            self._cr.stroke()
-
+        # Uses global Coeficients Cx, Cy e Cz in x, y and z
         n = 20
-        delta = 1 / n
-        dimu = surface.degu + 1
-        dimv = surface.degv + 1
+        delta = 1/ n
+        createDeltaMatrices(delta)
+        createForwardDiffMatrices()
+        # Draw curves along t
+        for i in range(n):
+            DrawCurveFwdDif(n, fwd_x, fwd_y)
+            UpdateForwardDiffMatrices()
 
-        cp = list(map(self.resolution_transform, surface.cached_points))
-        curves_in_u = [cp[dimu*i: dimu*i + dimu] for i in range(dimu)]
-        curves_in_v = [[cp[i], cp[dimv+i], cp[2*dimv+i], cp[3*dimv+i]] for i
-                       in range(dimv)]
+        # Regenerate DD matrices
+        createForwardDiffMatrices();
 
-        U = True
-        V = False
-        fwd_x, fwd_y = setup(curves_in_u, U)
-        draw(U)
-        fwd_x, fwd_y = setup(curves_in_v, V)
-        draw(V)
+        transpose(DDx)
+        transpose(DDy)
+        # Draw nt curves along s
+        for i in range(n):
+            DrawCurveFwdDif(n, fwd_x, fwd_y)
+            UpdateForwardDiffMatrices()
 
     def _init_curve_algorithm(self, basis, geometry, delta) -> 'tuple':
         """Initialize forward differences from basis and geometry of spline.
