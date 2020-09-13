@@ -99,25 +99,33 @@ class ObjectPainter:
 
     def paint_surface(self, surface: 'Surface'):
         """Draw bicubic bezier surface."""
-        # Uses global Coeficients Cx, Cy e Cz in x, y and z
-        n = 20
-        delta = 1/ n
-        createDeltaMatrices(delta)
-        createForwardDiffMatrices()
+        rt_points = list(map(self.resolution_transform, surface._cached_points))
+        surface.createGeometryMatrix(rt_points)
+        # print(surface._Ax)
+        # print(surface._Ay)
+        # print(surface._Az)
+        surface.calculateCoefficients()
+        n = 15
+        delta = 1/ (n-1)
+        surface.createDeltaMatrices(delta, delta)
+        surface.createForwardDiffMatrices()
+
         # Draw curves along t
         for i in range(n):
-            DrawCurveFwdDif(n, fwd_x, fwd_y)
-            UpdateForwardDiffMatrices()
+            self._generate_segment(n, surface._DDx[0].copy(), surface._DDy[0].copy())
+            # print(surface._DDx)
+            surface.UpdateForwardDiffMatrices()
 
         # Regenerate DD matrices
-        createForwardDiffMatrices();
+        surface.createForwardDiffMatrices()
 
-        transpose(DDx)
-        transpose(DDy)
+        surface._DDx = np.transpose(surface._DDx)
+        surface._DDy = np.transpose(surface._DDy)
+
         # Draw nt curves along s
         for i in range(n):
-            DrawCurveFwdDif(n, fwd_x, fwd_y)
-            UpdateForwardDiffMatrices()
+            self._generate_segment(n, surface._DDx[0].copy(), surface._DDy[0].copy())
+            surface.UpdateForwardDiffMatrices()
 
     def _init_curve_algorithm(self, basis, geometry, delta) -> 'tuple':
         """Initialize forward differences from basis and geometry of spline.
@@ -171,7 +179,7 @@ class ObjectPainter:
         res = (self._res[0]+10,10,self._res[1]+10,10)
         prev_out = True
         prev_point = None
-        for _ in range(n+1):
+        for _ in range(n):
             if out(fwd_x[0], fwd_y[0]):
                 if not prev_out:  # Leaving the window
                     cl = clip_line([prev_point, (fwd_x[0], fwd_y[0])], *res)
