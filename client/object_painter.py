@@ -6,6 +6,7 @@ Classes
 
 """
 import numpy as np
+from math import sqrt
 from scipy import special
 
 from .models.curve import Interpolator
@@ -98,53 +99,24 @@ class ObjectPainter:
                 self._generate_segment(100, *self._init_curve_algorithm(curve.bmatu, cp[i:i+4], 1/99))
 
     def paint_surface(self, surface: 'Surface'):
-        """Draw bicubic bezier surface."""
-        def update_fwd_diff_matrices():
-            """Update forward difference matrices."""
-            # //row1 <- row1 + row2
-            DDx[0,:] = DDx[0,:] + DDx[1,:]
-            DDy[0,:] = DDy[0,:] + DDy[1,:]
-            # //row2 <- row2 + row3
-            DDx[1,:] = DDx[1,:] + DDx[2,:]
-            DDy[1,:] = DDy[1,:] + DDy[2,:]
-            # //row3 <- row3 + row4
-            DDx[2,:] = DDx[2,:] + DDx[3,:]
-            DDy[2,:] = DDy[2,:] + DDy[3,:]
+        """Draw surface."""
+        def generate_geometry_matrix(r=0, d=0, siz=4):
+            """"""
+            Tx = np.array([[cp[r+k + siz*(d+l)][0] for k in range(4)] for l in range(4)])
+            Ty = np.array([[cp[r+k + siz*(d+l)][1] for k in range(4)] for l in range(4)])
+            return (Tx, Ty)
 
-        rt_points = list(map(self.resolution_transform, surface._cached_points))
-
-        Ax = np.array([[rt_points[i+4*j][0] for i in range(4)] for j in range(4)])
-        Ay = np.array([[rt_points[i+4*j][1] for i in range(4)] for j in range(4)])
-
-        Cx = surface.bmatu@Ax@np.transpose(surface.bmatu)
-        Cy = surface.bmatu@Ay@np.transpose(surface.bmatu)
-
-        n = 15
-        delta = 1/ (n-1)
-        Es = np.array([[0,0,0,1],
-                       [delta * delta * delta, delta * delta, delta, 0],
-                       [6 * delta * delta * delta, 2 * delta * delta, 0,0],
-                       [6 * delta * delta * delta,0,0,0]])
-
-        Et = np.transpose(Es)
-
-        # Init fwd_diff matrices for t
-        DDx = Es@Cx@Et
-        DDy = Es@Cy@Et
-
-        # Draw curves along t
-        for i in range(n):
-            self._generate_segment(n, DDx[0].copy(), DDy[0].copy())
-            update_fwd_diff_matrices()
-
-        # Init fwd_diff matrices for s
-        DDx = np.transpose(Es@Cx@Et)
-        DDy = np.transpose(Es@Cy@Et)
-
-        # Draw nt curves along s
-        for i in range(n):
-            self._generate_segment(n, DDx[0].copy(), DDy[0].copy())
-            update_fwd_diff_matrices()
+        cp = list(map(self.resolution_transform, surface._cached_points))
+        if surface.bmatu is Interpolator.BEZIER:
+            self._generate_patch(surface, *generate_geometry_matrix())
+        else:
+            size = len(surface._cached_points)
+            sqrt_size = sqrt(size)
+            isqrt = int(sqrt_size)
+            if isqrt - sqrt_size < 0.00001:
+                for i in range(isqrt - 3): # +1
+                    for j in range(isqrt - 3):
+                        self._generate_patch(surface, *generate_geometry_matrix(i, j, isqrt))
 
     def _init_curve_algorithm(self, basis, geometry, delta) -> 'tuple':
         """Initialize forward differences from basis and geometry of spline.
@@ -223,3 +195,47 @@ class ObjectPainter:
                 fwd_x[i] += fwd_x[i+1]
                 fwd_y[i] += fwd_y[i+1]
         self._cr.stroke()
+
+    def _generate_patch(self,surface, Ax: 'np.array', Ay: 'np.array'):
+        """Draw bicubic parametric surface."""
+        def update_fwd_diff_matrices():
+            """Update forward difference matrices."""
+            # //row1 <- row1 + row2
+            DDx[0,:] = DDx[0,:] + DDx[1,:]
+            DDy[0,:] = DDy[0,:] + DDy[1,:]
+            # //row2 <- row2 + row3
+            DDx[1,:] = DDx[1,:] + DDx[2,:]
+            DDy[1,:] = DDy[1,:] + DDy[2,:]
+            # //row3 <- row3 + row4
+            DDx[2,:] = DDx[2,:] + DDx[3,:]
+            DDy[2,:] = DDy[2,:] + DDy[3,:]
+
+        Cx = surface.bmatu@Ax@np.transpose(surface.bmatu)
+        Cy = surface.bmatu@Ay@np.transpose(surface.bmatu)
+
+        n = 15
+        delta = 1/ (n-1)
+        Es = np.array([[0,0,0,1],
+                       [delta * delta * delta, delta * delta, delta, 0],
+                       [6 * delta * delta * delta, 2 * delta * delta, 0,0],
+                       [6 * delta * delta * delta,0,0,0]])
+
+        Et = np.transpose(Es)
+
+        # Init fwd_diff matrices for t
+        DDx = Es@Cx@Et
+        DDy = Es@Cy@Et
+
+        # Draw curves along t
+        for i in range(n):
+            self._generate_segment(n, DDx[0].copy(), DDy[0].copy())
+            update_fwd_diff_matrices()
+
+        # Init fwd_diff matrices for s
+        DDx = np.transpose(Es@Cx@Et)
+        DDy = np.transpose(Es@Cy@Et)
+
+        # Draw nt curves along s
+        for i in range(n):
+            self._generate_segment(n, DDx[0].copy(), DDy[0].copy())
+            update_fwd_diff_matrices()
